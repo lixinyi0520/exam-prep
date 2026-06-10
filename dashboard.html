@@ -1,0 +1,1830 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>教师看板 - 高一下数学期末备考</title>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        :root{--bg:#0a0e1a;--card:#141825;--border:#2a2f45;--text:#e8eaf0;--text-dim:#6b7280;--accent:#6366f1;--accent-light:#818cf8;--green:#10b981;--yellow:#f59e0b;--red:#ef4444}
+        body{font-family:'PingFang SC','Microsoft YaHei',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+        .header{background:var(--card);border-bottom:1px solid var(--border);padding:.85rem 1.5rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+        .header h1{font-size:1.3rem}
+        .header-right{display:flex;align-items:center;gap:1rem}
+        .header a{color:var(--text-dim);text-decoration:none;font-size:.85rem}
+        .live-dot{width:8px;height:8px;border-radius:50%;background:var(--green);display:inline-block;animation:pulse 2s infinite}
+        @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+        .container{max-width:1440px;margin:0 auto;padding:1.5rem}
+
+        /* Countdown */
+        .countdown-banner{background:linear-gradient(135deg,rgba(99,102,241,.15),rgba(239,68,68,.1));border:1px solid rgba(99,102,241,.3);border-radius:14px;padding:1.25rem 1.5rem;margin-bottom:1.5rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.75rem}
+        .countdown-left{display:flex;align-items:baseline;gap:.75rem}
+        .countdown-num{font-size:2.8rem;font-weight:800;color:var(--red);line-height:1}
+        .countdown-label{font-size:1.1rem}
+        .countdown-sub{font-size:.85rem;color:var(--text-dim)}
+        .countdown-right{display:flex;gap:1.5rem}
+        .countdown-stat{text-align:center}
+        .countdown-stat .cs-val{font-size:1.3rem;font-weight:700}
+        .countdown-stat .cs-lbl{font-size:.75rem;color:var(--text-dim)}
+
+        /* Stats */
+        .stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:1rem;margin-bottom:1.5rem}
+        .stat-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.15rem}
+        .stat-label{color:var(--text-dim);font-size:.8rem;margin-bottom:.4rem}
+        .stat-value{font-size:1.7rem;font-weight:700}
+
+        /* Tabs */
+        .tab-nav{display:flex;gap:.5rem;margin-bottom:1.5rem;flex-wrap:wrap;border-bottom:1px solid var(--border);padding-bottom:.75rem}
+        .tab-btn{background:transparent;border:1px solid var(--border);color:var(--text-dim);padding:.5rem 1rem;border-radius:8px;cursor:pointer;font-size:.85rem;transition:all .2s;font-family:inherit}
+        .tab-btn:hover{border-color:var(--accent);color:var(--text)}
+        .tab-btn.active{background:var(--accent);border-color:var(--accent);color:#fff}
+        .tab-content{display:none}
+        .tab-content.active{display:block}
+
+        /* Calendar */
+        .calendar-wrapper{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.25rem;margin-bottom:1.5rem;overflow-x:auto}
+        .cal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:.5rem}
+        .cal-header h3{font-size:1rem}
+        .cal-legend{display:flex;gap:1rem;font-size:.75rem;color:var(--text-dim);flex-wrap:wrap}
+        .cal-legend span{display:flex;align-items:center;gap:.3rem}
+        .cal-legend-dot{width:10px;height:10px;border-radius:3px;display:inline-block}
+        .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;min-width:750px}
+        .cal-dow{text-align:center;font-size:.75rem;color:var(--text-dim);padding:.4rem 0;font-weight:500}
+        .cal-cell{position:relative;border:1px solid var(--border);border-radius:8px;padding:.5rem;min-height:95px;cursor:pointer;transition:border-color .2s,background .2s,box-shadow .2s;display:flex;flex-direction:column}
+        .cal-cell:hover{border-color:var(--accent)}
+        .cal-cell.empty{border-color:transparent;cursor:default;pointer-events:none}
+        .cal-cell.empty:hover{border-color:transparent}
+        .cal-date{font-size:.85rem;font-weight:600;margin-bottom:.25rem}
+        .cal-topic{font-size:.68rem;line-height:1.35;flex:1;overflow:hidden;cursor:text}
+        .cal-topic.is-test{color:var(--yellow);font-weight:600}
+        .cal-topic[contenteditable="true"]{outline:1px solid var(--accent);border-radius:3px;padding:2px 4px;background:rgba(99,102,241,.08);min-height:1.5em}
+        .cal-status-tag{font-size:.6rem;padding:.15rem .35rem;border-radius:3px;margin-top:.25rem;display:inline-block;align-self:flex-start;cursor:pointer;user-select:none}
+        .cal-cell.today{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
+        .cal-cell.past .cal-date{opacity:.5;text-decoration:line-through}
+        .cal-cell.past .cal-topic{opacity:.85}
+        .cal-cell.exam-day{border-color:var(--red);background:rgba(239,68,68,.08);box-shadow:0 0 12px rgba(239,68,68,.2)}
+        .cal-cell.exam-day .cal-date{color:var(--red);font-size:1rem}
+
+        /* Class hours label next to date */
+        .cal-class-hrs{font-size:.6rem;color:var(--accent-light);font-weight:400;margin-left:.15rem}
+        .cal-class-hrs.quiz{color:var(--yellow)}
+        .cal-dow-short{font-size:.6rem;color:var(--text-dim);font-weight:400;margin-left:.1rem}
+
+        /* Calendar task checkbox (macOS Calendar style) */
+        .cal-task-check{display:flex;align-items:flex-start;gap:.25rem;flex:1;overflow:hidden}
+        .cal-task-check input[type="checkbox"]{margin-top:1px;flex-shrink:0;cursor:pointer;accent-color:var(--accent);width:12px;height:12px}
+        .cal-task-check .cal-topic{flex:1}
+        .cal-task-check.checked .cal-topic{text-decoration:line-through;color:var(--text-dim) !important}
+
+        /* Calendar task lines (multi-task) */
+        .cal-task-line input[type="text"]{font-size:.72rem;background:transparent;border:none;color:var(--text);outline:none;width:100%;padding:1px 0;border-bottom:1px solid transparent}
+        .cal-task-line input[type="text"]:focus{border-bottom-color:var(--accent)}
+        .cal-inline-add::placeholder{color:var(--text-dim);font-size:.65rem}
+
+        /* Drop flash confirmation */
+        @keyframes dropFlash{0%{box-shadow:0 0 0 2px var(--accent),0 0 18px rgba(99,102,241,.5)}100%{box-shadow:none}}
+        .cal-cell.drop-flash{animation:dropFlash .5s ease-out}
+        .cal-cell.self-review{border-style:dashed}
+        .cal-cell.status-completed{border-color:var(--green);background:rgba(16,185,129,.06)}
+        .cal-cell.status-in_progress{border-color:var(--yellow);background:rgba(245,158,11,.06)}
+        .cal-cell.drag-over{border-color:var(--accent)!important;background:rgba(99,102,241,.12)!important;box-shadow:0 0 12px rgba(99,102,241,.3)}
+        .cal-cell.dragging{opacity:.4}
+        .tag-completed{background:rgba(16,185,129,.2);color:var(--green)}
+        .tag-in_progress{background:rgba(245,158,11,.2);color:var(--yellow)}
+        .tag-pending{background:rgba(107,114,128,.15);color:var(--text-dim)}
+        .tag-exam{background:rgba(239,68,68,.2);color:var(--red)}
+        .tag-self{background:rgba(99,102,241,.12);color:var(--accent-light)}
+        .edit-hint{position:absolute;top:2px;right:4px;font-size:.6rem;color:var(--text-dim);opacity:0;transition:opacity .2s}
+        .cal-cell:hover .edit-hint{opacity:1}
+
+        /* Status popover */
+        .status-popover{position:fixed;z-index:300;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:.5rem;box-shadow:0 8px 24px rgba(0,0,0,.4);display:none}
+        .status-popover.show{display:block}
+        .status-popover button{display:block;width:100%;padding:.5rem 1rem;border:none;background:transparent;color:var(--text);font-size:.82rem;cursor:pointer;text-align:left;border-radius:4px;white-space:nowrap;font-family:inherit}
+        .status-popover button:hover{background:rgba(255,255,255,.05)}
+
+        /* Section title */
+        .sec-title{font-size:1.15rem;font-weight:600;margin:1.5rem 0 1rem;display:flex;align-items:center;gap:.5rem}
+
+        /* Module cards */
+        .modules-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(440px,1fr));gap:1rem;margin-bottom:1.5rem}
+        .mod-card{background:var(--card);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+        .mod-head{padding:1rem 1.25rem;display:flex;align-items:center;justify-content:space-between;cursor:pointer}
+        .mod-head:hover{background:rgba(255,255,255,.02)}
+        .mod-info{flex:1}
+        .mod-name{font-size:1rem;font-weight:600;margin-bottom:.15rem}
+        .mod-meta{color:var(--text-dim);font-size:.78rem}
+        .mod-right{display:flex;align-items:center;gap:.75rem}
+        .mod-bar{width:80px;height:6px;background:var(--border);border-radius:3px;overflow:hidden}
+        .mod-bar-fill{height:100%;border-radius:3px;transition:width .3s}
+        .mod-pct{font-size:.78rem;min-width:36px;text-align:right;color:var(--text-dim)}
+        .mod-expand{color:var(--text-dim);font-size:.8rem;transition:transform .3s}
+        .mod-card.expanded .mod-expand{transform:rotate(180deg)}
+        .mod-body{display:none;border-top:1px solid var(--border)}
+        .mod-card.expanded .mod-body{display:block}
+        .mod-table{width:100%;border-collapse:collapse}
+        .mod-table th,.mod-table td{padding:.6rem 1rem;text-align:left;border-bottom:1px solid var(--border);font-size:.82rem}
+        .mod-table th{background:rgba(255,255,255,.02);color:var(--text-dim);font-weight:500;font-size:.75rem}
+        .w-high{color:var(--red)}.w-mid{color:var(--yellow)}.w-low{color:var(--green)}
+        .selfeval-bar{display:flex;height:16px;border-radius:3px;overflow:hidden;cursor:pointer;min-width:80px;position:relative}
+        .selfeval-bar .seg{height:100%;transition:width .3s}
+        .selfeval-bar .seg-g{background:var(--green)}
+        .selfeval-bar .seg-y{background:var(--yellow)}
+        .selfeval-bar .seg-r{background:var(--red)}
+        .selfeval-bar-label{font-size:.7rem;color:var(--text-dim);margin-left:.3rem;white-space:nowrap}
+
+        /* Assessment popup */
+        .assess-popup{position:fixed;z-index:350;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1rem;box-shadow:0 12px 36px rgba(0,0,0,.5);display:none;width:360px;max-height:400px;overflow-y:auto}
+        .assess-popup.show{display:block}
+        .assess-popup h4{font-size:.9rem;margin-bottom:.75rem;color:var(--accent-light)}
+        .assess-popup .cat-group{margin-bottom:.75rem}
+        .assess-popup .cat-title{font-size:.78rem;font-weight:600;margin-bottom:.3rem;display:flex;align-items:center;gap:.3rem}
+        .assess-popup .cat-title .dot{width:8px;height:8px;border-radius:50%;display:inline-block}
+        .assess-popup .student-chip{display:inline-block;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:4px;padding:.15rem .4rem;font-size:.72rem;margin:.15rem .15rem .15rem 0}
+        .assess-popup .close-btn{position:absolute;top:.5rem;right:.75rem;background:none;border:none;color:var(--text-dim);font-size:1rem;cursor:pointer}
+
+        /* Heatmap */
+        .heatmap-section{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1.25rem;margin-bottom:1.5rem}
+        .heatmap-scroll{overflow-x:auto}
+        .hm-table{width:100%;border-collapse:collapse;min-width:750px}
+        .hm-table th,.hm-table td{padding:.5rem .6rem;text-align:center;border-bottom:1px solid var(--border);font-size:.78rem}
+        .hm-table th{background:rgba(255,255,255,.03);color:var(--text-dim);font-weight:500;font-size:.72rem}
+        .hm-table td.hm-name{text-align:left;font-weight:500}
+        .hm-table tr.hm-module{background:rgba(99,102,241,.05);cursor:pointer}
+        .hm-table tr.hm-module:hover{background:rgba(99,102,241,.1)}
+        .hm-table tr.hm-point{display:none}
+        .hm-table tr.hm-point.visible{display:table-row}
+        .hm-green{background:rgba(16,185,129,.2);color:var(--green)}
+        .hm-yellow{background:rgba(245,158,11,.2);color:var(--yellow)}
+        .hm-red{background:rgba(239,68,68,.2);color:var(--red)}
+        .hm-gray{background:rgba(107,114,128,.1);color:var(--text-dim)}
+
+        /* Student list */
+        .student-section{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1.25rem;margin-bottom:1.5rem}
+        .student-filter{display:flex;gap:.5rem;margin-bottom:1rem;flex-wrap:wrap}
+        .student-filter select,.student-filter input{background:var(--bg);border:1px solid var(--border);color:var(--text);padding:.4rem .7rem;border-radius:6px;font-size:.82rem;font-family:inherit}
+        .student-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:.75rem}
+        .student-card{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:.85rem;cursor:pointer;transition:border-color .2s,transform .15s}
+        .student-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+        .sc-name{font-weight:600;font-size:.9rem;margin-bottom:.15rem}
+        .sc-class{color:var(--text-dim);font-size:.75rem;margin-bottom:.35rem}
+        .sc-target{font-size:.72rem;color:var(--accent-light);margin-bottom:.35rem}
+        .sc-stats{display:flex;gap:.5rem;font-size:.75rem}
+        .sc-stat{display:flex;align-items:center;gap:.2rem}
+        .sc-dot{width:6px;height:6px;border-radius:50%}
+
+        /* Student detail overlay */
+        .student-detail-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.7);z-index:400;display:none;overflow-y:auto;padding:2rem 1rem}
+        .student-detail-overlay.show{display:flex;align-items:flex-start;justify-content:center}
+        .student-detail{background:var(--card);border:1px solid var(--border);border-radius:14px;width:100%;max-width:900px;padding:2rem;position:relative}
+        .sd-close{position:absolute;top:1rem;right:1.25rem;background:none;border:none;color:var(--text-dim);font-size:1.4rem;cursor:pointer}
+        .sd-close:hover{color:var(--text)}
+        .sd-header{display:flex;gap:1.5rem;margin-bottom:1.5rem;flex-wrap:wrap;align-items:flex-start}
+        .sd-header-info h2{font-size:1.3rem;margin-bottom:.25rem}
+        .sd-header-info p{color:var(--text-dim);font-size:.85rem}
+        .sd-score-cards{display:flex;gap:1rem;flex-wrap:wrap}
+        .sd-score-card{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:.75rem 1rem;min-width:140px}
+        .sd-score-card .label{font-size:.72rem;color:var(--text-dim)}
+        .sd-score-card .value{font-size:1.2rem;font-weight:700}
+        .sd-section{margin-bottom:1.5rem}
+        .sd-section h3{font-size:1rem;font-weight:600;margin-bottom:.75rem;color:var(--accent-light);border-bottom:1px solid var(--border);padding-bottom:.4rem}
+        .sd-kp-table{width:100%;border-collapse:collapse}
+        .sd-kp-table th,.sd-kp-table td{padding:.5rem .75rem;text-align:left;border-bottom:1px solid var(--border);font-size:.82rem}
+        .sd-kp-table th{color:var(--text-dim);font-weight:500;font-size:.72rem;background:rgba(255,255,255,.02)}
+        .sd-note-item{background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:.6rem .8rem;margin-bottom:.4rem;font-size:.82rem}
+        .sd-note-item .point-label{color:var(--accent-light);font-size:.72rem;margin-bottom:.2rem}
+        .sd-plan-item{background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:.6rem .8rem;margin-bottom:.4rem;font-size:.82rem}
+        .sd-plan-item .plan-date{color:var(--accent-light);font-size:.72rem;margin-bottom:.2rem}
+        .sd-empty{color:var(--text-dim);font-size:.85rem;font-style:italic}
+
+        /* Tips */
+        .tips-section{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1.25rem;margin-bottom:1.5rem}
+        .tips-list{display:flex;flex-direction:column;gap:.75rem}
+        .tip-card{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:1rem;position:relative}
+        .tip-card.featured{border-color:var(--yellow);background:rgba(245,158,11,.04)}
+        .tip-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem;flex-wrap:wrap;gap:.3rem}
+        .tip-author{font-weight:600;font-size:.85rem}
+        .tip-point{font-size:.72rem;color:var(--accent-light);background:rgba(99,102,241,.1);padding:.1rem .4rem;border-radius:3px}
+        .tip-content{font-size:.88rem;line-height:1.5;margin-bottom:.5rem}
+        .tip-footer{display:flex;justify-content:space-between;align-items:center;font-size:.78rem;color:var(--text-dim)}
+        .tip-likes{display:flex;align-items:center;gap:.3rem}
+        .tip-actions{display:flex;gap:.5rem}
+        .tip-btn{background:transparent;border:1px solid var(--border);color:var(--text-dim);padding:.25rem .6rem;border-radius:4px;cursor:pointer;font-size:.72rem;font-family:inherit;transition:all .2s}
+        .tip-btn:hover{border-color:var(--accent);color:var(--text)}
+        .tip-btn.featured-btn{border-color:var(--yellow);color:var(--yellow)}
+        .tip-featured-badge{position:absolute;top:.5rem;right:.5rem;font-size:.65rem;color:var(--yellow);background:rgba(245,158,11,.15);padding:.1rem .4rem;border-radius:3px}
+
+        /* Loading */
+        .loading{text-align:center;padding:2rem;color:var(--text-dim)}
+
+        @media(max-width:768px){
+            .container{padding:1rem}
+            .countdown-banner{flex-direction:column;text-align:center}
+            .countdown-left{justify-content:center}
+            .countdown-right{justify-content:center}
+            .modules-grid{grid-template-columns:1fr}
+            .student-grid{grid-template-columns:1fr 1fr}
+            .cal-cell{min-height:70px;padding:.35rem}
+            .cal-topic{font-size:.6rem}
+            .student-detail{padding:1.25rem}
+            .sd-header{flex-direction:column}
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>教师备课看板</h1>
+        <div class="header-right">
+            <span style="font-size:.8rem;color:var(--text-dim)"><span class="live-dot"></span> 实时同步</span>
+            <a href="index.html">返回</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Countdown Banner -->
+        <div class="countdown-banner" id="countdownBanner">
+            <div class="countdown-left">
+                <span class="countdown-num" id="countdownNum">--</span>
+                <div>
+                    <div class="countdown-label">距离期末考试还有</div>
+                    <div class="countdown-sub">考试日期：2026年7月8日（周三）</div>
+                </div>
+            </div>
+            <div class="countdown-right">
+                <div class="countdown-stat"><div class="cs-val" style="color:var(--green)" id="cdReviewDone">0</div><div class="cs-lbl">已完成复习日</div></div>
+                <div class="countdown-stat"><div class="cs-val" style="color:var(--yellow)" id="cdReviewLeft">10</div><div class="cs-lbl">待复习日</div></div>
+                <div class="countdown-stat"><div class="cs-val" style="color:var(--accent-light)" id="cdSelfDays">13</div><div class="cs-lbl">自主复习日</div></div>
+            </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-row">
+            <div class="stat-card"><div class="stat-label">复习进度</div><div class="stat-value" style="color:var(--accent-light)" id="stProgress">0/10</div></div>
+            <div class="stat-card"><div class="stat-label">注册学生</div><div class="stat-value" style="color:var(--yellow)" id="stStudents">0</div></div>
+            <div class="stat-card"><div class="stat-label">已评估知识点</div><div class="stat-value" style="color:var(--green)" id="stAssessed">0%</div></div>
+            <div class="stat-card"><div class="stat-label">班级平均掌握度</div><div class="stat-value" id="stAvgMastery">--</div></div>
+            <div class="stat-card"><div class="stat-label">预警知识点</div><div class="stat-value" style="color:var(--red)" id="stWarnings">0</div></div>
+        </div>
+
+        <!-- Tab Navigation -->
+        <div class="tab-nav">
+            <button class="tab-btn active" data-tab="calendar">备考日历</button>
+            <button class="tab-btn" data-tab="modules">知识模块追踪</button>
+            <button class="tab-btn" data-tab="heatmap">掌握度热力图</button>
+            <button class="tab-btn" data-tab="students">学生列表</button>
+            <button class="tab-btn" data-tab="tips">温馨提示论坛</button>
+        </div>
+
+        <!-- TAB: Calendar -->
+        <div class="tab-content active" id="tab-calendar">
+            <div class="calendar-wrapper">
+                <div class="cal-header">
+                    <h3>2026年6月11日 - 7月8日</h3>
+                    <div class="cal-legend">
+                        <span><span class="cal-legend-dot" style="background:var(--accent)"></span>今天</span>
+                        <span><span class="cal-legend-dot" style="background:var(--green)"></span>已完成</span>
+                        <span><span class="cal-legend-dot" style="background:var(--yellow)"></span>进行中</span>
+                        <span><span class="cal-legend-dot" style="background:var(--border)"></span>待开始</span>
+                        <span><span class="cal-legend-dot" style="background:var(--red)"></span>考试日</span>
+                        <span><span class="cal-legend-dot" style="border:1px dashed var(--accent-light);background:transparent"></span>自主复习</span>
+                    </div>
+                </div>
+                <div class="cal-grid" id="calendarGrid"></div>
+            </div>
+        </div>
+
+        <!-- TAB: Modules -->
+        <div class="tab-content" id="tab-modules">
+            <div class="sec-title">知识模块追踪（二级指标）</div>
+            <div class="modules-grid" id="modulesGrid"></div>
+        </div>
+
+        <!-- TAB: Heatmap -->
+        <div class="tab-content" id="tab-heatmap">
+            <div class="sec-title">班级掌握热力图</div>
+            <div class="heatmap-section">
+                <div class="heatmap-scroll" id="heatmapContainer">
+                    <div class="loading">加载数据中...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB: Students -->
+        <div class="tab-content" id="tab-students">
+            <div class="sec-title">学生列表</div>
+            <div class="student-section">
+                <div class="student-filter">
+                    <select id="classFilter"><option value="">全部班级</option></select>
+                    <input type="text" id="studentSearch" placeholder="搜索学生姓名...">
+                </div>
+                <div class="student-grid" id="studentGrid"><div class="loading">加载中...</div></div>
+            </div>
+        </div>
+
+        <!-- TAB: Tips -->
+        <div class="tab-content" id="tab-tips">
+            <div class="sec-title">温馨提示论坛</div>
+            <div class="tips-section">
+                <div class="tips-list" id="tipsList"><div class="loading">加载中...</div></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Status popover -->
+    <div class="status-popover" id="statusPopover"></div>
+
+    <!-- Assessment popup -->
+    <div class="assess-popup" id="assessPopup"></div>
+
+    <!-- Student detail overlay -->
+    <div class="student-detail-overlay" id="studentDetailOverlay">
+        <div class="student-detail" id="studentDetailContent"></div>
+    </div>
+
+    <script type="module">
+    // ================================================================
+    // SUPABASE
+    // ================================================================
+    import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+
+    const SUPABASE_URL = 'https://zeijwibhhtznoagevaeh.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_HaQf-0CDYDEet6xuTCauMw_MZxKPMty';
+    const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    // ================================================================
+    // KNOWLEDGE BASE
+    // ================================================================
+    const KB = {
+        A: { name: '立体几何', weight: 38, points: [
+            { id:'A1', name:'三视图还原与直观图', w:'mid' },
+            { id:'A2', name:'截面问题分析', w:'mid' },
+            { id:'A3', name:'柱体/锥体表面积', w:'high' },
+            { id:'A4', name:'球的表面积与体积', w:'mid' },
+            { id:'A5', name:'线面平行判定与性质', w:'high' },
+            { id:'A6', name:'面面平行判定与性质', w:'mid' },
+            { id:'A7', name:'线面垂直判定与性质', w:'high' },
+            { id:'A8', name:'面面垂直判定与性质', w:'high' },
+            { id:'A9', name:'空间角(异面直线角/线面角/二面角)', w:'high' },
+            { id:'A10', name:'点面距离计算', w:'high' },
+            { id:'A11', name:'空间向量坐标法', w:'mid' },
+            { id:'A12', name:'立几综合证明', w:'high' },
+        ]},
+        B: { name: '解三角形', weight: 18, points: [
+            { id:'B1', name:'正弦定理(解三角形/边角互化)', w:'high' },
+            { id:'B2', name:'余弦定理(解三角形/边角互化)', w:'high' },
+            { id:'B3', name:'面积公式(1/2*ab*sinC)', w:'high' },
+            { id:'B4', name:'正余弦综合(选条件/最值/范围)', w:'high' },
+        ]},
+        C: { name: '向量', weight: 18, points: [
+            { id:'C1', name:'基本运算与坐标表示', w:'mid' },
+            { id:'C2', name:'数量积(定义/坐标/运算律)', w:'high' },
+            { id:'C3', name:'夹角与模的计算', w:'high' },
+            { id:'C4', name:'平面向量几何应用(基底表示)', w:'mid' },
+            { id:'C5', name:'向量共线/垂直条件', w:'mid' },
+            { id:'C6', name:'向量综合(最值/动点)', w:'high' },
+        ]},
+        D: { name: '概率统计', weight: 15, points: [
+            { id:'D1', name:'平均数/中位数/众数', w:'mid' },
+            { id:'D2', name:'方差与标准差', w:'high' },
+            { id:'D3', name:'频率分布直方图', w:'high' },
+            { id:'D4', name:'百分位数估计', w:'mid' },
+            { id:'D5', name:'分层抽样', w:'mid' },
+            { id:'D6', name:'古典概型', w:'mid' },
+            { id:'D7', name:'独立事件与乘法公式', w:'high' },
+            { id:'D8', name:'统计综合(直方图+概率+决策)', w:'high' },
+        ]},
+        E: { name: '复数', weight: 6, points: [
+            { id:'E1', name:'基本概念与四则运算', w:'mid' },
+            { id:'E2', name:'模与共轭复数', w:'mid' },
+            { id:'E3', name:'几何意义与坐标表示', w:'low' },
+        ]},
+        F: { name: '选填压轴', weight: 5, points: [
+            { id:'F1', name:'选择题第10题压轴(向量/立几)', w:'high' },
+            { id:'F2', name:'填空题第16题压轴(综合性)', w:'high' },
+            { id:'F3', name:'新定义与探究题型(Q21)', w:'high' },
+        ]},
+    };
+
+    // Module score weights for prediction (total 150)
+    const MODULE_SCORE_WEIGHTS = { A:38, B:27, C:18, D:25, E:8, F:34 };
+    const STATUS_SCORE = { mastered: 1.0, partial: 0.6, not_mastered: 0.25 };
+    const UNASSESSED_SCORE = 0.5;
+
+    const ALL_POINTS = [];
+    Object.entries(KB).forEach(([key, mod]) => {
+        mod.points.forEach(p => ALL_POINTS.push({ ...p, moduleKey: key, moduleName: mod.name }));
+    });
+
+    // ================================================================
+    // PAST EXAM SCORES (embedded from student data)
+    // ================================================================
+    const STUDENT_SCORES = {"王诗涵":{"c":"4班","fm":141,"fmr":14,"mm":76,"mmr":27},"吴沁珂":{"c":"4班","fm":144,"fmr":3,"mm":93,"mmr":5},"杨瑾华":{"c":"4班","fm":145,"fmr":2,"mm":93,"mmr":5},"张芙宁":{"c":"4班","fm":140,"fmr":18,"mm":94,"mmr":4},"刘思齐":{"c":"4班","fm":144,"fmr":3,"mm":98,"mmr":1},"张宸楠":{"c":"4班","fm":143,"fmr":6,"mm":91,"mmr":8},"张一弛":{"c":"4班","fm":140,"fmr":18,"mm":83,"mmr":18},"何知政":{"c":"4班","fm":142,"fmr":10,"mm":75,"mmr":31},"唐巍桓":{"c":"4班","fm":129,"fmr":42,"mm":64,"mmr":42},"陈以诺":{"c":"4班","fm":134,"fmr":29,"mm":80,"mmr":24},"付启亨":{"c":"4班","fm":141,"fmr":14,"mm":87,"mmr":13},"屠俊赫":{"c":"4班","fm":141,"fmr":14,"mm":73,"mmr":33},"杭诗雨":{"c":"4班","fm":144,"fmr":3,"mm":76,"mmr":27},"蒋宸安":{"c":"4班","fm":133,"fmr":33,"mm":82,"mmr":20},"贺宜量":{"c":"4班","fm":142,"fmr":10,"mm":91,"mmr":8},"许悠然":{"c":"4班","fm":142,"fmr":10,"mm":64,"mmr":42},"李玥瑶":{"c":"4班","fm":140,"fmr":18,"mm":84,"mmr":14},"高艺宁":{"c":"4班","fm":137,"fmr":25,"mm":82,"mmr":20},"张楚玉":{"c":"4班","fm":131,"fmr":36,"mm":73,"mmr":33},"黄知涵":{"c":"4班","fm":138,"fmr":22,"mm":79,"mmr":26},"李瀚林":{"c":"4班","fm":126,"fmr":44,"mm":72,"mmr":35},"朱浩文":{"c":"4班","fm":127,"fmr":43,"mm":60,"mmr":43},"毛潇然":{"c":"4班","fm":136,"fmr":26,"mm":78,"mmr":28},"邓超":{"c":"4班","fm":132,"fmr":34,"mm":71,"mmr":36},"卢慕白":{"c":"4班","fm":135,"fmr":28,"mm":80,"mmr":24},"杨嘉瑞":{"c":"4班","fm":125,"fmr":45,"mm":66,"mmr":40},"苗雨涵":{"c":"4班","fm":138,"fmr":22,"mm":85,"mmr":12},"李鹏宇":{"c":"4班","fm":131,"fmr":36,"mm":57,"mmr":44},"张涵":{"c":"4班","fm":134,"fmr":29,"mm":82,"mmr":20},"李牧远":{"c":"4班","fm":129,"fmr":42,"mm":68,"mmr":38},"卢若水":{"c":"4班","fm":141,"fmr":14,"mm":90,"mmr":6},"龚奕铭":{"c":"4班","fm":128,"fmr":43,"mm":62,"mmr":42},"曹昊坤":{"c":"4班","fm":130,"fmr":39,"mm":70,"mmr":37},"赵瑞阳":{"c":"4班","fm":132,"fmr":34,"mm":77,"mmr":30},"王冉":{"c":"4班","fm":130,"fmr":39,"mm":75,"mmr":31},"申屠泰然":{"c":"4班","fm":134,"fmr":29,"mm":86,"mmr":11},"李沐琛":{"c":"4班","fm":139,"fmr":21,"mm":78,"mmr":28},"吴润旗":{"c":"4班","fm":126,"fmr":44,"mm":65,"mmr":41},"田沐杉":{"c":"4班","fm":137,"fmr":25,"mm":83,"mmr":18},"孙诗尧":{"c":"4班","fm":130,"fmr":39,"mm":74,"mmr":32},"姚天灏":{"c":"4班","fm":131,"fmr":36,"mm":63,"mmr":42},"刘思远":{"c":"4班","fm":128,"fmr":43,"mm":72,"mmr":35},"余梦璠":{"c":"4班","fm":140,"fmr":18,"mm":88,"mmr":9},"郜源":{"c":"4班","fm":125,"fmr":45,"mm":68,"mmr":38},"马世博":{"c":"4班","fm":128,"fmr":43,"mm":66,"mmr":40}};
+
+    // ================================================================
+    // QUIZ DATA (滚动练习0526)
+    // ================================================================
+    const QUIZ_DATA = {
+    name: "滚动练习0526",
+    date: "2026-05-26",
+    total: 70,
+    submitted: ["陈以诺", "邓超", "蒋宸安", "刘思远", "张涵", "高艺宁", "李沐琛", "屠俊赫", "张宸楠", "杨嘉瑞", "毛潇然", "杨瑾华", "杭诗雨", "赵瑞阳", "朱浩文", "黄知涵", "王诗涵", "王冉", "曹昊坤", "卢慕白", "余梦璠", "许悠然", "卢若水", "唐巍桓", "吴沁珂", "田沐杉", "付启亨", "张楚玉", "张芙宁", "李玥瑶", "苗雨涵"],
+    notSubmitted: ["贺宜量", "李牧远", "刘思齐", "吴润旗", "姚天灏", "郜源", "马世博", "张一弛", "龚奕铭", "何知政", "李鹏宇", "李瀚林", "申屠泰然", "孙诗尧"],
+    questions: [
+        {q:1, type:"单选", answer:"D", module:"向量", points:["C1", "C2"], topic:"单位向量数量积"},
+        {q:2, type:"单选", answer:"B", module:"向量", points:["C1", "C5"], topic:"勒洛三角形向量范围"},
+        {q:3, type:"单选", answer:"B", module:"解三角形", points:["B2", "B3"], topic:"等比数列+余弦定理"},
+        {q:4, type:"单选", answer:"D", module:"数列(课外)", points:[], topic:"等差数列求和"},
+        {q:5, type:"单选", answer:"B", module:"数列(课外)", points:[], topic:"等比数列求和"},
+        {q:6, type:"单选", answer:"C", module:"圆锥曲线(课外)", points:[], topic:"椭圆抛物线综合"},
+        {q:7, type:"单选", answer:"A", module:"圆锥曲线(课外)", points:[], topic:"抛物线焦点性质"},
+        {q:8, type:"单选", answer:"C", module:"圆锥曲线(课外)", points:[], topic:"椭圆焦半径"},
+        {q:9, type:"单选", answer:"C", module:"概率统计", points:["D4"], topic:"排列概率"},
+        {q:10, type:"单选", answer:"B", module:"概率统计", points:["D4"], topic:"组合计数概率"},
+        {q:11, type:"单选", answer:"C", module:"概率统计", points:["D4"], topic:"连续数字组合"},
+        {q:12, type:"单选", answer:"B", module:"概率统计", points:["D6"], topic:"分类计数概率"},
+        {q:13, type:"单选", answer:"B", module:"概率统计", points:["D4"], topic:"取球概率"},
+        {q:14, type:"单选", answer:"A", module:"概率统计", points:["D7"], topic:"条件概率对比"},
+    ],
+    scores: {"陈以诺": {"total": 70.0, "questions": [{"q": 1, "score": 5.0}, {"q": 2, "score": 5.0}, {"q": 3, "score": 5.0}, {"q": 4, "score": 5.0}, {"q": 5, "score": 5.0}, {"q": 6, "score": 5.0}, {"q": 7, "score": 5.0}, {"q": 8, "score": 5.0}, {"q": 9, "score": 5.0}, {"q": 10, "score": 5.0}, {"q": 11, "score": 5.0}, {"q": 12, "score": 5.0}, {"q": 13, "score": 5.0}, {"q": 14, "score": 5.0}]}, "邓超": {"total": 70.0, "questions": [{"q": 1, "score": 5.0}, {"q": 2, "score": 5.0}, {"q": 3, "score": 5.0}, {"q": 4, "score": 5.0}, {"q": 5, "score": 5.0}, {"q": 6, "score": 5.0}, {"q": 7, "score": 5.0}, {"q": 8, "score": 5.0}, {"q": 9, "score": 5.0}, {"q": 10, "score": 5.0}, {"q": 11, "score": 5.0}, {"q": 12, "score": 5.0}, {"q": 13, "score": 5.0}, {"q": 14, "score": 5.0}]}, "蒋宸安": {"total": 70.0, "questions": [{"q": 1, "score": 5.0}, {"q": 2, "score": 5.0}, {"q": 3, "score": 5.0}, {"q": 4, "score": 5.0}, {"q": 5, "score": 5.0}, {"q": 6, "score": 5.0}, {"q": 7, "score": 5.0}, {"q": 8, "score": 5.0}, {"q": 9, "score": 5.0}, {"q": 10, "score": 5.0}, {"q": 11, "score": 5.0}, {"q": 12, "score": 5.0}, {"q": 13, "score": 5.0}, {"q": 14, "score": 5.0}]}, "刘思远": {"total": 70.0, "questions": [{"q": 1, "score": 5.0}, {"q": 2, "score": 5.0}, {"q": 3, "score": 5.0}, {"q": 4, "score": 5.0}, {"q": 5, "score": 5.0}, {"q": 6, "score": 5.0}, {"q": 7, "score": 5.0}, {"q": 8, "score": 5.0}, {"q": 9, "score": 5.0}, {"q": 10, "score": 5.0}, {"q": 11, "score": 5.0}, {"q": 12, "score": 5.0}, {"q": 13, "score": 5.0}, {"q": 14, "score": 5.0}]}, "张涵": {"total": 70.0, "questions": [{"q": 1, "score": 5.0}, {"q": 2, "score": 5.0}, {"q": 3, "score": 5.0}, {"q": 4, "score": 5.0}, {"q": 5, "score": 5.0}, {"q": 6, "score": 5.0}, {"q": 7, "score": 5.0}, {"q": 8, "score": 5.0}, {"q": 9, "score": 5.0}, {"q": 10, "score": 5.0}, {"q": 11, "score": 5.0}, {"q": 12, "score": 5.0}, {"q": 13, "score": 5.0}, {"q": 14, "score": 5.0}]}, "高艺宁": {"total": 70.0, "questions": [{"q": 1, "score": 5.0}, {"q": 2, "score": 5.0}, {"q": 3, "score": 5.0}, {"q": 4, "score": 5.0}, {"q": 5, "score": 5.0}, {"q": 6, "score": 5.0}, {"q": 7, "score": 5.0}, {"q": 8, "score": 5.0}, {"q": 9, "score": 5.0}, {"q": 10, "score": 5.0}, {"q": 11, "score": 5.0}, {"q": 12, "score": 5.0}, {"q": 13, "score": 5.0}, {"q": 14, "score": 5.0}]}, "李沐琛": {"total": 70.0, "questions": [{"q": 1, "score": 5.0}, {"q": 2, "score": 5.0}, {"q": 3, "score": 5.0}, {"q": 4, "score": 5.0}, {"q": 5, "score": 5.0}, {"q": 6, "score": 5.0}, {"q": 7, "score": 5.0}, {"q": 8, "score": 5.0}, {"q": 9, "score": 5.0}, {"q": 10, "score": 5.0}, {"q": 11, "score": 5.0}, {"q": 12, "score": 5.0}, {"q": 13, "score": 5.0}, {"q": 14, "score": 5.0}]}, "屠俊赫": {"total": 70.0, "questions": [{"q": 1, "score": 5.0}, {"q": 2, "score": 5.0}, {"q": 3, "score": 5.0}, {"q": 4, "score": 5.0}, {"q": 5, "score": 5.0}, {"q": 6, "score": 5.0}, {"q": 7, "score": 5.0}, {"q": 8, "score": 5.0}, {"q": 9, "score": 5.0}, {"q": 10, "score": 5.0}, {"q": 11, "score": 5.0}, {"q": 12, "score": 5.0}, {"q": 13, "score": 5.0}, {"q": 14, "score": 5.0}]}, "张宸楠": {"total": 70.0, "questions": [{"q": 1, "score": 5.0}, {"q": 2, "score": 5.0}, {"q": 3, "score": 5.0}, {"q": 4, "score": 5.0}, {"q": 5, "score": 5.0}, {"q": 6, "score": 5.0}, {"q": 7, "score": 5.0}, {"q": 8, "score": 5.0}, {"q": 9, "score": 5.0}, {"q": 10, "score": 5.0}, {"q": 11, "score": 5.0}, {"q": 12, "score": 5.0}, {"q": 13, "score": 5.0}, {"q": 14, "score": 5.0}]}, "杨嘉瑞": {"total": 70.0, "questions": [{"q": 1, "score": 5.0}, {"q": 2, "score": 5.0}, {"q": 3, "score": 5.0}, {"q": 4, "score": 5.0}, {"q": 5, "score": 5.0}, {"q": 6, "score": 5.0}, {"q": 7, "score": 5.0}, {"q": 8, "score": 5.0}, {"q": 9, "score": 5.0}, {"q": 10, "score": 5.0}, {"q": 11, "score": 5.0}, {"q": 12, "score": 5.0}, {"q": 13, "score": 5.0}, {"q": 14, "score": 5.0}]}, "毛潇然": {"total": 65.0, "questions": [{"q": 1, "score": 5.0}, {"q": 2, "score": 5.0}, {"q": 3, "score": 5.0}, {"q": 4, "score": 5.0}, {"q": 5, "score": 0.0}, {"q": 6, "score": 5.0}, {"q": 7, "score": 5.0}, {"q": 8, "score": 5.0}, {"q": 9, "score": 5.0}, {"q": 10, "score": 5.0}, {"q": 11, "score": 5.0}, {"q": 12, "score": 5.0}, {"q": 13, "score": 5.0}, {"q": 14, "score": 5.0}]}, "杨瑾华": {"total": 65.0, "questions": [{"q": 1, "score": 5.0}, {"q": 2, "score": 5.0}, {"q": 3, "score": 5.0}, {"q": 4, "score": 5.0}, {"q": 5, "score": 5.0}, {"q": 6, "score": 5.0}, {"q": 7, "score": 5.0}, {"q": 8, "score": 0.0}, {"q": 9, "score": 5.0}, {"q": 10, "score": 5.0}, {"q": 11, "score": 5.0}, {"q": 12, "score": 5.0}, {"q": 13, "score": 5.0}, {"q": 14, "score": 5.0}]}, "杭诗雨": {"total": 65.0, "questions": [{"q": 1, "score": 5.0}, {"q": 2, "score": 5.0}, {"q": 3, "score": 5.0}, {"q": 4, "score": 5.0}, {"q": 5, "score": 5.0}, {"q": 6, "score": 5.0}, {"q": 7, "score": 0.0}, {"q": 8, "score": 5.0}, {"q": 9, "score": 5.0}, {"q": 10, "score": 5.0}, {"q": 11, "score": 5.0}, {"q": 12, "score": 5.0}, {"q": 13, "score": 5.0}, {"q": 14, "score": 5.0}]}, "赵瑞阳": {"total": 65.0, "questions": [{"q": 1, "score": 5.0}, {"q": 2, "score": 5.0}, {"q": 3, "score": 5.0}, {"q": 4, "score": 5.0}, {"q": 5, "score": 5.0}, {"q": 6, "score": 5.0}, {"q": 7, "score": 5.0}, {"q": 8, "score": 0.0}, {"q": 9, "score": 5.0}, {"q": 10, "score": 5.0}, {"q": 11, "score": 5.0}, {"q": 12, "score": 5.0}, {"q": 13, "score": 5.0}, {"q": 14, "score": 5.0}]}, "朱浩文": {"total": 65.0, "questions": [{"q": 1, "score": 5.0}, {"q": 2, "score": 5.0}, {"q": 3, "score": 5.0}, {"q": 4, "score": 5.0}, {"q": 5, "score": 5.0}, {"q": 6, "score": 5.0}, {"q": 7, "score": 5.0}, {"q": 8, "score": 5.0}, {"q": 9, "score": 5.0}, {"q": 10, "score": 0.0}, {"q": 11, "score": 5.0}, {"q": 12, "score": 5.0}, {"q": 13, "score": 5.0}, {"q": 14, "score": 5.0}]}, "黄知涵": {"total": 65.0, "questions": [{"q": 1, "score": 5.0}, {"q": 2, "score": 0.0}, {"q": 3, "score": 5.0}, {"q": 4, "score": 5.0}, {"q": 5, "score": 5.0}, {"q": 6, "score": 5.0}, {"q": 7, "score": 5.0}, {"q": 8, "score": 5.0}, {"q": 9, "score": 5.0}, {"q": 10, "score": 5.0}, {"q": 11, "score": 5.0}, {"q": 12, "score": 5.0}, {"q": 13, "score": 5.0}, {"q": 14, "score": 5.0}]}, "王诗涵": {"total": 65.0, "questions": [{"q": 1, "score": 5.0}, {"q": 2, "score": 5.0}, {"q": 3, "score": 5.0}, {"q": 4, "score": 5.0}, {"q": 5, "score": 5.0}, {"q": 6, "score": 5.0}, {"q": 7, "score": 5.0}, {"q": 8, "score": 5.0}, {"q": 9, "score": 5.0}, {"q": 10, "score": 5.0}, {"q": 11, "score": 5.0}, {"q": 12, "score": 0.0}, {"q": 13, "score": 5.0}, {"q": 14, "score": 5.0}]}, "王冉": {"total": 65.0, "questions": [{"q": 1, "score": 5.0}, {"q": 2, "score": 5.0}, {"q": 3, "score": 5.0}, {"q": 4, "score": 5.0}, {"q": 5, "score": 0.0}, {"q": 6, "score": 5.0}, {"q": 7, "score": 5.0}, {"q": 8, "score": 5.0}, {"q": 9, "score": 5.0}, {"q": 10, "score": 5.0}, {"q": 11, "score": 5.0}, {"q": 12, "score": 5.0}, {"q": 13, "score": 5.0}, {"q": 14, "score": 5.0}]}, "曹昊坤": {"total": 65.0, "questions": [{"q": 1, "score": 5.0}, {"q": 2, "score": 5.0}, {"q": 3, "score": 5.0}, {"q": 4, "score": 5.0}, {"q": 5, "score": 5.0}, {"q": 6, "score": 5.0}, {"q": 7, "score": 5.0}, {"q": 8, "score": 5.0}, {"q": 9, "score": 5.0}, {"q": 10, "score": 5.0}, {"q": 11, "score": 0.0}, {"q": 12, "score": 5.0}, {"q": 13, "score": 5.0}, {"q": 14, "score": 5.0}]}, "卢慕白": {"total": 60.0, "questions": [{"q": 1, "score": 5.0}, {"q": 2, "score": 5.0}, {"q": 3, "score": 5.0}, {"q": 4, "score": 5.0}, {"q": 5, "score": 5.0}, {"q": 6, "score": 5.0}, {"q": 7, "score": 5.0}, {"q": 8, "score": 5.0}, {"q": 9, "score": 5.0}, {"q": 10, "score": 0.0}, {"q": 11, "score": 5.0}, {"q": 12, "score": 5.0}, {"q": 13, "score": 5.0}, {"q": 14, "score": 0.0}]}, "余梦璠": {"total": 60.0, "questions": [{"q": 1, "score": 5.0}, {"q": 2, "score": 5.0}, {"q": 3, "score": 0.0}, {"q": 4, "score": 5.0}, {"q": 5, "score": 5.0}, {"q": 6, "score": 5.0}, {"q": 7, "score": 5.0}, {"q": 8, "score": 0.0}, {"q": 9, "score": 5.0}, {"q": 10, "score": 5.0}, {"q": 11, "score": 5.0}, {"q": 12, "score": 5.0}, {"q": 13, "score": 5.0}, {"q": 14, "score": 5.0}]}, "许悠然": {"total": 60.0, "questions": [{"q": 1, "score": 5.0}, {"q": 2, "score": 0.0}, {"q": 3, "score": 5.0}, {"q": 4, "score": 5.0}, {"q": 5, "score": 5.0}, {"q": 6, "score": 5.0}, {"q": 7, "score": 5.0}, {"q": 8, "score": 5.0}, {"q": 9, "score": 0.0}, {"q": 10, "score": 5.0}, {"q": 11, "score": 5.0}, {"q": 12, "score": 5.0}, {"q": 13, "score": 5.0}, {"q": 14, "score": 5.0}]}, "卢若水": {"total": 55.0, "questions": [{"q": 1, "score": 5.0}, {"q": 2, "score": 5.0}, {"q": 3, "score": 5.0}, {"q": 4, "score": 5.0}, {"q": 5, "score": 0.0}, {"q": 6, "score": 5.0}, {"q": 7, "score": 0.0}, {"q": 8, "score": 0.0}, {"q": 9, "score": 5.0}, {"q": 10, "score": 5.0}, {"q": 11, "score": 5.0}, {"q": 12, "score": 5.0}, {"q": 13, "score": 5.0}, {"q": 14, "score": 5.0}]}, "唐巍桓": {"total": 55.0, "questions": [{"q": 1, "score": 5.0}, {"q": 2, "score": 5.0}, {"q": 3, "score": 5.0}, {"q": 4, "score": 5.0}, {"q": 5, "score": 5.0}, {"q": 6, "score": 5.0}, {"q": 7, "score": 5.0}, {"q": 8, "score": 5.0}, {"q": 9, "score": 5.0}, {"q": 10, "score": 0.0}, {"q": 11, "score": 5.0}, {"q": 12, "score": 0.0}, {"q": 13, "score": 5.0}, {"q": 14, "score": 0.0}]}, "吴沁珂": {"total": 55.0, "questions": [{"q": 1, "score": 5.0}, {"q": 2, "score": 5.0}, {"q": 3, "score": 5.0}, {"q": 4, "score": 5.0}, {"q": 5, "score": 5.0}, {"q": 6, "score": 5.0}, {"q": 7, "score": 0.0}, {"q": 8, "score": 0.0}, {"q": 9, "score": 5.0}, {"q": 10, "score": 5.0}, {"q": 11, "score": 5.0}, {"q": 12, "score": 5.0}, {"q": 13, "score": 0.0}, {"q": 14, "score": 5.0}]}, "田沐杉": {"total": 55.0, "questions": [{"q": 1, "score": 5.0}, {"q": 2, "score": 5.0}, {"q": 3, "score": 0.0}, {"q": 4, "score": 5.0}, {"q": 5, "score": 5.0}, {"q": 6, "score": 0.0}, {"q": 7, "score": 5.0}, {"q": 8, "score": 5.0}, {"q": 9, "score": 5.0}, {"q": 10, "score": 5.0}, {"q": 11, "score": 5.0}, {"q": 12, "score": 5.0}, {"q": 13, "score": 5.0}, {"q": 14, "score": 0.0}]}, "付启亨": {"total": 55.0, "questions": [{"q": 1, "score": 5.0}, {"q": 2, "score": 5.0}, {"q": 3, "score": 5.0}, {"q": 4, "score": 5.0}, {"q": 5, "score": 0.0}, {"q": 6, "score": 5.0}, {"q": 7, "score": 0.0}, {"q": 8, "score": 5.0}, {"q": 9, "score": 0.0}, {"q": 10, "score": 5.0}, {"q": 11, "score": 5.0}, {"q": 12, "score": 5.0}, {"q": 13, "score": 5.0}, {"q": 14, "score": 5.0}]}, "张楚玉": {"total": 55.0, "questions": [{"q": 1, "score": 5.0}, {"q": 2, "score": 5.0}, {"q": 3, "score": 5.0}, {"q": 4, "score": 5.0}, {"q": 5, "score": 5.0}, {"q": 6, "score": 5.0}, {"q": 7, "score": 0.0}, {"q": 8, "score": 0.0}, {"q": 9, "score": 5.0}, {"q": 10, "score": 5.0}, {"q": 11, "score": 5.0}, {"q": 12, "score": 5.0}, {"q": 13, "score": 0.0}, {"q": 14, "score": 5.0}]}, "张芙宁": {"total": 55.0, "questions": [{"q": 1, "score": 5.0}, {"q": 2, "score": 5.0}, {"q": 3, "score": 5.0}, {"q": 4, "score": 5.0}, {"q": 5, "score": 5.0}, {"q": 6, "score": 5.0}, {"q": 7, "score": 0.0}, {"q": 8, "score": 5.0}, {"q": 9, "score": 5.0}, {"q": 10, "score": 5.0}, {"q": 11, "score": 5.0}, {"q": 12, "score": 5.0}, {"q": 13, "score": 0.0}, {"q": 14, "score": 0.0}]}, "李玥瑶": {"total": 50.0, "questions": [{"q": 1, "score": 5.0}, {"q": 2, "score": 5.0}, {"q": 3, "score": 5.0}, {"q": 4, "score": 0.0}, {"q": 5, "score": 5.0}, {"q": 6, "score": 0.0}, {"q": 7, "score": 5.0}, {"q": 8, "score": 0.0}, {"q": 9, "score": 5.0}, {"q": 10, "score": 5.0}, {"q": 11, "score": 5.0}, {"q": 12, "score": 5.0}, {"q": 13, "score": 0.0}, {"q": 14, "score": 5.0}]}, "苗雨涵": {"total": 45.0, "questions": [{"q": 1, "score": 5.0}, {"q": 2, "score": 5.0}, {"q": 3, "score": 5.0}, {"q": 4, "score": 5.0}, {"q": 5, "score": 5.0}, {"q": 6, "score": 5.0}, {"q": 7, "score": 5.0}, {"q": 8, "score": 5.0}, {"q": 9, "score": 0.0}, {"q": 10, "score": 0.0}, {"q": 11, "score": 5.0}, {"q": 12, "score": 0.0}, {"q": 13, "score": 0.0}, {"q": 14, "score": 0.0}]}}
+};
+
+    // Build point → quiz question mapping
+    const pointToQuiz = {};
+    QUIZ_DATA.questions.forEach(q => {
+        q.points.forEach(pid => {
+            if (!pointToQuiz[pid]) pointToQuiz[pid] = [];
+            pointToQuiz[pid].push(q);
+        });
+    });
+
+    // Compute module-level quiz summary
+    const moduleQuizSummary = {};
+    QUIZ_DATA.questions.forEach(q => {
+        if (!moduleQuizSummary[q.module]) moduleQuizSummary[q.module] = 0;
+        moduleQuizSummary[q.module]++;
+    });
+
+    // Helper: compute correct rate for a given question number
+    function getQuestionCorrectRate(qNum) {
+        if (!QUIZ_DATA.scores) return null;
+        const studentNames = Object.keys(QUIZ_DATA.scores);
+        if (!studentNames.length) return null;
+        let correct = 0;
+        studentNames.forEach(name => {
+            const s = QUIZ_DATA.scores[name];
+            const qData = s.questions.find(q => q.q === qNum);
+            if (qData && qData.score === 5) correct++;
+        });
+        return Math.round(correct / studentNames.length * 100);
+    }
+
+    // Helper: compute average correct rate for questions in a module
+    function getModuleAvgCorrectRate(moduleName) {
+        const modQuestions = QUIZ_DATA.questions.filter(q => q.module === moduleName);
+        if (!modQuestions.length) return null;
+        let totalRate = 0;
+        let count = 0;
+        modQuestions.forEach(q => {
+            const rate = getQuestionCorrectRate(q.q);
+            if (rate !== null) {
+                totalRate += rate;
+                count++;
+            }
+        });
+        return count > 0 ? Math.round(totalRate / count) : null;
+    }
+
+    // ================================================================
+    // REVIEW DAYS SCHEDULE
+    // ================================================================
+    const EXAM_DATE = new Date(2026, 6, 8); // July 8, 2026
+
+    const INITIAL_REVIEW_DAYS = {
+        1:  { date: new Date(2026, 5, 11), topic: '立体几何(1)：结构特征+三视图+表面积体积', isTest: false },
+        2:  { date: new Date(2026, 5, 12), topic: '立体几何(2)：线面平行+面面平行', isTest: false },
+        3:  { date: new Date(2026, 5, 13), topic: '立体几何(3)：线面垂直+面面垂直+空间角', isTest: false },
+        4:  { date: new Date(2026, 5, 16), topic: '解三角形：正弦/余弦定理+面积公式+综合', isTest: false },
+        5:  { date: new Date(2026, 5, 17), topic: '\uD83C\uDFAF 第一次综合套卷检测', isTest: true },
+        6:  { date: new Date(2026, 5, 18), topic: '向量(1)：基本运算+数量积+坐标表示', isTest: false },
+        7:  { date: new Date(2026, 5, 19), topic: '向量(2)：向量应用+与立几交叉题型', isTest: false },
+        8:  { date: new Date(2026, 5, 20), topic: '概率统计：统计三量+直方图+抽样+概率', isTest: false },
+        9:  { date: new Date(2026, 5, 23), topic: '复数速览 + 选填压轴专项', isTest: false },
+        10: { date: new Date(2026, 5, 24), topic: '\uD83C\uDFAF 第二次综合套卷检测 + 考前策略', isTest: true },
+    };
+
+    // Current date mapping: dayNumber -> dateStr "YYYY-MM-DD"
+    let reviewDayDateMap = {};
+    function initReviewDayMap() {
+        Object.entries(INITIAL_REVIEW_DAYS).forEach(([num, info]) => {
+            reviewDayDateMap[parseInt(num)] = dateKey(info.date);
+        });
+    }
+
+    function dateKey(d) {
+        return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    }
+
+    function parseDateKey(str) {
+        const [y, m, d] = str.split('-').map(Number);
+        return new Date(y, m - 1, d);
+    }
+
+    // Build reverse lookup: dateStr -> dayNumber
+    function getDateToDayMap() {
+        const m = {};
+        Object.entries(reviewDayDateMap).forEach(([dayNum, dateStr]) => {
+            m[dateStr] = parseInt(dayNum);
+        });
+        return m;
+    }
+
+    const DOW_NAMES = ['一', '二', '三', '四', '五', '六', '日'];
+
+    // ================================================================
+    // GLOBAL DATA
+    // ================================================================
+    let students = [];
+    let allAssessments = [];
+    let dailyProgress = [];
+    let allTips = [];
+    let allReviewPlans = [];
+    let isDragging = false;
+    let reloadTimer = null;
+
+    // ================================================================
+    // DATA LOADING
+    // ================================================================
+    async function loadAll() {
+        try {
+            const [sRes, aRes, pRes, tRes, rRes] = await Promise.all([
+                sb.from('students').select('id, class_name, name').order('class_name'),
+                sb.from('self_assessments').select('student_id, point_id, status, note'),
+                sb.from('daily_progress').select('day_number, topic, status, notes').order('day_number'),
+                sb.from('tips').select('id, student_id, student_name, point_id, module_name, content, likes, liked_by, featured, created_at').order('likes', { ascending: false }).then(res => {
+                    if (res.error) {
+                        // Retry without 'featured' column if it doesn't exist
+                        return sb.from('tips').select('id, student_id, student_name, point_id, module_name, content, likes, liked_by, created_at').order('likes', { ascending: false });
+                    }
+                    return res;
+                }),
+                sb.from('review_plans').select('id, student_id, plan_date, content, created_at').order('plan_date'),
+            ]);
+            students = sRes.data || [];
+            allAssessments = aRes.data || [];
+            dailyProgress = pRes.data || [];
+            allTips = tRes.data || [];
+            allReviewPlans = rRes.data || [];
+
+            // Load custom date mapping from daily_progress if available
+            dailyProgress.forEach(dp => {
+                if (dp.notes && dp.notes.startsWith('date:')) {
+                    const customDate = dp.notes.substring(5);
+                    reviewDayDateMap[dp.day_number] = customDate;
+                }
+            });
+        } catch (e) {
+            console.error('Load error:', e);
+        }
+        renderAll();
+    }
+
+    // ================================================================
+    // RENDER ALL
+    // ================================================================
+    function renderAll() {
+        renderCountdown();
+        renderStats();
+        renderCalendar();
+        renderModules();
+        renderHeatmap();
+        renderStudentList();
+        renderTips();
+        populateClassFilter();
+    }
+
+    // ================================================================
+    // TABS
+    // ================================================================
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            btn.classList.add('active');
+            document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+        });
+    });
+
+    // ================================================================
+    // COUNTDOWN
+    // ================================================================
+    function renderCountdown() {
+        const now = new Date();
+        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        const diffMs = EXAM_DATE.getTime() - today.getTime();
+        const diffDays = Math.max(0, Math.ceil(diffMs / (1000 * 60 * 60 * 24)));
+        document.getElementById('countdownNum').textContent = diffDays;
+
+        const completedDays = dailyProgress.filter(d => d.status === 'completed').length;
+        document.getElementById('cdReviewDone').textContent = completedDays;
+        document.getElementById('cdReviewLeft').textContent = Math.max(0, 10 - completedDays);
+        document.getElementById('cdSelfDays').textContent = 13;
+    }
+
+    // ================================================================
+    // STATS
+    // ================================================================
+    function renderStats() {
+        const completedDays = dailyProgress.filter(d => d.status === 'completed').length;
+        document.getElementById('stProgress').textContent = `${completedDays}/10`;
+        document.getElementById('stStudents').textContent = students.length;
+
+        if (students.length > 0) {
+            const totalSlots = students.length * ALL_POINTS.length;
+            const assessed = allAssessments.length;
+            const pct = totalSlots > 0 ? Math.round(assessed / totalSlots * 100) : 0;
+            document.getElementById('stAssessed').textContent = pct + '%';
+
+            let masterCount = 0;
+            allAssessments.forEach(a => { if (a.status === 'mastered') masterCount++; });
+            const avgMastery = assessed > 0 ? Math.round(masterCount / assessed * 100) : 0;
+            document.getElementById('stAvgMastery').textContent = avgMastery + '%';
+
+            const pointStats = {};
+            ALL_POINTS.forEach(p => { pointStats[p.id] = { mastered: 0, partial: 0, not: 0, total: 0 }; });
+            allAssessments.forEach(a => {
+                if (!pointStats[a.point_id]) return;
+                pointStats[a.point_id].total++;
+                if (a.status === 'mastered') pointStats[a.point_id].mastered++;
+                else if (a.status === 'partial') pointStats[a.point_id].partial++;
+                else pointStats[a.point_id].not++;
+            });
+            let warnings = 0;
+            Object.values(pointStats).forEach(s => {
+                if (s.total >= 3 && s.not / s.total > 0.3) warnings++;
+            });
+            document.getElementById('stWarnings').textContent = warnings;
+        } else {
+            document.getElementById('stAssessed').textContent = '0%';
+            document.getElementById('stAvgMastery').textContent = '--';
+            document.getElementById('stWarnings').textContent = '0';
+        }
+    }
+
+    // ================================================================
+    // CALENDAR RENDERING (with drag & drop + inline edit)
+    // ================================================================
+    function renderCalendar() {
+        const grid = document.getElementById('calendarGrid');
+        grid.innerHTML = '';
+
+        const now = new Date();
+        const todayStr = dateKey(now);
+        const dateToDay = getDateToDayMap();
+
+        // Day-of-week headers
+        DOW_NAMES.forEach(name => {
+            const hdr = document.createElement('div');
+            hdr.className = 'cal-dow';
+            hdr.textContent = name;
+            grid.appendChild(hdr);
+        });
+
+        // Calendar from June 1 to July 8
+        const startDate = new Date(2026, 5, 1);
+        const endDate = new Date(2026, 6, 8);
+        const jun1Dow = (startDate.getDay() + 6) % 7;
+
+        // Empty cells before June 1
+        for (let i = 0; i < jun1Dow; i++) {
+            const empty = document.createElement('div');
+            empty.className = 'cal-cell empty';
+            grid.appendChild(empty);
+        }
+
+        const cursor = new Date(startDate);
+        while (cursor <= endDate) {
+            const key = dateKey(cursor);
+            const dayOfMonth = cursor.getDate();
+            const month = cursor.getMonth();
+            const isToday = key === todayStr;
+            const isPast = cursor < new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            const isExam = (month === 6 && dayOfMonth === 8);
+
+            const dayNum = dateToDay[key] || null;
+            const reviewInfo = dayNum ? INITIAL_REVIEW_DAYS[dayNum] : null;
+
+            const isSelfReview = !isExam && !reviewInfo &&
+                ((month === 5 && dayOfMonth >= 25) || (month === 6 && dayOfMonth >= 1 && dayOfMonth <= 7));
+
+            let status = null;
+            if (reviewInfo) {
+                const prog = dailyProgress.find(d => d.day_number === dayNum);
+                status = prog ? prog.status : 'pending';
+            }
+
+            let cellClasses = ['cal-cell'];
+            if (isToday) cellClasses.push('today');
+            if (isPast && !isToday) cellClasses.push('past');
+            if (isExam) cellClasses.push('exam-day');
+            if (isSelfReview) cellClasses.push('self-review');
+            if (status === 'completed') cellClasses.push('status-completed');
+            else if (status === 'in_progress') cellClasses.push('status-in_progress');
+            else if (status) cellClasses.push('status-pending');
+
+            const cell = document.createElement('div');
+            cell.className = cellClasses.join(' ');
+            cell.dataset.dateKey = key;
+
+            // Date label with day-of-week and class hours info
+            const dowIdx = (cursor.getDay() + 6) % 7; // 0=Mon..6=Sun
+            const dowShort = DOW_NAMES[dowIdx];
+            const classHrsMap = {0:'2节',1:'小测',2:'1节',3:'2节',4:'2节'};
+            const classHrs = classHrsMap[dowIdx] || '';
+
+            let dateLabel = `${dayOfMonth}`;
+            if (month === 6) dateLabel = `7/${dayOfMonth}`;
+            else if ([1, 8, 15, 22, 29].includes(dayOfMonth)) dateLabel = `6/${dayOfMonth}`;
+
+            let dateExtra = '';
+            if (!cell.classList.contains('empty')) {
+                dateExtra = ` <span class="cal-dow-short">周${dowShort}</span>`;
+                if (classHrs) {
+                    const quizCls = classHrs === '小测' ? ' quiz' : '';
+                    dateExtra += ` <span class="cal-class-hrs${quizCls}">${classHrs}</span>`;
+                }
+            }
+
+            let inner = `<div class="cal-date">${dateLabel}${dateExtra}</div>`;
+
+            if (isExam) {
+                inner += `<div class="cal-topic is-test">期末考试</div>`;
+                inner += `<span class="cal-status-tag tag-exam">考试日</span>`;
+            } else if (reviewInfo) {
+                const prog = dailyProgress.find(d => d.day_number === dayNum);
+
+                if (reviewInfo.isTest) {
+                    // Test days: show as single topic line (no multi-task)
+                    const displayTopic = (prog && prog.topic) ? prog.topic : reviewInfo.topic;
+                    inner += `<div class="cal-topic is-test" data-day-num="${dayNum}" data-editable="true">${escapeHtml(displayTopic)}</div>`;
+                } else {
+                    // Regular review days: multi-task display
+                    const topicStr = (prog && prog.topic) ? prog.topic : reviewInfo.topic;
+                    const topicTasks = parseTopicTasks(topicStr);
+
+                    let tasksHtml = topicTasks.map((task, idx) => {
+                        const chkKey = `cal-task-checked-${dayNum}-${idx}`;
+                        const isChecked = localStorage.getItem(chkKey) === 'true';
+                        const doneStyle = isChecked ? 'text-decoration:line-through;opacity:0.5;' : '';
+                        return `<div class="cal-task-line" style="display:flex;align-items:center;gap:4px;margin:2px 0;">
+                            <input type="checkbox" data-task-check="${dayNum}-${idx}" ${isChecked ? 'checked' : ''} style="width:13px;height:13px;accent-color:var(--green);cursor:pointer;flex-shrink:0;">
+                            <span style="font-size:.72rem;flex:1;${doneStyle}" data-task-text="${dayNum}-${idx}">${escapeHtml(task.text)}</span>
+                        </div>`;
+                    }).join('');
+
+                    // Add task input
+                    tasksHtml += `<div class="cal-add-task-row" style="display:flex;align-items:center;gap:4px;margin-top:3px;">
+                        <input type="text" placeholder="+ 添加任务..." class="cal-inline-add" data-day="${dayNum}" style="width:100%;background:transparent;border:none;border-bottom:1px dashed var(--border);color:var(--text-dim);font-size:.65rem;padding:2px 0;outline:none;">
+                    </div>`;
+
+                    inner += `<div class="cal-tasks-container" style="flex:1;overflow:hidden;">${tasksHtml}</div>`;
+                }
+
+                const tagClass = status === 'completed' ? 'tag-completed' : status === 'in_progress' ? 'tag-in_progress' : 'tag-pending';
+                const tagText = status === 'completed' ? '已完成' : status === 'in_progress' ? '进行中' : '待开始';
+                inner += `<span class="cal-status-tag ${tagClass}" data-day-num="${dayNum}" data-status-action="true">Day ${dayNum} ${tagText}</span>`;
+                inner += `<span class="edit-hint">点击编辑</span>`;
+
+                // Make draggable
+                cell.draggable = true;
+                cell.dataset.dayNum = dayNum;
+            } else if (isSelfReview) {
+                inner += `<div class="cal-topic" style="color:var(--accent-light)">自主复习</div>`;
+                inner += `<span class="cal-status-tag tag-self">自由安排</span>`;
+            } else if (month === 5 && dayOfMonth < 11) {
+                inner += `<div class="cal-topic" style="color:var(--text-dim);font-size:.6rem">--</div>`;
+            }
+
+            cell.innerHTML = inner;
+
+            // === DRAG events (for review day cells) ===
+            if (reviewInfo) {
+                cell.addEventListener('dragstart', (e) => {
+                    isDragging = true;
+                    cell.classList.add('dragging');
+                    e.dataTransfer.setData('text/plain', String(dayNum));
+                    e.dataTransfer.effectAllowed = 'move';
+                });
+                cell.addEventListener('dragend', () => {
+                    isDragging = false;
+                    cell.classList.remove('dragging');
+                    document.querySelectorAll('.cal-cell.drag-over').forEach(c => c.classList.remove('drag-over'));
+                });
+            }
+
+            // === DROP events (for all non-empty cells) ===
+            if (!cell.classList.contains('empty')) {
+                cell.addEventListener('dragover', (e) => {
+                    if (!isDragging) return;
+                    e.preventDefault();
+                    e.dataTransfer.dropEffect = 'move';
+                    cell.classList.add('drag-over');
+                });
+                cell.addEventListener('dragleave', () => {
+                    cell.classList.remove('drag-over');
+                });
+                cell.addEventListener('drop', async (e) => {
+                    e.preventDefault();
+                    cell.classList.remove('drag-over');
+                    const draggedDayNum = parseInt(e.dataTransfer.getData('text/plain'));
+                    const targetDateKey = cell.dataset.dateKey;
+                    if (!targetDateKey || !draggedDayNum) return;
+
+                    const sourceDateKey = reviewDayDateMap[draggedDayNum];
+                    if (sourceDateKey === targetDateKey) return;
+
+                    // Check if target already has a review day
+                    const dateToDayNow = getDateToDayMap();
+                    const targetDayNum = dateToDayNow[targetDateKey];
+
+                    if (targetDayNum) {
+                        // Swap: target day goes to source date
+                        reviewDayDateMap[targetDayNum] = sourceDateKey;
+                        await saveDayDateMapping(targetDayNum, sourceDateKey);
+                    }
+                    // Move dragged day to target date
+                    reviewDayDateMap[draggedDayNum] = targetDateKey;
+                    await saveDayDateMapping(draggedDayNum, targetDateKey);
+
+                    renderCalendar();
+
+                    // Flash the target cell to confirm the move
+                    const flashCell = document.querySelector(`.cal-cell[data-date-key="${targetDateKey}"]`);
+                    if (flashCell) {
+                        flashCell.classList.add('drop-flash');
+                        setTimeout(() => flashCell.classList.remove('drop-flash'), 600);
+                    }
+                });
+            }
+
+            // === CLICK events ===
+            cell.addEventListener('click', (e) => {
+                if (isDragging) return;
+
+                // Checkbox click -> toggle strikethrough (multi-task)
+                const checkbox = e.target.closest('[data-task-check]');
+                if (checkbox) {
+                    e.stopPropagation();
+                    const key = `cal-task-checked-${checkbox.dataset.taskCheck}`;
+                    localStorage.setItem(key, checkbox.checked);
+                    // Update visual
+                    const textEl = checkbox.parentElement.querySelector('[data-task-text]');
+                    if (textEl) {
+                        textEl.style.textDecoration = checkbox.checked ? 'line-through' : 'none';
+                        textEl.style.opacity = checkbox.checked ? '0.5' : '1';
+                    }
+                    return;
+                }
+
+                // Status tag click -> show popover
+                const statusTag = e.target.closest('[data-status-action]');
+                if (statusTag) {
+                    e.stopPropagation();
+                    const dn = parseInt(statusTag.dataset.dayNum);
+                    const ri = INITIAL_REVIEW_DAYS[dn];
+                    showStatusPopover(e, dn, ri ? ri.topic : '', status || 'pending');
+                    return;
+                }
+
+                // Topic text click -> inline edit (for test days with data-editable)
+                const topicEl = e.target.closest('[data-editable]');
+                if (topicEl) {
+                    e.stopPropagation();
+                    startInlineEdit(topicEl);
+                    return;
+                }
+
+                // Task text click -> inline edit individual task
+                const taskTextEl = e.target.closest('[data-task-text]');
+                if (taskTextEl) {
+                    e.stopPropagation();
+                    const [dn, ti] = taskTextEl.dataset.taskText.split('-').map(Number);
+                    taskTextEl.dataset.dayNum = String(dn);
+                    taskTextEl.dataset.taskIdx = String(ti);
+                    taskTextEl.dataset.editable = 'true';
+                    startInlineEdit(taskTextEl);
+                    return;
+                }
+            });
+
+            grid.appendChild(cell);
+            cursor.setDate(cursor.getDate() + 1);
+        }
+
+        // Fill trailing empty cells
+        const totalCells = grid.children.length - 7;
+        const remainder = totalCells % 7;
+        if (remainder > 0) {
+            for (let i = 0; i < (7 - remainder); i++) {
+                const empty = document.createElement('div');
+                empty.className = 'cal-cell empty';
+                grid.appendChild(empty);
+            }
+        }
+    }
+
+    // ================================================================
+    // INLINE EDITING for calendar topics
+    // ================================================================
+    function startInlineEdit(el) {
+        if (el.getAttribute('contenteditable') === 'true') return;
+        const dayNum = parseInt(el.dataset.dayNum);
+        const originalText = el.textContent;
+        const taskIdx = el.dataset.taskIdx !== undefined ? parseInt(el.dataset.taskIdx) : null;
+
+        el.setAttribute('contenteditable', 'true');
+        el.focus();
+
+        // Select all text
+        const range = document.createRange();
+        range.selectNodeContents(el);
+        const sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+
+        const finishEdit = async () => {
+            el.setAttribute('contenteditable', 'false');
+            const newText = el.textContent.trim() || originalText;
+            if (newText !== originalText) {
+                const existing = dailyProgress.find(d => d.day_number === dayNum);
+                if (taskIdx !== null) {
+                    // Editing a single task within the task list
+                    const currentTopic = (existing && existing.topic) ? existing.topic : (INITIAL_REVIEW_DAYS[dayNum] ? INITIAL_REVIEW_DAYS[dayNum].topic : '');
+                    const tasks = parseTopicTasks(currentTopic);
+                    if (taskIdx >= 0 && taskIdx < tasks.length) {
+                        tasks[taskIdx].text = newText;
+                    }
+                    const newTopicStr = topicTasksToText(tasks);
+                    if (existing) {
+                        existing.topic = newTopicStr;
+                    } else {
+                        dailyProgress.push({ day_number: dayNum, topic: newTopicStr, status: 'pending' });
+                    }
+                    await saveTopicEdit(dayNum, newTopicStr);
+                } else {
+                    // Editing whole topic (test days)
+                    if (existing) {
+                        existing.topic = newText;
+                    } else {
+                        dailyProgress.push({ day_number: dayNum, topic: newText, status: 'pending' });
+                    }
+                    await saveTopicEdit(dayNum, newText);
+                }
+            }
+            el.removeEventListener('blur', finishEdit);
+            el.removeEventListener('keydown', handleKey);
+        };
+
+        const handleKey = (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                el.blur();
+            }
+            if (e.key === 'Escape') {
+                el.textContent = originalText;
+                el.blur();
+            }
+        };
+
+        el.addEventListener('blur', finishEdit);
+        el.addEventListener('keydown', handleKey);
+    }
+
+    async function saveTopicEdit(dayNum, topic) {
+        try {
+            await sb.from('daily_progress').upsert(
+                { day_number: dayNum, topic: topic, status: getStatusForDay(dayNum) },
+                { onConflict: 'day_number' }
+            );
+        } catch (e) { console.error('saveTopicEdit error:', e); }
+    }
+
+    function getStatusForDay(dayNum) {
+        const prog = dailyProgress.find(d => d.day_number === dayNum);
+        return prog ? prog.status : 'pending';
+    }
+
+    // ================================================================
+    // SAVE DAY DATE MAPPING (after drag)
+    // ================================================================
+    async function saveDayDateMapping(dayNum, dateStr) {
+        try {
+            const existing = dailyProgress.find(d => d.day_number === dayNum);
+            const topic = existing ? existing.topic : (INITIAL_REVIEW_DAYS[dayNum] ? INITIAL_REVIEW_DAYS[dayNum].topic : '');
+            const status = existing ? existing.status : 'pending';
+            await sb.from('daily_progress').upsert(
+                { day_number: dayNum, topic, status, notes: 'date:' + dateStr },
+                { onConflict: 'day_number' }
+            );
+        } catch (e) { console.error('saveDayDateMapping error:', e); }
+    }
+
+    // ================================================================
+    // STATUS POPOVER
+    // ================================================================
+    function showStatusPopover(event, dayNumber, topic, currentStatus) {
+        const popover = document.getElementById('statusPopover');
+        const statuses = ['pending', 'in_progress', 'completed'];
+        const labels = { pending: '待开始', in_progress: '进行中', completed: '已完成' };
+        const icons = { pending: '\u25CB', in_progress: '\u2192', completed: '\u2713' };
+
+        let html = `<div style="padding:.3rem .5rem;font-size:.75rem;color:var(--text-dim);border-bottom:1px solid var(--border);margin-bottom:.25rem">Day ${dayNumber}</div>`;
+        statuses.forEach(s => {
+            const active = s === currentStatus ? ' style="color:var(--accent-light);font-weight:600"' : '';
+            html += `<button data-status="${s}"${active}>${icons[s]} ${labels[s]}</button>`;
+        });
+        popover.innerHTML = html;
+
+        const rect = event.currentTarget.getBoundingClientRect();
+        let top = rect.bottom + 4;
+        let left = rect.left;
+        if (top + 160 > window.innerHeight) top = rect.top - 160;
+        if (left + 150 > window.innerWidth) left = window.innerWidth - 160;
+        popover.style.top = top + 'px';
+        popover.style.left = left + 'px';
+        popover.classList.add('show');
+
+        popover.querySelectorAll('button').forEach(btn => {
+            btn.addEventListener('click', async (e) => {
+                e.stopPropagation();
+                const newStatus = btn.dataset.status;
+                popover.classList.remove('show');
+                await markDay(dayNumber, newStatus);
+            });
+        });
+    }
+
+    document.addEventListener('click', (e) => {
+        const popover = document.getElementById('statusPopover');
+        if (!e.target.closest('.cal-cell') && !e.target.closest('.status-popover')) {
+            popover.classList.remove('show');
+        }
+        const assessPopup = document.getElementById('assessPopup');
+        if (!e.target.closest('.selfeval-bar') && !e.target.closest('.assess-popup')) {
+            assessPopup.classList.remove('show');
+        }
+    });
+
+    async function markDay(dayNum, status) {
+        const reviewInfo = INITIAL_REVIEW_DAYS[dayNum];
+        const existing = dailyProgress.find(d => d.day_number === dayNum);
+        // Preserve existing topic (may be JSON task array) instead of overwriting
+        const topic = (existing && existing.topic) ? existing.topic : (reviewInfo ? reviewInfo.topic : '');
+        const dateStr = reviewDayDateMap[dayNum] || '';
+        try {
+            await sb.from('daily_progress').upsert(
+                { day_number: dayNum, topic, status, notes: dateStr ? 'date:' + dateStr : '' },
+                { onConflict: 'day_number' }
+            );
+            const existingIdx = dailyProgress.findIndex(d => d.day_number === dayNum);
+            if (existingIdx >= 0) {
+                dailyProgress[existingIdx].status = status;
+                dailyProgress[existingIdx].topic = topic;
+            } else {
+                dailyProgress.push({ day_number: dayNum, topic, status, notes: dateStr ? 'date:' + dateStr : '' });
+            }
+            renderCalendar();
+            renderStats();
+            renderCountdown();
+        } catch (e) { console.error('markDay error:', e); }
+    }
+
+    // ================================================================
+    // KNOWLEDGE MODULE CARDS
+    // ================================================================
+    function renderModules() {
+        const grid = document.getElementById('modulesGrid');
+        grid.innerHTML = '';
+
+        Object.entries(KB).forEach(([key, mod]) => {
+            const card = document.createElement('div');
+            card.className = 'mod-card';
+
+            let totalAssessed = 0, totalMastered = 0;
+            const pointRows = mod.points.map(p => {
+                const assessments = allAssessments.filter(a => a.point_id === p.id);
+                const mastered = assessments.filter(a => a.status === 'mastered').length;
+                const partial = assessments.filter(a => a.status === 'partial').length;
+                const notM = assessments.filter(a => a.status === 'not_mastered').length;
+                const total = assessments.length;
+                totalAssessed += total;
+                totalMastered += mastered;
+
+                // Collect student names per category
+                const gStudents = [], yStudents = [], rStudents = [];
+                assessments.forEach(a => {
+                    const student = students.find(s => s.id === a.student_id);
+                    const name = student ? student.name : '未知';
+                    if (a.status === 'mastered') gStudents.push(name);
+                    else if (a.status === 'partial') yStudents.push(name);
+                    else rStudents.push(name);
+                });
+
+                return { ...p, mastered, partial, notM, total, gStudents, yStudents, rStudents };
+            });
+
+            // Progress: mastery rate among assessed students
+            const masteryRate = totalAssessed > 0 ? Math.round(totalMastered / totalAssessed * 100) : 0;
+            const barColor = masteryRate > 60 ? 'var(--green)' : masteryRate > 30 ? 'var(--yellow)' : 'var(--red)';
+
+            let tableRows = pointRows.map(p => {
+                const wLabel = p.w === 'high' ? '高频' : p.w === 'mid' ? '中频' : '低频';
+                const totalBar = p.gStudents.length + p.yStudents.length + p.rStudents.length;
+                const gPct = totalBar > 0 ? (p.gStudents.length / totalBar * 100) : 0;
+                const yPct = totalBar > 0 ? (p.yStudents.length / totalBar * 100) : 0;
+                const rPct = totalBar > 0 ? (p.rStudents.length / totalBar * 100) : 0;
+
+                const barHtml = totalBar > 0
+                    ? `<div class="selfeval-bar" data-point-id="${p.id}" data-g='${JSON.stringify(p.gStudents)}' data-y='${JSON.stringify(p.yStudents)}' data-r='${JSON.stringify(p.rStudents)}'>
+                         <div class="seg seg-g" style="width:${gPct}%"></div>
+                         <div class="seg seg-y" style="width:${yPct}%"></div>
+                         <div class="seg seg-r" style="width:${rPct}%"></div>
+                       </div>
+                       <span class="selfeval-bar-label">${p.total}人已评</span>`
+                    : `<span style="color:var(--text-dim);font-size:.78rem">暂无评估</span>`;
+
+                return `<tr>
+                    <td>${p.id} ${escapeHtml(p.name)} <span class="w-${p.w}" style="font-size:.7rem">[${wLabel}]</span></td>
+                    <td>${barHtml}</td>
+                    <td style="color:var(--text-dim);font-size:.78rem">待导入练习数据</td>
+                </tr>`;
+            }).join('');
+
+            card.innerHTML = `
+                <div class="mod-head">
+                    <div class="mod-info">
+                        <div class="mod-name">${key}. ${mod.name}</div>
+                        <div class="mod-meta">权重 ${mod.weight}% | ${mod.points.length} 个知识点 | 掌握率 ${masteryRate}% (${totalAssessed}人已评)</div>
+                    </div>
+                    <div class="mod-right">
+                        <div class="mod-bar"><div class="mod-bar-fill" style="width:${masteryRate}%;background:${barColor}"></div></div>
+                        <span class="mod-pct" style="color:${barColor}">${masteryRate}%</span>
+                        <span class="mod-expand">\u25BC</span>
+                    </div>
+                </div>
+                <div class="mod-body">
+                    <table class="mod-table">
+                        <thead><tr><th>知识点</th><th>学生自评</th><th>复习情况</th></tr></thead>
+                        <tbody>${tableRows}</tbody>
+                    </table>
+                </div>`;
+
+            card.querySelector('.mod-head').addEventListener('click', () => {
+                card.classList.toggle('expanded');
+            });
+
+            // Self-eval bar click -> show popup
+            card.querySelectorAll('.selfeval-bar').forEach(bar => {
+                bar.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    showAssessPopup(e, bar);
+                });
+            });
+
+            grid.appendChild(card);
+        });
+    }
+
+    // ================================================================
+    // ASSESSMENT POPUP (shows which students in each category)
+    // ================================================================
+    function showAssessPopup(event, barEl) {
+        const popup = document.getElementById('assessPopup');
+        const pointId = barEl.dataset.pointId;
+        const gStudents = JSON.parse(barEl.dataset.g || '[]');
+        const yStudents = JSON.parse(barEl.dataset.y || '[]');
+        const rStudents = JSON.parse(barEl.dataset.r || '[]');
+
+        const pointInfo = ALL_POINTS.find(p => p.id === pointId);
+        const pointName = pointInfo ? pointInfo.name : pointId;
+
+        let html = `<button class="close-btn" onclick="document.getElementById('assessPopup').classList.remove('show')">&times;</button>`;
+        html += `<h4>${escapeHtml(pointName)}</h4>`;
+
+        html += `<div class="cat-group">
+            <div class="cat-title"><span class="dot" style="background:var(--green)"></span> 满分拿下 (${gStudents.length}人)</div>
+            <div>${gStudents.length > 0 ? gStudents.map(n => `<span class="student-chip">${escapeHtml(n)}</span>`).join('') : '<span style="color:var(--text-dim);font-size:.78rem">暂无</span>'}</div>
+        </div>`;
+        html += `<div class="cat-group">
+            <div class="cat-title"><span class="dot" style="background:var(--yellow)"></span> 加强练习 (${yStudents.length}人)</div>
+            <div>${yStudents.length > 0 ? yStudents.map(n => `<span class="student-chip">${escapeHtml(n)}</span>`).join('') : '<span style="color:var(--text-dim);font-size:.78rem">暂无</span>'}</div>
+        </div>`;
+        html += `<div class="cat-group">
+            <div class="cat-title"><span class="dot" style="background:var(--red)"></span> 有点挑战 (${rStudents.length}人)</div>
+            <div>${rStudents.length > 0 ? rStudents.map(n => `<span class="student-chip">${escapeHtml(n)}</span>`).join('') : '<span style="color:var(--text-dim);font-size:.78rem">暂无</span>'}</div>
+        </div>`;
+
+        popup.innerHTML = html;
+
+        const rect = barEl.getBoundingClientRect();
+        let top = rect.bottom + 4;
+        let left = rect.left;
+        if (top + 300 > window.innerHeight) top = Math.max(10, rect.top - 300);
+        if (left + 360 > window.innerWidth) left = Math.max(10, window.innerWidth - 370);
+        popup.style.top = top + 'px';
+        popup.style.left = left + 'px';
+        popup.classList.add('show');
+    }
+
+    // ================================================================
+    // HEATMAP (redesigned: level-1 summary + level-2 expand, sorted)
+    // ================================================================
+    function renderHeatmap() {
+        const container = document.getElementById('heatmapContainer');
+        if (students.length === 0) {
+            container.innerHTML = '<div style="color:var(--text-dim);padding:1rem;">暂无学生注册</div>';
+            return;
+        }
+
+        // Compute stats per point
+        const pointStats = {};
+        ALL_POINTS.forEach(p => {
+            const assessments = allAssessments.filter(a => a.point_id === p.id);
+            const mastered = assessments.filter(a => a.status === 'mastered').length;
+            const partial = assessments.filter(a => a.status === 'partial').length;
+            const notM = assessments.filter(a => a.status === 'not_mastered').length;
+            const total = assessments.length;
+            const unassessed = Math.max(0, students.length - total);
+            const challengeRate = total > 0 ? (notM / total * 100) : 0;
+            pointStats[p.id] = { ...p, mastered, partial, notM, total, unassessed, challengeRate };
+        });
+
+        // Sort modules: F first, then by average challenge rate descending
+        const moduleKeys = Object.keys(KB);
+        const moduleOrder = [...moduleKeys].sort((a, b) => {
+            if (a === 'F') return -1;
+            if (b === 'F') return 1;
+            const avgChalA = getModuleAvgChallenge(a, pointStats);
+            const avgChalB = getModuleAvgChallenge(b, pointStats);
+            return avgChalB - avgChalA;
+        });
+
+        let html = `<table class="hm-table">`;
+        html += `<thead><tr>
+            <th style="text-align:left;width:220px">模块 / 知识点</th>
+            <th>掌握</th><th>部分</th><th>挑战</th><th>未评估</th>
+            <th>挑战率</th><th>预警</th><th>练习反馈</th>
+        </tr></thead><tbody>`;
+
+        moduleOrder.forEach(key => {
+            const mod = KB[key];
+            const pts = mod.points.map(p => pointStats[p.id]);
+            const sumM = pts.reduce((s, p) => s + p.mastered, 0);
+            const sumP = pts.reduce((s, p) => s + p.partial, 0);
+            const sumN = pts.reduce((s, p) => s + p.notM, 0);
+            const sumTotal = pts.reduce((s, p) => s + p.total, 0);
+            const sumUnassessed = pts.reduce((s, p) => s + p.unassessed, 0);
+            const challengeRate = sumTotal > 0 ? Math.round(sumN / sumTotal * 100) : 0;
+            const isWarn = sumTotal >= 3 && challengeRate > 30;
+
+            const modColorClass = challengeRate > 40 ? 'hm-red' : challengeRate > 20 ? 'hm-yellow' : 'hm-green';
+
+            html += `<tr class="hm-module" data-module="${key}">
+                <td class="hm-name" style="font-weight:600">${key}. ${mod.name} (${mod.points.length}个知识点)</td>
+                <td class="hm-green">${sumM}</td>
+                <td class="hm-yellow">${sumP}</td>
+                <td class="${sumN > 0 ? 'hm-red' : 'hm-gray'}">${sumN}</td>
+                <td class="hm-gray">${sumUnassessed}</td>
+                <td class="${modColorClass}">${challengeRate}%</td>
+                <td class="${isWarn ? 'hm-red' : ''}">${isWarn ? '\u26A0' : '-'}</td>
+                <td class="hm-gray" style="font-size:.7rem">${(() => {
+                    const qCount = moduleQuizSummary[mod.name] || 0;
+                    if (qCount > 0) {
+                        const avgRate = getModuleAvgCorrectRate(mod.name);
+                        const rateStr = avgRate !== null ? '均正确率' + avgRate + '%' : '';
+                        return '<span style="color:var(--yellow);font-size:.65rem;" title="' + QUIZ_DATA.name + ': ' + mod.name + qCount + '题 ' + rateStr + '">0526: ' + mod.name + qCount + '题 ' + rateStr + '</span>';
+                    }
+                    return '<span style="color:var(--text-dim);font-size:.65rem;">暂无练习</span>';
+                })()}</td>
+            </tr>`;
+
+            // Sort points: highest challenge rate first
+            const sortedPoints = [...pts].sort((a, b) => b.challengeRate - a.challengeRate);
+            sortedPoints.forEach(p => {
+                const pColorClass = p.challengeRate > 40 ? 'hm-red' : p.challengeRate > 20 ? 'hm-yellow' : 'hm-green';
+                const isPW = p.total >= 3 && p.challengeRate > 30;
+                const displayName = p.name.length > 18 ? p.name.substring(0, 18) + '...' : p.name;
+
+                // Compute student names per status for tooltip
+                const ptStudents = { mastered: [], partial: [], notM: [], unassessed: [] };
+                students.forEach(student => {
+                    const assessment = allAssessments.find(a => a.student_id === student.id && a.point_id === p.id);
+                    if (!assessment) {
+                        ptStudents.unassessed.push(student.name);
+                    } else if (assessment.status === 'mastered') {
+                        ptStudents.mastered.push(student.name);
+                    } else if (assessment.status === 'partial') {
+                        ptStudents.partial.push(student.name);
+                    } else {
+                        ptStudents.notM.push(student.name);
+                    }
+                });
+
+                html += `<tr class="hm-point" data-module="${key}">
+                    <td class="hm-name" style="padding-left:2rem;font-size:.76rem">${p.id} ${escapeHtml(displayName)}</td>
+                    <td class="hm-green" title="${escapeHtml(ptStudents.mastered.join(', '))}">${p.mastered}</td>
+                    <td class="hm-yellow" title="${escapeHtml(ptStudents.partial.join(', '))}">${p.partial}</td>
+                    <td class="${p.notM > 0 ? 'hm-red' : 'hm-gray'}" title="${escapeHtml(ptStudents.notM.join(', '))}">${p.notM}</td>
+                    <td class="hm-gray" title="${escapeHtml(ptStudents.unassessed.join(', '))}">${p.unassessed}</td>
+                    <td class="${pColorClass}">${Math.round(p.challengeRate)}%</td>
+                    <td class="${isPW ? 'hm-red' : ''}">${isPW ? '!!' : '-'}</td>
+                    <td class="hm-gray" style="font-size:.7rem">${(() => {
+                        const quizzes = pointToQuiz[p.id];
+                        if (quizzes) {
+                            const qDetails = quizzes.map(q => {
+                                const rate = getQuestionCorrectRate(q.q);
+                                const rateStr = rate !== null ? rate + '%' : '?';
+                                return 'Q' + q.q + ': ' + rateStr;
+                            }).join(' ');
+                            return '<span style="font-size:.65rem;color:var(--yellow);" title="' + quizzes.map(q => 'Q' + q.q + '(' + q.topic + ')').join(', ') + '">' + qDetails + '</span>';
+                        }
+                        return '<span style="font-size:.65rem;color:var(--text-dim);">暂无练习</span>';
+                    })()}</td>
+                </tr>`;
+            });
+        });
+
+        html += '</tbody></table>';
+        container.innerHTML = html;
+
+        // Click to expand module rows
+        container.querySelectorAll('tr.hm-module').forEach(row => {
+            row.addEventListener('click', () => {
+                const mod = row.dataset.module;
+                const points = container.querySelectorAll(`tr.hm-point[data-module="${mod}"]`);
+                points.forEach(p => p.classList.toggle('visible'));
+            });
+        });
+    }
+
+    function getModuleAvgChallenge(moduleKey, pointStats) {
+        const pts = KB[moduleKey].points.map(p => pointStats[p.id]);
+        if (pts.length === 0) return 0;
+        return pts.reduce((s, p) => s + p.challengeRate, 0) / pts.length;
+    }
+
+    // ================================================================
+    // STUDENT LIST (enhanced with target/prediction)
+    // ================================================================
+    function populateClassFilter() {
+        const select = document.getElementById('classFilter');
+        const classes = [...new Set(students.map(s => s.class_name))].sort();
+        select.innerHTML = '<option value="">全部班级</option>' +
+            classes.map(c => `<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join('');
+    }
+
+    document.getElementById('classFilter').addEventListener('change', renderStudentList);
+    document.getElementById('studentSearch').addEventListener('input', renderStudentList);
+
+    function renderStudentList() {
+        const grid = document.getElementById('studentGrid');
+        if (students.length === 0) {
+            grid.innerHTML = '<div style="color:var(--text-dim);padding:1rem;">暂无学生注册</div>';
+            return;
+        }
+
+        const classFilter = document.getElementById('classFilter').value;
+        const search = document.getElementById('studentSearch').value.trim().toLowerCase();
+
+        let filtered = students;
+        if (classFilter) filtered = filtered.filter(s => s.class_name === classFilter);
+        if (search) filtered = filtered.filter(s => s.name.toLowerCase().includes(search));
+
+        // Compute class averages for warning detection
+        const allScoreValues = Object.values(STUDENT_SCORES);
+        const allFm = allScoreValues.filter(s => s.fm).map(s => s.fm);
+        const avgFm = allFm.length > 0 ? allFm.reduce((a, b) => a + b, 0) / allFm.length : 0;
+        const allFt = allScoreValues.filter(s => s.ft).map(s => s.ft);
+        const avgFt = allFt.length > 0 ? allFt.reduce((a, b) => a + b, 0) / allFt.length : 0;
+        const allMm = allScoreValues.filter(s => s.mm).map(s => s.mm);
+        const avgMm = allMm.length > 0 ? allMm.reduce((a, b) => a + b, 0) / allMm.length : 0;
+        const allMt = allScoreValues.filter(s => s.mt).map(s => s.mt);
+        const avgMt = allMt.length > 0 ? allMt.reduce((a, b) => a + b, 0) / allMt.length : 0;
+
+        // Determine warning level for each student and sort by priority
+        const getWarningLevel = (s) => {
+            const sd = STUDENT_SCORES[s.name];
+            // Red: total score above average BUT math below average
+            if (sd) {
+                if (sd.ft && sd.ft > avgFt && sd.fm && sd.fm < avgFm) return 1;
+                if (sd.mt && sd.mt > avgMt && sd.mm && sd.mm < avgMm) return 1;
+            }
+            // Orange: quiz warning (score < 55 or didn't submit)
+            const quizScore = QUIZ_DATA.scores[s.name];
+            if (!quizScore || quizScore.total < 55) return 2;
+            return 3;
+        };
+
+        filtered.sort((a, b) => getWarningLevel(a) - getWarningLevel(b));
+
+        grid.innerHTML = filtered.map(s => {
+            const assessments = allAssessments.filter(a => a.student_id === s.id);
+            const g = assessments.filter(a => a.status === 'mastered').length;
+            const y = assessments.filter(a => a.status === 'partial').length;
+            const r = assessments.filter(a => a.status === 'not_mastered').length;
+            const total = ALL_POINTS.length;
+
+            // Target: from past exam score
+            const scoreData = STUDENT_SCORES[s.name];
+            const target = scoreData ? scoreData.fm : '--';
+
+            // Prediction: compute from assessments
+            const prediction = computeStudentPrediction(s.id);
+
+            // Determine warning level and visual style
+            const warningLevel = getWarningLevel(s);
+            let cardStyle = '';
+            let badge = '';
+            if (warningLevel === 1) {
+                cardStyle = 'border-left:3px solid var(--red);box-shadow:0 0 8px rgba(239,68,68,0.3);';
+                badge = '<span style="font-size:.6rem;color:var(--red);background:rgba(239,68,68,.1);padding:1px 5px;border-radius:3px;margin-left:6px;">数学薄弱</span>';
+            } else if (warningLevel === 2) {
+                cardStyle = 'border-left:3px solid var(--yellow);';
+                badge = '<span style="font-size:.6rem;color:var(--yellow);background:rgba(245,158,11,.1);padding:1px 5px;border-radius:3px;margin-left:6px;">小测预警</span>';
+            }
+
+            return `<div class="student-card" data-sid="${s.id}" style="${cardStyle}">
+                <div class="sc-name">${escapeHtml(s.name)}${badge}</div>
+                <div class="sc-class">${escapeHtml(s.class_name)}</div>
+                <div class="sc-target">目标: ${target}分 | 预测: ${prediction}分</div>
+                <div class="sc-stats">
+                    <span class="sc-stat"><span class="sc-dot" style="background:var(--green)"></span>${g}</span>
+                    <span class="sc-stat"><span class="sc-dot" style="background:var(--yellow)"></span>${y}</span>
+                    <span class="sc-stat"><span class="sc-dot" style="background:var(--red)"></span>${r}</span>
+                    <span class="sc-stat" style="color:var(--text-dim)">/${total}</span>
+                </div>
+            </div>`;
+        }).join('');
+
+        grid.querySelectorAll('.student-card').forEach(card => {
+            card.addEventListener('click', () => showStudentDetail(card.dataset.sid));
+        });
+    }
+
+    // ================================================================
+    // SCORE PREDICTION
+    // ================================================================
+    function computeStudentPrediction(studentId) {
+        const studentAssessments = allAssessments.filter(a => a.student_id === studentId);
+        const aMap = {};
+        studentAssessments.forEach(a => { aMap[a.point_id] = a.status; });
+
+        let totalScore = 0;
+        Object.entries(KB).forEach(([key, mod]) => {
+            const moduleWeight = MODULE_SCORE_WEIGHTS[key] || 0;
+            let moduleRate = 0;
+            let assessedCount = 0;
+            let moduleScore = 0;
+
+            mod.points.forEach(p => {
+                const status = aMap[p.id];
+                if (status) {
+                    assessedCount++;
+                    moduleScore += (STATUS_SCORE[status] || UNASSESSED_SCORE);
+                } else {
+                    moduleScore += UNASSESSED_SCORE;
+                }
+            });
+
+            moduleRate = mod.points.length > 0 ? moduleScore / mod.points.length : UNASSESSED_SCORE;
+            totalScore += moduleWeight * moduleRate;
+        });
+
+        return Math.round(totalScore);
+    }
+
+    // ================================================================
+    // STUDENT DETAIL (full overlay page)
+    // ================================================================
+    async function showStudentDetail(studentId) {
+        const student = students.find(s => s.id === studentId);
+        if (!student) return;
+
+        const overlay = document.getElementById('studentDetailOverlay');
+        const content = document.getElementById('studentDetailContent');
+
+        const assessments = allAssessments.filter(a => a.student_id === studentId);
+        const aMap = {};
+        assessments.forEach(a => { aMap[a.point_id] = a; });
+
+        const prediction = computeStudentPrediction(studentId);
+        const scoreData = STUDENT_SCORES[student.name];
+        const target = scoreData ? scoreData.fm : '--';
+        const studentPlans = allReviewPlans.filter(p => p.student_id === studentId);
+
+        let html = `<button class="sd-close" id="sdCloseBtn">&times;</button>`;
+
+        // Header
+        html += `<div class="sd-header">
+            <div class="sd-header-info">
+                <h2>${escapeHtml(student.class_name)} ${escapeHtml(student.name)}</h2>
+                <p>已评估 ${assessments.length}/${ALL_POINTS.length} 个知识点 | 预测分数: ${prediction}分 | 目标: ${target}分</p>
+            </div>
+            <div class="sd-score-cards">`;
+
+        if (scoreData) {
+            html += `<div class="sd-score-card"><div class="label">高一上期末数学</div><div class="value">${scoreData.fm}/150</div></div>`;
+            if (scoreData.mm !== null && scoreData.mm !== undefined) {
+                html += `<div class="sd-score-card"><div class="label">高一下月考数学</div><div class="value">${scoreData.mm}/100</div></div>`;
+            }
+        }
+        html += `<div class="sd-score-card"><div class="label">预测分数</div><div class="value" style="color:var(--accent-light)">${prediction}/150</div></div>`;
+        html += `</div></div>`;
+
+        // Knowledge points assessment status
+        html += `<div class="sd-section"><h3>知识点评估详情</h3>`;
+        html += `<table class="sd-kp-table"><thead><tr><th>知识点</th><th>权重</th><th>状态</th><th>备注</th></tr></thead><tbody>`;
+
+        Object.entries(KB).forEach(([key, mod]) => {
+            html += `<tr><td colspan="4" style="background:rgba(99,102,241,.05);font-weight:600;color:var(--accent-light)">${key}. ${mod.name}</td></tr>`;
+            mod.points.forEach(p => {
+                const a = aMap[p.id];
+                let statusHtml;
+                if (!a) {
+                    statusHtml = '<span style="color:var(--text-dim)">未评估</span>';
+                } else if (a.status === 'mastered') {
+                    statusHtml = '<span style="color:var(--green)">掌握</span>';
+                } else if (a.status === 'partial') {
+                    statusHtml = '<span style="color:var(--yellow)">部分掌握</span>';
+                } else {
+                    statusHtml = '<span style="color:var(--red)">未掌握</span>';
+                }
+                const wLabel = p.w === 'high' ? '高频' : p.w === 'mid' ? '中频' : '低频';
+                const note = a && a.note ? escapeHtml(a.note) : '';
+                html += `<tr>
+                    <td>${p.id} ${escapeHtml(p.name)}</td>
+                    <td><span class="w-${p.w}">[${wLabel}]</span></td>
+                    <td>${statusHtml}</td>
+                    <td style="font-size:.78rem;color:var(--text-dim)">${note}</td>
+                </tr>`;
+            });
+        });
+        html += `</tbody></table></div>`;
+
+        // Notes/Tips section
+        const studentNotes = [];
+        Object.entries(KB).forEach(([key, mod]) => {
+            mod.points.forEach(p => {
+                const a = aMap[p.id];
+                if (a && a.note) {
+                    studentNotes.push({ pointId: p.id, pointName: p.name, note: a.note });
+                }
+            });
+        });
+
+        html += `<div class="sd-section"><h3>学习笔记 / 备注</h3>`;
+        if (studentNotes.length > 0) {
+            studentNotes.forEach(n => {
+                html += `<div class="sd-note-item"><div class="point-label">${n.pointId} ${escapeHtml(n.pointName)}</div>${escapeHtml(n.note)}</div>`;
+            });
+        } else {
+            html += `<div class="sd-empty">暂无学习笔记</div>`;
+        }
+        html += `</div>`;
+
+        // Past exam scores
+        html += `<div class="sd-section"><h3>历史成绩</h3>`;
+        if (scoreData) {
+            html += `<table class="sd-kp-table"><thead><tr><th>考试</th><th>数学</th><th>班级排名</th></tr></thead><tbody>`;
+            html += `<tr><td>高一上期末</td><td>${scoreData.fm}/150</td><td>第${scoreData.fmr}名</td></tr>`;
+            if (scoreData.mm !== null && scoreData.mm !== undefined) {
+                html += `<tr><td>高一下5月月考</td><td>${scoreData.mm}/100</td><td>第${scoreData.mmr}名</td></tr>`;
+            }
+            html += `</tbody></table>`;
+        } else {
+            html += `<div class="sd-empty">暂无历史成绩数据</div>`;
+        }
+        html += `</div>`;
+
+        // Review plans
+        html += `<div class="sd-section"><h3>复习计划</h3>`;
+        if (studentPlans.length > 0) {
+            studentPlans.forEach(plan => {
+                const dateStr = plan.plan_date ? new Date(plan.plan_date).toLocaleDateString('zh-CN') : '未知日期';
+                html += `<div class="sd-plan-item"><div class="plan-date">${dateStr}</div>${escapeHtml(plan.content)}</div>`;
+            });
+        } else {
+            html += `<div class="sd-empty">暂无复习计划</div>`;
+        }
+        html += `</div>`;
+
+        // Quiz scores section
+        const studentQuiz = QUIZ_DATA.scores[student.name];
+        if (studentQuiz) {
+            html += `<div class="sd-section">
+                <h3>📝 小测成绩 (${QUIZ_DATA.name})</h3>
+                <div style="font-size:1.3rem;font-weight:700;margin:.5rem 0;color:${studentQuiz.total >= 60 ? 'var(--green)' : studentQuiz.total >= 50 ? 'var(--yellow)' : 'var(--red)'}">
+                    ${studentQuiz.total} / ${QUIZ_DATA.total}
+                </div>
+                <table style="width:100%;font-size:.78rem;border-collapse:collapse;">
+                    <tr style="color:var(--text-dim);border-bottom:1px solid var(--border);">
+                        <th style="text-align:left;padding:4px;">题号</th><th>得分</th><th>正确答案</th><th>考点</th>
+                    </tr>
+                    ${studentQuiz.questions.map(sq => {
+                        const qInfo = QUIZ_DATA.questions.find(q => q.q === sq.q);
+                        const isCorrect = sq.score === 5;
+                        return `<tr style="border-bottom:1px solid rgba(42,47,69,.4);">
+                            <td style="padding:4px;">Q${sq.q}</td>
+                            <td style="text-align:center;color:${isCorrect ? 'var(--green)' : 'var(--red)'};font-weight:600;">${sq.score}/5</td>
+                            <td style="text-align:center;">${qInfo ? qInfo.answer : '-'}</td>
+                            <td style="font-size:.7rem;color:var(--text-dim);">${qInfo ? qInfo.topic : '-'}</td>
+                        </tr>`;
+                    }).join('')}
+                </table>
+            </div>`;
+        } else {
+            const isSubmitted = QUIZ_DATA.submitted.includes(student.name);
+            html += `<div class="sd-section">
+                <h3>📝 小测成绩 (${QUIZ_DATA.name})</h3>
+                <div style="color:var(--text-dim);font-size:.85rem;">${isSubmitted ? '已交卷，成绩待录入' : '未交卷'}</div>
+            </div>`;
+        }
+
+        content.innerHTML = html;
+        overlay.classList.add('show');
+
+        document.getElementById('sdCloseBtn').addEventListener('click', closeStudentDetail);
+    }
+
+    function closeStudentDetail() {
+        document.getElementById('studentDetailOverlay').classList.remove('show');
+    }
+
+    document.getElementById('studentDetailOverlay').addEventListener('click', (e) => {
+        if (e.target === e.currentTarget) closeStudentDetail();
+    });
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            closeStudentDetail();
+            document.getElementById('assessPopup').classList.remove('show');
+        }
+    });
+
+    // ================================================================
+    // TIPS OVERVIEW
+    // ================================================================
+    async function renderTips() {
+        const list = document.getElementById('tipsList');
+        if (allTips.length === 0) {
+            list.innerHTML = '<div style="color:var(--text-dim);padding:1rem;">暂无温馨提示</div>';
+            return;
+        }
+
+        // Sort: featured first, then by likes
+        const sorted = [...allTips].sort((a, b) => {
+            if (a.featured && !b.featured) return -1;
+            if (!a.featured && b.featured) return 1;
+            return (b.likes || 0) - (a.likes || 0);
+        });
+
+        list.innerHTML = sorted.map(tip => {
+            const isFeatured = tip.featured;
+            const dateStr = tip.created_at ? new Date(tip.created_at).toLocaleDateString('zh-CN') : '';
+            return `<div class="tip-card ${isFeatured ? 'featured' : ''}">
+                ${isFeatured ? '<span class="tip-featured-badge">精选</span>' : ''}
+                <div class="tip-meta">
+                    <span class="tip-author">${escapeHtml(tip.student_name)}</span>
+                    <span class="tip-point">${escapeHtml(tip.module_name || '')} ${escapeHtml(tip.point_id || '')}</span>
+                </div>
+                <div class="tip-content">${escapeHtml(tip.content)}</div>
+                <div class="tip-footer">
+                    <div class="tip-likes">点赞 ${tip.likes || 0}</div>
+                    <div class="tip-actions">
+                        <button class="tip-btn ${isFeatured ? 'featured-btn' : ''}" data-tip-id="${tip.id}" data-action="feature">
+                            ${isFeatured ? '取消精选' : '设为精选'}
+                        </button>
+                        <button class="tip-btn" data-tip-id="${tip.id}" data-action="delete" style="color:var(--red);border-color:var(--red);">删除</button>
+                    </div>
+                </div>
+                <div style="font-size:.7rem;color:var(--text-dim);margin-top:.3rem">${dateStr}</div>
+            </div>`;
+        }).join('');
+
+        // Feature button handlers
+        list.querySelectorAll('.tip-btn[data-action="feature"]').forEach(btn => {
+            btn.addEventListener('click', async () => {
+                const tipId = btn.dataset.tipId;
+                const tip = allTips.find(t => t.id === tipId);
+                const newFeatured = !tip.featured;
+                try {
+                    const { error } = await sb.from('tips').update({ featured: newFeatured }).eq('id', tipId);
+                    if (error) {
+                        // If 'featured' column doesn't exist, try to add it
+                        console.warn('Featured column may not exist. Run: ALTER TABLE tips ADD COLUMN featured BOOLEAN DEFAULT false;');
+                        return;
+                    }
+                    tip.featured = newFeatured;
+                    renderTips();
+                } catch (e) { console.error('Feature tip error:', e); }
+            });
+        });
+
+        // Delete button handlers
+        list.querySelectorAll('.tip-btn[data-action="delete"]').forEach(btn => {
+            btn.addEventListener('click', async () => {
+                const tipId = btn.dataset.tipId;
+                if (!confirm('确定删除这条提示吗？')) return;
+                try {
+                    const { error } = await sb.from('tips').delete().eq('id', tipId);
+                    if (error) throw error;
+                    allTips = allTips.filter(t => t.id !== tipId);
+                    renderTips();
+                } catch (e) {
+                    console.error('Delete tip error:', e);
+                }
+            });
+        });
+    }
+
+    // ================================================================
+    // REAL-TIME SUBSCRIPTIONS
+    // ================================================================
+    function debouncedReload() {
+        if (reloadTimer) clearTimeout(reloadTimer);
+        reloadTimer = setTimeout(() => { loadAll(); }, 800);
+    }
+
+    function subscribeRealtime() {
+        sb.channel('teacher-dashboard')
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'self_assessments' }, debouncedReload)
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'students' }, debouncedReload)
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'daily_progress' }, debouncedReload)
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'tips' }, debouncedReload)
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'review_plans' }, debouncedReload)
+            .subscribe();
+    }
+
+    // ================================================================
+    // UTILITY
+    // ================================================================
+    function escapeHtml(str) {
+        if (!str) return '';
+        const div = document.createElement('div');
+        div.textContent = str;
+        return div.innerHTML;
+    }
+
+    function parseTopicTasks(raw) {
+        if (!raw || !raw.trim()) return [];
+        try {
+            const parsed = JSON.parse(raw);
+            if (Array.isArray(parsed)) return parsed;
+        } catch (_) {}
+        return [{ text: raw.trim(), done: false }];
+    }
+
+    function topicTasksToText(tasks) {
+        return JSON.stringify(tasks);
+    }
+
+    // ================================================================
+    // INIT
+    // ================================================================
+    initReviewDayMap();
+    await loadAll();
+    subscribeRealtime();
+
+    // Inline add task handler (event delegation on calendar grid)
+    document.getElementById('calendarGrid').addEventListener('keydown', async (e) => {
+        if (e.key === 'Enter' && e.target.classList.contains('cal-inline-add')) {
+            e.preventDefault();
+            const dayNum = parseInt(e.target.dataset.day);
+            const newText = e.target.value.trim();
+            if (!newText) return;
+
+            // Find current tasks for this day
+            const prog = dailyProgress.find(d => d.day_number === dayNum);
+            const currentTopic = (prog && prog.topic) ? prog.topic : (INITIAL_REVIEW_DAYS[dayNum] ? INITIAL_REVIEW_DAYS[dayNum].topic : '');
+            const tasks = parseTopicTasks(currentTopic);
+            tasks.push({ text: newText, done: false });
+
+            // Save
+            const newTopicStr = topicTasksToText(tasks);
+            if (prog) {
+                prog.topic = newTopicStr;
+            } else {
+                dailyProgress.push({ day_number: dayNum, topic: newTopicStr, status: 'pending' });
+            }
+            try {
+                await sb.from('daily_progress').upsert(
+                    { day_number: dayNum, topic: newTopicStr, status: getStatusForDay(dayNum) },
+                    { onConflict: 'day_number' }
+                );
+            } catch(_) {}
+
+            renderCalendar();
+        }
+    });
+    </script>
+</body>
+</html>

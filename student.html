@@ -1,0 +1,2445 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>高一下数学期末备考</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg: #0a0e1a; --card: #141825; --border: #2a2f45;
+            --text: #e8eaf0; --text-dim: #6b7280;
+            --accent: #6366f1; --accent-light: #818cf8;
+            --green: #10b981; --yellow: #f59e0b; --red: #ef4444;
+            --sidebar-w: 220px;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: var(--bg); color: var(--text);
+            min-height: 100vh; -webkit-tap-highlight-color: transparent;
+        }
+
+        /* ===== LOGIN SCREEN ===== */
+        .login-screen {
+            display: flex; flex-direction: column; align-items: center;
+            justify-content: center; min-height: 100vh; padding: 2rem;
+        }
+        .login-screen h1 {
+            font-size: 1.8rem; margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, var(--accent-light), var(--green));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .login-screen .subtitle { color: var(--text-dim); margin-bottom: 2rem; }
+        .login-form {
+            background: var(--card); border: 1px solid var(--border);
+            border-radius: 16px; padding: 2rem; width: 100%; max-width: 360px;
+        }
+        .login-form input, .login-form select {
+            width: 100%; padding: 0.85rem 1rem; border: 1px solid var(--border);
+            border-radius: 10px; background: var(--bg); color: var(--text);
+            font-size: 1rem; margin-bottom: 0.75rem;
+        }
+        .login-form input:focus, .login-form select:focus {
+            outline: none; border-color: var(--accent);
+        }
+        .login-form button {
+            width: 100%; padding: 0.85rem; background: var(--accent); color: white;
+            border: none; border-radius: 10px; font-size: 1rem; font-weight: 600;
+            cursor: pointer; margin-top: 0.5rem;
+        }
+        .login-form button:active { opacity: 0.85; }
+        .login-form .error {
+            color: var(--red); font-size: 0.85rem; margin-top: 0.5rem; display: none;
+        }
+        .login-form label {
+            display: block; font-size: 0.85rem; color: var(--text-dim);
+            margin-bottom: 0.3rem; margin-top: 0.25rem;
+        }
+
+        /* ===== PASSWORD CHANGE SCREEN ===== */
+        .pwd-change-screen {
+            display: none; flex-direction: column; align-items: center;
+            justify-content: center; min-height: 100vh; padding: 2rem;
+        }
+        .pwd-change-screen h1 { font-size: 1.5rem; margin-bottom: 0.5rem; color: var(--yellow); }
+        .pwd-change-screen .subtitle { color: var(--text-dim); margin-bottom: 2rem; }
+
+        /* ===== SIDEBAR ===== */
+        .sidebar {
+            position: fixed; left: 0; top: 0; bottom: 0; width: var(--sidebar-w);
+            background: var(--card); border-right: 1px solid var(--border);
+            z-index: 200; display: none; flex-direction: column;
+            overflow-y: auto; padding-top: 60px;
+        }
+        .sidebar.open { display: flex; }
+        .sidebar-item {
+            padding: 0.75rem 1.25rem; font-size: 0.88rem; color: var(--text-dim);
+            cursor: pointer; border-left: 3px solid transparent;
+            transition: all 0.15s; white-space: nowrap; text-decoration: none;
+        }
+        .sidebar-item:hover, .sidebar-item.active {
+            color: var(--text); background: rgba(99,102,241,0.08);
+            border-left-color: var(--accent);
+        }
+        .sidebar-item.section-label {
+            font-size: 0.75rem; color: var(--text-dim); opacity: 0.6;
+            padding: 0.6rem 1.25rem 0.3rem; text-transform: uppercase;
+            pointer-events: none;
+        }
+        .sidebar-close {
+            position: absolute; top: 12px; right: 12px; background: none;
+            border: none; color: var(--text-dim); font-size: 1.3rem; cursor: pointer;
+            display: none;
+        }
+
+        /* ===== MAIN APP ===== */
+        .app { display: none; }
+        .header {
+            background: var(--card); border-bottom: 1px solid var(--border);
+            padding: 0.85rem 1.25rem; display: flex; align-items: center;
+            justify-content: space-between; position: sticky; top: 0; z-index: 150;
+        }
+        .header-left { display: flex; align-items: center; gap: 0.75rem; }
+        .hamburger {
+            background: none; border: none; color: var(--text); font-size: 1.4rem;
+            cursor: pointer; padding: 4px 8px; display: none;
+        }
+        .header h1 { font-size: 1.1rem; }
+        .header-right { display: flex; align-items: center; gap: 0.75rem; }
+        .profile-badge {
+            background: var(--accent); color: white; padding: 0.35rem 0.7rem;
+            border-radius: 6px; font-size: 0.8rem;
+        }
+        .sync-status { font-size: 0.7rem; color: var(--green); }
+        .sync-status.offline { color: var(--red); }
+
+        .main-wrapper { display: flex; }
+        .container {
+            max-width: 800px; margin: 0 auto; padding: 1rem 1.25rem 6rem;
+            flex: 1; min-width: 0;
+        }
+
+        /* Desktop: sidebar always visible */
+        @media (min-width: 1025px) {
+            .sidebar { display: flex; }
+            .sidebar .sidebar-close { display: none !important; }
+            .app .header { margin-left: var(--sidebar-w); }
+            .main-wrapper { margin-left: var(--sidebar-w); }
+            .hamburger { display: none !important; }
+        }
+        /* Tablet/Mobile: sidebar as drawer */
+        @media (max-width: 1024px) {
+            .sidebar { display: none; }
+            .sidebar.open { display: flex; }
+            .sidebar .sidebar-close { display: block; }
+            .hamburger { display: block; }
+            .sidebar-overlay {
+                display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+                background: rgba(0,0,0,0.5); z-index: 199;
+            }
+            .sidebar-overlay.open { display: block; }
+        }
+
+        /* Score card */
+        .score-card {
+            background: var(--card); border: 1px solid var(--border);
+            border-radius: 12px; padding: 1.25rem; margin-bottom: 1rem;
+        }
+        .score-card h3 { font-size: 1rem; margin-bottom: 0.75rem; }
+        .score-period { margin-bottom: 0.75rem; }
+        .score-period-title {
+            font-size: 0.85rem; color: var(--accent-light); font-weight: 600;
+            margin-bottom: 0.4rem; padding-bottom: 0.3rem;
+            border-bottom: 1px solid rgba(99,102,241,0.2);
+        }
+        .score-row {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0.3rem 0; font-size: 0.9rem;
+        }
+        .score-label { color: var(--text-dim); }
+        .score-value { font-weight: 600; }
+        .score-rank {
+            font-size: 0.8rem; color: var(--text-dim);
+            background: rgba(99,102,241,0.1); padding: 0.15rem 0.5rem;
+            border-radius: 4px; margin-left: 0.5rem;
+        }
+        .score-absent { color: var(--red); font-style: italic; }
+
+        /* Target section */
+        .target-section {
+            background: var(--card); border: 1px solid var(--border);
+            border-radius: 12px; padding: 1.25rem; margin-bottom: 1rem;
+        }
+        .target-section h3 { font-size: 1rem; margin-bottom: 0.75rem; }
+        .target-row {
+            display: flex; gap: 0.75rem; align-items: center; margin-bottom: 0.6rem;
+        }
+        .target-row label {
+            font-size: 0.85rem; color: var(--text-dim); min-width: 120px; flex-shrink: 0;
+        }
+        .target-row input {
+            flex: 1; padding: 0.5rem 0.75rem; border: 1px solid var(--border);
+            border-radius: 8px; background: var(--bg); color: var(--text); font-size: 0.9rem;
+        }
+        .target-row input:focus { outline: none; border-color: var(--accent); }
+        .target-row span { font-size: 0.85rem; color: var(--text-dim); flex-shrink: 0; }
+        .target-save-btn {
+            padding: 0.5rem 1.25rem; background: var(--accent); color: white;
+            border: none; border-radius: 8px; font-size: 0.85rem; cursor: pointer; margin-top: 0.5rem;
+        }
+        .target-save-btn:active { opacity: 0.8; }
+
+        /* Overall progress */
+        .overall-progress {
+            background: var(--card); border: 1px solid var(--border);
+            border-radius: 12px; padding: 1.25rem; margin-bottom: 1rem;
+        }
+        .overall-progress h3 { font-size: 1rem; margin-bottom: 0.75rem; }
+        .progress-stats { display: flex; gap: 1.5rem; margin-bottom: 0.75rem; flex-wrap: wrap; }
+        .progress-stat { text-align: center; }
+        .progress-stat .num { font-size: 1.5rem; font-weight: 700; }
+        .progress-stat .label { font-size: 0.75rem; color: var(--text-dim); }
+        .progress-bar-outer {
+            height: 8px; background: var(--border); border-radius: 4px; overflow: hidden;
+        }
+        .progress-bar-inner {
+            height: 100%; border-radius: 4px; transition: width 0.5s ease;
+        }
+
+        /* Score Prediction */
+        .prediction-section {
+            background: var(--card); border: 1px solid var(--border);
+            border-radius: 12px; padding: 1.25rem; margin-bottom: 1rem;
+        }
+        .prediction-section h3 { font-size: 1rem; margin-bottom: 0.75rem; }
+        .prediction-total {
+            font-size: 1.6rem; font-weight: 700; color: var(--accent-light);
+            margin-bottom: 0.75rem; text-align: center;
+        }
+        .prediction-breakdown { display: flex; flex-direction: column; gap: 0.4rem; }
+        .pred-row {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0.4rem 0.75rem; border-radius: 6px;
+            background: rgba(255,255,255,0.02); font-size: 0.85rem;
+        }
+        .pred-row .pred-mod { color: var(--text); font-weight: 500; }
+        .pred-row .pred-pts { font-weight: 600; color: var(--accent-light); }
+        .pred-row .pred-detail { font-size: 0.75rem; color: var(--text-dim); }
+
+        /* Radar */
+        .radar-section {
+            background: var(--card); border: 1px solid var(--border);
+            border-radius: 12px; padding: 1.25rem; margin-bottom: 1rem; text-align: center;
+        }
+        .radar-section h3 { font-size: 1rem; margin-bottom: 0.75rem; }
+        .radar-canvas { max-width: 100%; }
+
+        /* Calendar */
+        .calendar-section {
+            background: var(--card); border: 1px solid var(--border);
+            border-radius: 12px; padding: 1.25rem; margin-bottom: 1rem;
+        }
+        .calendar-section h3 { font-size: 1rem; margin-bottom: 0.5rem; }
+        .countdown-banner {
+            text-align: center; font-size: 1.15rem; font-weight: 600;
+            color: var(--yellow); padding: 0.75rem; margin-bottom: 0.75rem;
+            background: rgba(245,158,11,0.08); border-radius: 8px;
+        }
+        .cal-grid {
+            display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px;
+        }
+        .cal-header-cell {
+            text-align: center; font-size: 0.75rem; color: var(--text-dim);
+            padding: 0.3rem 0; font-weight: 600;
+        }
+        .cal-cell {
+            background: var(--bg); border: 1px solid var(--border);
+            border-radius: 6px; padding: 0.35rem; min-height: 56px;
+            font-size: 0.75rem; cursor: pointer; position: relative;
+            transition: all 0.15s;
+        }
+        .cal-cell:hover { border-color: var(--accent); }
+        .cal-cell .cal-day { font-weight: 600; margin-bottom: 2px; }
+        .cal-cell .cal-plan {
+            font-size: 0.65rem; color: var(--text-dim); overflow: hidden;
+            text-overflow: ellipsis; white-space: nowrap;
+        }
+        .cal-cell.today { border: 2px solid var(--accent); background: rgba(99,102,241,0.12); box-shadow: 0 0 8px rgba(99,102,241,0.3); }
+        .cal-cell.past { }
+        .cal-cell.past .cal-day { opacity: 0.5; }
+        .cal-cell.exam-day {
+            border-color: var(--red); background: rgba(239,68,68,0.12);
+        }
+        .cal-cell.exam-day .cal-day { color: var(--red); }
+        .cal-cell .cal-plan-item {
+            display: flex; align-items: flex-start; gap: 3px;
+            font-size: 0.65rem; color: var(--text-dim); line-height: 1.3;
+        }
+        .cal-cell .cal-plan-item input[type="checkbox"] {
+            width: 12px; height: 12px; margin-top: 1px; cursor: pointer;
+            flex-shrink: 0; accent-color: var(--green);
+        }
+        .cal-cell .cal-plan-item.checked .plan-text {
+            text-decoration: line-through; color: var(--text-dim); opacity: 0.5;
+        }
+        .cal-cell .plan-text {
+            overflow: hidden; text-overflow: ellipsis;
+            display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+        }
+        .cal-empty { background: transparent; border: none; cursor: default; }
+
+        /* Sort toggle */
+        .sort-toggle-btn {
+            background: none; border: 1px solid var(--border);
+            border-radius: 6px; color: var(--text-dim); font-size: 0.72rem;
+            padding: 0.2rem 0.55rem; cursor: pointer; margin: 0.5rem 1.25rem 0;
+            transition: all 0.15s;
+        }
+        .sort-toggle-btn:hover { border-color: var(--accent); color: var(--accent-light); }
+        .sort-toggle-btn.active { border-color: var(--accent); color: var(--accent-light); background: rgba(99,102,241,0.08); }
+
+        /* Calendar plan modal */
+        .modal-overlay {
+            display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.6); z-index: 300;
+            justify-content: center; align-items: center; padding: 1rem;
+        }
+        .modal-overlay.open { display: flex; }
+        .modal-box {
+            background: var(--card); border: 1px solid var(--border);
+            border-radius: 14px; padding: 1.5rem; width: 100%; max-width: 400px;
+        }
+        .modal-box h3 { font-size: 1rem; margin-bottom: 0.75rem; }
+        .modal-box textarea {
+            width: 100%; padding: 0.75rem; border: 1px solid var(--border);
+            border-radius: 8px; background: var(--bg); color: var(--text);
+            font-size: 0.9rem; resize: vertical; min-height: 80px;
+            font-family: inherit; margin-bottom: 0.75rem;
+        }
+        .modal-box textarea:focus { outline: none; border-color: var(--accent); }
+        .modal-actions { display: flex; gap: 0.5rem; justify-content: flex-end; }
+        .modal-actions button {
+            padding: 0.5rem 1rem; border: none; border-radius: 8px;
+            font-size: 0.85rem; cursor: pointer;
+        }
+        .modal-save { background: var(--accent); color: white; }
+        .modal-cancel { background: var(--border); color: var(--text); }
+
+        /* Calendar task list (multi-task modal) */
+        .cal-task-list { max-height: 300px; overflow-y: auto; margin-bottom: 0.75rem; }
+        .cal-task-item { display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 0; border-bottom: 1px solid rgba(42,47,69,0.4); }
+        .cal-task-item input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--green); cursor: pointer; flex-shrink: 0; }
+        .cal-task-item input[type="text"] { flex: 1; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 0.4rem 0.6rem; color: var(--text); font-size: 0.85rem; font-family: inherit; }
+        .cal-task-item input[type="text"]:focus { outline: none; border-color: var(--accent); }
+        .cal-task-item.done input[type="text"] { text-decoration: line-through; opacity: 0.5; }
+        .cal-task-remove { background: none; border: none; color: var(--red); font-size: 1.1rem; cursor: pointer; padding: 0 0.3rem; opacity: 0.6; }
+        .cal-task-remove:hover { opacity: 1; }
+        .cal-task-add-row { display: flex; gap: 0.5rem; margin-bottom: 0.75rem; }
+        .cal-new-task-input { flex: 1; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 0.5rem 0.75rem; color: var(--text); font-size: 0.85rem; font-family: inherit; }
+        .cal-new-task-input:focus { outline: none; border-color: var(--accent); }
+        .cal-add-task-btn { background: var(--accent); color: white; border: none; border-radius: 8px; width: 36px; height: 36px; font-size: 1.2rem; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .cal-add-task-btn:active { opacity: 0.8; }
+
+        /* Module cards */
+        .module-card {
+            background: var(--card); border: 1px solid var(--border);
+            border-radius: 12px; margin-bottom: 0.75rem; overflow: hidden;
+        }
+        .module-header {
+            padding: 1rem 1.25rem; display: flex; align-items: center;
+            justify-content: space-between; cursor: pointer;
+            -webkit-user-select: none; user-select: none;
+        }
+        .module-header:active { background: rgba(255,255,255,0.02); }
+        .module-name { font-size: 1rem; font-weight: 600; }
+        .module-meta { display: flex; align-items: center; gap: 0.5rem; }
+        .module-dots { display: flex; gap: 3px; }
+        .dot { width: 8px; height: 8px; border-radius: 50%; }
+        .dot.g { background: var(--green); }
+        .dot.y { background: var(--yellow); }
+        .dot.r { background: var(--red); }
+        .module-pct { font-size: 0.8rem; color: var(--text-dim); min-width: 36px; text-align: right; }
+        .expand-icon {
+            color: var(--text-dim); transition: transform 0.3s; font-size: 0.8rem;
+        }
+        .module-card.expanded .expand-icon { transform: rotate(180deg); }
+        .module-body { display: none; border-top: 1px solid var(--border); }
+        .module-card.expanded .module-body { display: block; }
+
+        .point-item {
+            padding: 0.85rem 1.25rem;
+            border-bottom: 1px solid rgba(42,47,69,0.6);
+        }
+        .point-item:last-child { border-bottom: none; }
+        .point-header {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 0.5rem; flex-wrap: wrap; gap: 0.4rem;
+        }
+        .point-name { font-size: 0.9rem; flex: 1; min-width: 120px; }
+        .point-weight {
+            font-size: 0.7rem; padding: 0.15rem 0.4rem; border-radius: 4px;
+            margin-right: 0.5rem; flex-shrink: 0;
+        }
+        .weight-high { background: rgba(239,68,68,0.15); color: var(--red); }
+        .weight-mid { background: rgba(245,158,11,0.15); color: var(--yellow); }
+        .weight-low { background: rgba(16,185,129,0.15); color: var(--green); }
+        .custom-badge {
+            font-size: 0.65rem; padding: 0.1rem 0.35rem; border-radius: 3px;
+            background: rgba(99,102,241,0.15); color: var(--accent-light);
+            margin-right: 0.3rem; flex-shrink: 0;
+        }
+
+        .btn-group { display: flex; gap: 4px; }
+        .status-btn {
+            min-width: 70px; height: 36px; border: 2px solid var(--border);
+            border-radius: 8px; background: transparent; color: var(--text-dim);
+            font-size: 0.78rem; cursor: pointer; display: flex; align-items: center;
+            justify-content: center; transition: all 0.15s; padding: 0 6px;
+            -webkit-tap-highlight-color: transparent; white-space: nowrap;
+        }
+        .status-btn:active { transform: scale(0.95); }
+        .status-btn.active-g {
+            border-color: var(--green); background: rgba(16,185,129,0.18); color: var(--green);
+            font-weight: 600;
+        }
+        .status-btn.active-y {
+            border-color: var(--yellow); background: rgba(245,158,11,0.18); color: var(--yellow);
+            font-weight: 600;
+        }
+        .status-btn.active-r {
+            border-color: var(--red); background: rgba(239,68,68,0.18); color: var(--red);
+            font-weight: 600;
+        }
+
+        .point-note {
+            width: 100%; padding: 0.65rem 0.75rem; border: 1px solid var(--border);
+            border-radius: 8px; background: var(--bg); color: var(--text);
+            font-size: 0.85rem; resize: none; min-height: 50px; margin-top: 0.4rem;
+            font-family: inherit;
+        }
+        .point-note:focus { outline: none; border-color: var(--accent); }
+        .point-note::placeholder { color: var(--text-dim); }
+        .note-actions { display: flex; gap: 0.5rem; margin-top: 0.4rem; }
+        .share-tip-btn {
+            padding: 0.3rem 0.65rem; border: 1px solid var(--accent);
+            border-radius: 6px; background: transparent; color: var(--accent-light);
+            font-size: 0.75rem; cursor: pointer;
+        }
+        .share-tip-btn:hover { background: rgba(99,102,241,0.1); }
+
+        /* Add custom point */
+        .add-custom-point {
+            padding: 0.75rem 1.25rem; display: flex; gap: 0.5rem; align-items: center;
+            border-top: 1px solid var(--border);
+        }
+        .add-custom-point input {
+            flex: 1; padding: 0.5rem 0.75rem; border: 1px solid var(--border);
+            border-radius: 8px; background: var(--bg); color: var(--text);
+            font-size: 0.85rem;
+        }
+        .add-custom-point input:focus { outline: none; border-color: var(--accent); }
+        .add-custom-point button {
+            padding: 0.5rem 0.85rem; background: var(--accent); color: white;
+            border: none; border-radius: 8px; font-size: 0.8rem; cursor: pointer;
+            white-space: nowrap;
+        }
+
+        /* Tips Forum */
+        .tips-section {
+            background: var(--card); border: 1px solid var(--border);
+            border-radius: 12px; padding: 1.25rem; margin-bottom: 1rem;
+        }
+        .tips-section h3 { font-size: 1rem; margin-bottom: 0.75rem; }
+        .tips-list { display: flex; flex-direction: column; gap: 0.6rem; }
+        .tip-card {
+            background: var(--bg); border: 1px solid var(--border);
+            border-radius: 10px; padding: 0.85rem 1rem;
+        }
+        .tip-meta {
+            font-size: 0.78rem; color: var(--accent-light); margin-bottom: 0.4rem;
+            font-weight: 500;
+        }
+        .tip-content { font-size: 0.88rem; line-height: 1.5; margin-bottom: 0.5rem; }
+        .tip-actions { display: flex; gap: 0.75rem; align-items: center; }
+        .tip-like-btn {
+            display: flex; align-items: center; gap: 0.3rem;
+            background: none; border: 1px solid var(--border); border-radius: 6px;
+            color: var(--text-dim); font-size: 0.78rem; padding: 0.25rem 0.55rem;
+            cursor: pointer;
+        }
+        .tip-like-btn:hover { border-color: var(--yellow); color: var(--yellow); }
+        .tip-like-btn.liked { border-color: var(--yellow); color: var(--yellow); }
+        .tip-add-note-btn {
+            background: none; border: 1px solid var(--border); border-radius: 6px;
+            color: var(--text-dim); font-size: 0.78rem; padding: 0.25rem 0.55rem;
+            cursor: pointer;
+        }
+        .tip-add-note-btn:hover { border-color: var(--green); color: var(--green); }
+
+        /* Actions */
+        .actions { display: flex; gap: 0.75rem; margin: 1.5rem 0; }
+        .action-btn {
+            flex: 1; padding: 0.85rem; border: 1px solid var(--border);
+            border-radius: 10px; background: var(--card); color: var(--text);
+            font-size: 0.9rem; cursor: pointer; text-align: center;
+        }
+        .action-btn.primary {
+            background: var(--accent); border-color: var(--accent); color: white;
+        }
+        .action-btn:active { opacity: 0.8; }
+
+        /* Toast */
+        .toast {
+            position: fixed; bottom: 2rem; left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--green); color: white; padding: 0.75rem 1.5rem;
+            border-radius: 8px; font-size: 0.9rem; transition: transform 0.3s; z-index: 999;
+            white-space: nowrap;
+        }
+        .toast.show { transform: translateX(-50%) translateY(0); }
+
+        @media (max-width: 768px) {
+            .container { padding: 0.75rem 1rem 6rem; }
+            .progress-stats { gap: 1rem; }
+            .target-row { flex-wrap: wrap; }
+            .target-row label { min-width: 100%; }
+            .point-header { flex-direction: column; align-items: flex-start; }
+            .btn-group { width: 100%; }
+            .status-btn { flex: 1; min-width: 0; }
+            .cal-cell { min-height: 44px; }
+        }
+
+        /* Quiz Diagnosis */
+        .quiz-card.expanded .quiz-body { display: block !important; }
+        .quiz-status-badge { display: inline-block; padding: 0.3rem 0.8rem; border-radius: 8px; font-size: 0.8rem; font-weight: 600; margin: 0.75rem 1.25rem; }
+        .quiz-status-badge.submitted { background: rgba(16,185,129,0.15); color: var(--green); }
+        .quiz-status-badge.not-submitted { background: rgba(245,158,11,0.15); color: var(--yellow); }
+        .quiz-table { width: 100%; border-collapse: collapse; font-size: 0.78rem; }
+        .quiz-table th { text-align: left; padding: 0.5rem 0.75rem; color: var(--text-dim); font-weight: 600; border-bottom: 1px solid var(--border); }
+        .quiz-table td { padding: 0.5rem 0.75rem; border-bottom: 1px solid rgba(42,47,69,0.4); }
+        .quiz-table tr:last-child td { border-bottom: none; }
+    </style>
+</head>
+<body>
+
+    <!-- ===== LOGIN SCREEN ===== -->
+    <div class="login-screen" id="loginScreen">
+        <h1>高一下数学期末备考</h1>
+        <p class="subtitle">学有法，行有踪；脚踏实地，持之以恒！</p>
+        <div class="login-form" id="loginForm">
+            <label>班级</label>
+            <input type="text" id="loginClass" placeholder="如：高一4班" autocomplete="off">
+            <label>姓名</label>
+            <input type="text" id="loginName" placeholder="输入姓名" autocomplete="off" list="nameDatalist">
+            <datalist id="nameDatalist"></datalist>
+            <label>密码</label>
+            <input type="password" id="loginPin" placeholder="密码（默认1234）" value="1234" autocomplete="off">
+            <button id="loginBtn">进入自评</button>
+            <div class="error" id="loginError"></div>
+        </div>
+    </div>
+
+    <!-- ===== PASSWORD CHANGE SCREEN ===== -->
+    <div class="pwd-change-screen" id="pwdChangeScreen">
+        <h1>首次登录请修改密码</h1>
+        <p class="subtitle">请设置一个新的密码（至少4位数字）</p>
+        <div class="login-form">
+            <label>新密码</label>
+            <input type="password" id="newPin" placeholder="新密码（至少4位）" autocomplete="off">
+            <label>确认密码</label>
+            <input type="password" id="confirmPin" placeholder="再次输入新密码" autocomplete="off">
+            <button id="changePinBtn">确认修改</button>
+            <div class="error" id="pwdChangeError"></div>
+        </div>
+    </div>
+
+    <!-- ===== MAIN APP ===== -->
+    <div class="app" id="app">
+        <!-- Sidebar Overlay (mobile) -->
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+        <!-- Sidebar -->
+        <nav class="sidebar" id="sidebar">
+            <button class="sidebar-close" id="sidebarClose">&times;</button>
+            <div class="sidebar-item" data-scroll="targetSection">&#127919; 目标设定</div>
+            <div class="sidebar-item" data-scroll="progressSection">&#128202; 整体进度</div>
+            <div class="sidebar-item section-label">知识模块</div>
+            <div class="sidebar-item" data-scroll="module_A">A. 立体几何</div>
+            <div class="sidebar-item" data-scroll="module_B">B. 解三角形</div>
+            <div class="sidebar-item" data-scroll="module_C">C. 向量</div>
+            <div class="sidebar-item" data-scroll="module_D">D. 概率统计</div>
+            <div class="sidebar-item" data-scroll="module_E">E. 复数</div>
+            <div class="sidebar-item" data-scroll="module_F">F. 选填压轴</div>
+            <div class="sidebar-item section-label">工具</div>
+            <div class="sidebar-item" data-scroll="calendarSection">&#128197; 我的日历</div>
+            <div class="sidebar-item" data-scroll="tipsSection">&#128161; 温馨提示</div>
+        </nav>
+
+        <!-- Header -->
+        <div class="header">
+            <div class="header-left">
+                <button class="hamburger" id="hamburgerBtn">&#9776;</button>
+                <h1>自评看板</h1>
+            </div>
+            <div class="header-right">
+                <span class="sync-status" id="syncStatus">-- 已同步</span>
+                <span class="profile-badge" id="profileBadge"></span>
+            </div>
+        </div>
+
+        <div class="main-wrapper">
+            <div class="container">
+                <!-- Score card -->
+                <div class="score-card" id="scoreCard">
+                    <h3>我的成绩</h3>
+                    <div id="scoreContent"></div>
+                </div>
+
+                <!-- Target setting -->
+                <div class="target-section" id="targetSection">
+                    <h3>&#127919; 目标设定</h3>
+                    <div class="target-row">
+                        <label>期末数学目标分数</label>
+                        <input type="number" id="targetMath" min="0" max="150" placeholder="0-150">
+                        <span>/ 150</span>
+                    </div>
+                    <div class="target-row">
+                        <label>期末总分目标班排</label>
+                        <input type="number" id="targetRank" min="1" max="50" placeholder="目标名次">
+                    </div>
+                    <button class="target-save-btn" id="saveTargetBtn">保存目标</button>
+                </div>
+
+                <!-- Overall progress -->
+                <div class="overall-progress" id="progressSection">
+                    <h3>&#128202; 整体进度</h3>
+                    <div class="progress-stats">
+                        <div class="progress-stat">
+                            <div class="num" id="statMastered" style="color:var(--green)">0</div>
+                            <div class="label">已掌握</div>
+                        </div>
+                        <div class="progress-stat">
+                            <div class="num" id="statPartial" style="color:var(--yellow)">0</div>
+                            <div class="label">部分掌握</div>
+                        </div>
+                        <div class="progress-stat">
+                            <div class="num" id="statNot" style="color:var(--red)">0</div>
+                            <div class="label">未掌握</div>
+                        </div>
+                        <div class="progress-stat">
+                            <div class="num" id="statUnset" style="color:var(--text-dim)">0</div>
+                            <div class="label">未评估</div>
+                        </div>
+                    </div>
+                    <div class="progress-bar-outer">
+                        <div class="progress-bar-inner" id="overallBar" style="width:0%; background: linear-gradient(90deg, var(--green), var(--yellow));"></div>
+                    </div>
+                </div>
+
+                <!-- Score Prediction -->
+                <div class="prediction-section" id="predictionSection">
+                    <h3>&#127891; 预测我的期末得分</h3>
+                    <div class="prediction-total" id="predTotal">约 --/150 分</div>
+                    <div class="prediction-breakdown" id="predBreakdown"></div>
+                </div>
+
+                <!-- Radar chart -->
+                <div class="radar-section">
+                    <h3>各模块掌握度</h3>
+                    <canvas id="radarCanvas" class="radar-canvas" width="320" height="320"></canvas>
+                </div>
+
+                <!-- Calendar -->
+                <div class="calendar-section" id="calendarSection">
+                    <h3>&#128197; 我的日历</h3>
+                    <div class="countdown-banner" id="countdownBanner">距离期末考试还有 -- 天</div>
+                    <div class="cal-grid" id="calGrid"></div>
+                </div>
+
+                <!-- Quiz Diagnosis -->
+                <div id="quizDiagnosisContainer"></div>
+
+                <!-- Module cards -->
+                <div id="modulesContainer"></div>
+
+                <!-- Tips Forum -->
+                <div class="tips-section" id="tipsSection">
+                    <h3>&#128161; 温馨提示论坛</h3>
+                    <div class="tips-list" id="tipsList">
+                        <p style="color:var(--text-dim);font-size:0.85rem;">加载中...</p>
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="actions">
+                    <button class="action-btn primary" id="exportBtn">导出数据</button>
+                    <button class="action-btn" id="logoutBtn">切换账号</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Calendar Plan Modal (Multi-Task) -->
+    <div class="modal-overlay" id="calModal">
+        <div class="modal-box">
+            <h3 id="calModalTitle">复习计划</h3>
+            <div id="calTaskList" class="cal-task-list"></div>
+            <div class="cal-task-add-row">
+                <input type="text" id="calNewTaskInput" placeholder="添加新任务..." class="cal-new-task-input">
+                <button id="calAddTaskBtn" class="cal-add-task-btn">+</button>
+            </div>
+            <div class="modal-actions">
+                <button class="modal-cancel" id="calModalCancel">取消</button>
+                <button class="modal-save" id="calModalSave">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
+    <script type="module">
+        // ============================================================
+        // Supabase Import & Init
+        // ============================================================
+        import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+
+        var sb = createClient(
+            'https://zeijwibhhtznoagevaeh.supabase.co',
+            'sb_publishable_HaQf-0CDYDEet6xuTCauMw_MZxKPMty'
+        );
+
+        // ============================================================
+        // Student Data (embedded from student_data.js)
+        // ============================================================
+        var STUDENT_SCORES = {"王诗涵": {"c": "4班", "fm": 141.0, "fmr": 14, "ft": 699.5, "ftr": 1, "mm": 76.0, "mmr": 27, "mt": 524.5, "mtr": 19}, "吴沁珂": {"c": "4班", "fm": 144.0, "fmr": 3, "ft": 695.0, "ftr": 2, "mm": 93.0, "mmr": 5, "mt": 549.5, "mtr": 8}, "杨瑾华": {"c": "4班", "fm": 145.0, "fmr": 2, "ft": 687.0, "ftr": 3, "mm": 93.0, "mmr": 5, "mt": 582.0, "mtr": 1}, "张芙宁": {"c": "4班", "fm": 140.0, "fmr": 18, "ft": 685.5, "ftr": 4, "mm": 94.0, "mmr": 4, "mt": 541.5, "mtr": 13}, "刘思齐": {"c": "4班", "fm": 144.0, "fmr": 3, "ft": 682.5, "ftr": 5, "mm": 98.0, "mmr": 1, "mt": 564.0, "mtr": 4}, "张宸楠": {"c": "4班", "fm": 143.0, "fmr": 6, "ft": 681.5, "ftr": 6, "mm": 91.0, "mmr": 8, "mt": 540.0, "mtr": 15}, "张一弛": {"c": "4班", "fm": 140.0, "fmr": 18, "ft": 680.0, "ftr": 7, "mm": 83.0, "mmr": 18, "mt": 546.5, "mtr": 10}, "何知政": {"c": "4班", "fm": 142.0, "fmr": 10, "ft": 678.0, "ftr": 8, "mm": 75.0, "mmr": 31, "mt": 493.5, "mtr": 36}, "唐巍桓": {"c": "4班", "fm": 129.0, "fmr": 42, "ft": 677.5, "ftr": 9, "mm": 64.0, "mmr": 42, "mt": 523.0, "mtr": 20}, "陈以诺": {"c": "4班", "fm": 134.0, "fmr": 29, "ft": 677.5, "ftr": 9, "mm": 80.0, "mmr": 24, "mt": 530.5, "mtr": 17}, "付启亨": {"c": "4班", "fm": 141.0, "fmr": 14, "ft": 677.0, "ftr": 11, "mm": 87.0, "mmr": 13, "mt": 568.0, "mtr": 2}, "屠俊赫": {"c": "4班", "fm": 141.0, "fmr": 14, "ft": 676.5, "ftr": 12, "mm": 73.0, "mmr": 33, "mt": 521.0, "mtr": 21}, "杭诗雨": {"c": "4班", "fm": 144.0, "fmr": 3, "ft": 676.5, "ftr": 12, "mm": 76.0, "mmr": 27, "mt": 503.0, "mtr": 32}, "蒋宸安": {"c": "4班", "fm": 133.0, "fmr": 33, "ft": 674.5, "ftr": 14, "mm": 82.0, "mmr": 20, "mt": 568.0, "mtr": 2}, "贺宜量": {"c": "4班", "fm": 142.0, "fmr": 10, "ft": 674.0, "ftr": 15, "mm": 91.0, "mmr": 8, "mt": 561.5, "mtr": 5}, "许悠然": {"c": "4班", "fm": 142.0, "fmr": 10, "ft": 673.5, "ftr": 16, "mm": 64.0, "mmr": 42, "mt": 488.5, "mtr": 38}, "李玥瑶": {"c": "4班", "fm": 132.0, "fmr": 37, "ft": 673.5, "ftr": 16, "mm": 83.0, "mmr": 18, "mt": 550.5, "mtr": 6}, "高艺宁": {"c": "4班", "fm": 136.0, "fmr": 27, "ft": 672.5, "ftr": 18, "mm": 76.0, "mmr": 27, "mt": 489.5, "mtr": 37}, "张楚玉": {"c": "4班", "fm": 143.0, "fmr": 6, "ft": 671.5, "ftr": 19, "mm": 81.0, "mmr": 23, "mt": 530.5, "mtr": 17}, "黄知涵": {"c": "4班", "fm": 129.0, "fmr": 42, "ft": 667.5, "ftr": 20, "mm": 70.0, "mmr": 38, "mt": 547.5, "mtr": 9}, "李瀚林": {"c": "4班", "fm": 134.0, "fmr": 29, "ft": 666.0, "ftr": 21, "mm": 82.0, "mmr": 20, "mt": 544.0, "mtr": 11}, "朱浩文": {"c": "4班", "fm": 139.0, "fmr": 21, "ft": 665.5, "ftr": 22, "mm": 76.0, "mmr": 27, "mt": 541.5, "mtr": 13}, "毛潇然": {"c": "4班", "fm": 131.0, "fmr": 39, "ft": 665.5, "ftr": 22, "mm": 72.0, "mmr": 35, "mt": 514.5, "mtr": 23}, "邓超": {"c": "4班", "fm": 133.0, "fmr": 33, "ft": 665.0, "ftr": 24, "mm": 80.0, "mmr": 24, "mt": 503.0, "mtr": 32}, "卢慕白": {"c": "4班", "fm": 130.0, "fmr": 41, "ft": 665.0, "ftr": 24, "mm": 89.0, "mmr": 12, "mt": 512.0, "mtr": 24}, "杨嘉瑞": {"c": "4班", "fm": 141.0, "fmr": 14, "ft": 663.5, "ftr": 26, "mm": 87.0, "mmr": 13, "mt": 517.0, "mtr": 22}, "苗雨涵": {"c": "4班", "fm": 127.0, "fmr": 44, "ft": 662.5, "ftr": 27, "mm": 78.0, "mmr": 26, "mt": 506.5, "mtr": 30}, "李鹏宇": {"c": "4班", "fm": 139.0, "fmr": 21, "ft": 662.5, "ftr": 27, "mm": 90.0, "mmr": 10, "mt": 550.5, "mtr": 6}, "张涵": {"c": "4班", "fm": 131.0, "fmr": 39, "ft": 661.0, "ftr": 29, "mm": 92.0, "mmr": 7, "mt": 532.5, "mtr": 16}, "李牧远": {"c": "4班", "fm": 135.0, "fmr": 28, "ft": 660.0, "ftr": 30, "mm": 74.0, "mmr": 32, "mt": 511.5, "mtr": 26}, "卢若水": {"c": "4班", "fm": 143.0, "fmr": 6, "ft": 658.0, "ftr": 31, "mm": 95.0, "mmr": 2, "mt": 475.0, "mtr": 39}, "龚奕铭": {"c": "4班", "fm": 139.0, "fmr": 21, "ft": 653.5, "ftr": 32, "mm": 86.0, "mmr": 16, "mt": 510.0, "mtr": 27}, "曹昊坤": {"c": "4班", "fm": 137.0, "fmr": 26, "ft": 652.5, "ftr": 33, "mm": 69.0, "mmr": 40, "mt": 494.0, "mtr": 35}, "赵瑞阳": {"c": "4班", "fm": 142.0, "fmr": 10, "ft": 651.5, "ftr": 34, "mm": 87.0, "mmr": 13, "mt": 503.5, "mtr": 31}, "王冉": {"c": "4班", "fm": 134.0, "fmr": 29, "ft": 648.5, "ftr": 35, "mm": 68.0, "mmr": 41, "mt": 455.5, "mtr": 41}, "申屠泰然": {"c": "4班", "fm": 134.0, "fmr": 29, "ft": 648.5, "ftr": 35, "mm": 72.0, "mmr": 35, "mt": 543.0, "mtr": 12}, "李沐琛": {"c": "4班", "fm": 147.0, "fmr": 1, "ft": 646.5, "ftr": 37, "mm": 73.0, "mmr": 33, "mt": 444.5, "mtr": 42}, "吴润旗": {"c": "4班", "fm": 139.0, "fmr": 21, "ft": 646.0, "ftr": 38, "mm": 95.0, "mmr": 2, "mt": 512.0, "mtr": 24}, "田沐杉": {"c": "4班", "fm": 138.0, "fmr": 25, "ft": 644.5, "ftr": 39, "mm": 82.0, "mmr": 20, "mt": 508.0, "mtr": 29}, "孙诗尧": {"c": "4班", "fm": 140.0, "fmr": 18, "ft": 644.5, "ftr": 39, "mm": null, "mmr": null, "mt": null, "mtr": null}, "姚天灏": {"c": "4班", "fm": 143.0, "fmr": 6, "ft": 637.5, "ftr": 41, "mm": 86.0, "mmr": 16, "mt": 509.0, "mtr": 28}, "刘思远": {"c": "4班", "fm": 132.0, "fmr": 37, "ft": 627.0, "ftr": 42, "mm": 90.0, "mmr": 10, "mt": 495.5, "mtr": 34}, "余梦璠": {"c": "4班", "fm": 133.0, "fmr": 33, "ft": 623.0, "ftr": 43, "mm": 71.0, "mmr": 37, "mt": 436.0, "mtr": 43}, "郜源": {"c": "4班", "fm": 108.0, "fmr": 45, "ft": 618.5, "ftr": 44, "mm": 62.0, "mmr": 44, "mt": 461.0, "mtr": 40}, "马世博": {"c": "4班", "fm": 133.0, "fmr": 33, "ft": 601.5, "ftr": 45, "mm": 70.0, "mmr": 38, "mt": 432.5, "mtr": 44}};
+
+        var STUDENT_NAMES = ["王诗涵", "吴沁珂", "杨瑾华", "张芙宁", "刘思齐", "张宸楠", "张一弛", "何知政", "唐巍桓", "陈以诺", "付启亨", "屠俊赫", "杭诗雨", "蒋宸安", "贺宜量", "许悠然", "李玥瑶", "高艺宁", "张楚玉", "黄知涵", "李瀚林", "朱浩文", "毛潇然", "邓超", "卢慕白", "杨嘉瑞", "苗雨涵", "李鹏宇", "张涵", "李牧远", "卢若水", "龚奕铭", "曹昊坤", "赵瑞阳", "王冉", "申屠泰然", "李沐琛", "吴润旗", "田沐杉", "孙诗尧", "姚天灏", "刘思远", "余梦璠", "郜源", "马世博"];
+
+        // ============================================================
+        // QUIZ DATA (滚动练习0526)
+        // ============================================================
+        var QUIZ_DATA = {
+    name: "滚动练习0526",
+    date: "2026-05-26",
+    total: 70,
+    submitted: ["陈以诺", "邓超", "蒋宸安", "刘思远", "张涵", "高艺宁", "李沐琛", "屠俊赫", "张宸楠", "杨嘉瑞", "毛潇然", "杨瑾华", "杭诗雨", "赵瑞阳", "朱浩文", "黄知涵", "王诗涵", "王冉", "曹昊坤", "卢慕白", "余梦璠", "许悠然", "卢若水", "唐巍桓", "吴沁珂", "田沐杉", "付启亨", "张楚玉", "张芙宁", "李玥瑶", "苗雨涵"],
+    notSubmitted: ["贺宜量", "李牧远", "刘思齐", "吴润旗", "姚天灏", "郜源", "马世博", "张一弛", "龚奕铭", "何知政", "李鹏宇", "李瀚林", "申屠泰然", "孙诗尧"],
+    questions: [
+        {q:1, type:"单选", answer:"D", module:"向量", points:["C1", "C2"], topic:"单位向量数量积"},
+        {q:2, type:"单选", answer:"B", module:"向量", points:["C1", "C5"], topic:"勒洛三角形向量范围"},
+        {q:3, type:"单选", answer:"B", module:"解三角形", points:["B2", "B3"], topic:"等比数列+余弦定理"},
+        {q:4, type:"单选", answer:"D", module:"数列(课外)", points:[], topic:"等差数列求和"},
+        {q:5, type:"单选", answer:"B", module:"数列(课外)", points:[], topic:"等比数列求和"},
+        {q:6, type:"单选", answer:"C", module:"圆锥曲线(课外)", points:[], topic:"椭圆抛物线综合"},
+        {q:7, type:"单选", answer:"A", module:"圆锥曲线(课外)", points:[], topic:"抛物线焦点性质"},
+        {q:8, type:"单选", answer:"C", module:"圆锥曲线(课外)", points:[], topic:"椭圆焦半径"},
+        {q:9, type:"单选", answer:"C", module:"概率统计", points:["D4"], topic:"排列概率"},
+        {q:10, type:"单选", answer:"B", module:"概率统计", points:["D4"], topic:"组合计数概率"},
+        {q:11, type:"单选", answer:"C", module:"概率统计", points:["D4"], topic:"连续数字组合"},
+        {q:12, type:"单选", answer:"B", module:"概率统计", points:["D6"], topic:"分类计数概率"},
+        {q:13, type:"单选", answer:"B", module:"概率统计", points:["D4"], topic:"取球概率"},
+        {q:14, type:"单选", answer:"A", module:"概率统计", points:["D7"], topic:"条件概率对比"},
+    ],
+    scores: {"陈以诺": {"total": 70.0, "questions": [{"q": 1, "score": 5.0}, {"q": 2, "score": 5.0}, {"q": 3, "score": 5.0}, {"q": 4, "score": 5.0}, {"q": 5, "score": 5.0}, {"q": 6, "score": 5.0}, {"q": 7, "score": 5.0}, {"q": 8, "score": 5.0}, {"q": 9, "score": 5.0}, {"q": 10, "score": 5.0}, {"q": 11, "score": 5.0}, {"q": 12, "score": 5.0}, {"q": 13, "score": 5.0}, {"q": 14, "score": 5.0}]}, "邓超": {"total": 70.0, "questions": [{"q": 1, "score": 5.0}, {"q": 2, "score": 5.0}, {"q": 3, "score": 5.0}, {"q": 4, "score": 5.0}, {"q": 5, "score": 5.0}, {"q": 6, "score": 5.0}, {"q": 7, "score": 5.0}, {"q": 8, "score": 5.0}, {"q": 9, "score": 5.0}, {"q": 10, "score": 5.0}, {"q": 11, "score": 5.0}, {"q": 12, "score": 5.0}, {"q": 13, "score": 5.0}, {"q": 14, "score": 5.0}]}, "蒋宸安": {"total": 70.0, "questions": [{"q": 1, "score": 5.0}, {"q": 2, "score": 5.0}, {"q": 3, "score": 5.0}, {"q": 4, "score": 5.0}, {"q": 5, "score": 5.0}, {"q": 6, "score": 5.0}, {"q": 7, "score": 5.0}, {"q": 8, "score": 5.0}, {"q": 9, "score": 5.0}, {"q": 10, "score": 5.0}, {"q": 11, "score": 5.0}, {"q": 12, "score": 5.0}, {"q": 13, "score": 5.0}, {"q": 14, "score": 5.0}]}, "刘思远": {"total": 70.0, "questions": [{"q": 1, "score": 5.0}, {"q": 2, "score": 5.0}, {"q": 3, "score": 5.0}, {"q": 4, "score": 5.0}, {"q": 5, "score": 5.0}, {"q": 6, "score": 5.0}, {"q": 7, "score": 5.0}, {"q": 8, "score": 5.0}, {"q": 9, "score": 5.0}, {"q": 10, "score": 5.0}, {"q": 11, "score": 5.0}, {"q": 12, "score": 5.0}, {"q": 13, "score": 5.0}, {"q": 14, "score": 5.0}]}, "张涵": {"total": 70.0, "questions": [{"q": 1, "score": 5.0}, {"q": 2, "score": 5.0}, {"q": 3, "score": 5.0}, {"q": 4, "score": 5.0}, {"q": 5, "score": 5.0}, {"q": 6, "score": 5.0}, {"q": 7, "score": 5.0}, {"q": 8, "score": 5.0}, {"q": 9, "score": 5.0}, {"q": 10, "score": 5.0}, {"q": 11, "score": 5.0}, {"q": 12, "score": 5.0}, {"q": 13, "score": 5.0}, {"q": 14, "score": 5.0}]}, "高艺宁": {"total": 70.0, "questions": [{"q": 1, "score": 5.0}, {"q": 2, "score": 5.0}, {"q": 3, "score": 5.0}, {"q": 4, "score": 5.0}, {"q": 5, "score": 5.0}, {"q": 6, "score": 5.0}, {"q": 7, "score": 5.0}, {"q": 8, "score": 5.0}, {"q": 9, "score": 5.0}, {"q": 10, "score": 5.0}, {"q": 11, "score": 5.0}, {"q": 12, "score": 5.0}, {"q": 13, "score": 5.0}, {"q": 14, "score": 5.0}]}, "李沐琛": {"total": 70.0, "questions": [{"q": 1, "score": 5.0}, {"q": 2, "score": 5.0}, {"q": 3, "score": 5.0}, {"q": 4, "score": 5.0}, {"q": 5, "score": 5.0}, {"q": 6, "score": 5.0}, {"q": 7, "score": 5.0}, {"q": 8, "score": 5.0}, {"q": 9, "score": 5.0}, {"q": 10, "score": 5.0}, {"q": 11, "score": 5.0}, {"q": 12, "score": 5.0}, {"q": 13, "score": 5.0}, {"q": 14, "score": 5.0}]}, "屠俊赫": {"total": 70.0, "questions": [{"q": 1, "score": 5.0}, {"q": 2, "score": 5.0}, {"q": 3, "score": 5.0}, {"q": 4, "score": 5.0}, {"q": 5, "score": 5.0}, {"q": 6, "score": 5.0}, {"q": 7, "score": 5.0}, {"q": 8, "score": 5.0}, {"q": 9, "score": 5.0}, {"q": 10, "score": 5.0}, {"q": 11, "score": 5.0}, {"q": 12, "score": 5.0}, {"q": 13, "score": 5.0}, {"q": 14, "score": 5.0}]}, "张宸楠": {"total": 70.0, "questions": [{"q": 1, "score": 5.0}, {"q": 2, "score": 5.0}, {"q": 3, "score": 5.0}, {"q": 4, "score": 5.0}, {"q": 5, "score": 5.0}, {"q": 6, "score": 5.0}, {"q": 7, "score": 5.0}, {"q": 8, "score": 5.0}, {"q": 9, "score": 5.0}, {"q": 10, "score": 5.0}, {"q": 11, "score": 5.0}, {"q": 12, "score": 5.0}, {"q": 13, "score": 5.0}, {"q": 14, "score": 5.0}]}, "杨嘉瑞": {"total": 70.0, "questions": [{"q": 1, "score": 5.0}, {"q": 2, "score": 5.0}, {"q": 3, "score": 5.0}, {"q": 4, "score": 5.0}, {"q": 5, "score": 5.0}, {"q": 6, "score": 5.0}, {"q": 7, "score": 5.0}, {"q": 8, "score": 5.0}, {"q": 9, "score": 5.0}, {"q": 10, "score": 5.0}, {"q": 11, "score": 5.0}, {"q": 12, "score": 5.0}, {"q": 13, "score": 5.0}, {"q": 14, "score": 5.0}]}, "毛潇然": {"total": 65.0, "questions": [{"q": 1, "score": 5.0}, {"q": 2, "score": 5.0}, {"q": 3, "score": 5.0}, {"q": 4, "score": 5.0}, {"q": 5, "score": 0.0}, {"q": 6, "score": 5.0}, {"q": 7, "score": 5.0}, {"q": 8, "score": 5.0}, {"q": 9, "score": 5.0}, {"q": 10, "score": 5.0}, {"q": 11, "score": 5.0}, {"q": 12, "score": 5.0}, {"q": 13, "score": 5.0}, {"q": 14, "score": 5.0}]}, "杨瑾华": {"total": 65.0, "questions": [{"q": 1, "score": 5.0}, {"q": 2, "score": 5.0}, {"q": 3, "score": 5.0}, {"q": 4, "score": 5.0}, {"q": 5, "score": 5.0}, {"q": 6, "score": 5.0}, {"q": 7, "score": 5.0}, {"q": 8, "score": 0.0}, {"q": 9, "score": 5.0}, {"q": 10, "score": 5.0}, {"q": 11, "score": 5.0}, {"q": 12, "score": 5.0}, {"q": 13, "score": 5.0}, {"q": 14, "score": 5.0}]}, "杭诗雨": {"total": 65.0, "questions": [{"q": 1, "score": 5.0}, {"q": 2, "score": 5.0}, {"q": 3, "score": 5.0}, {"q": 4, "score": 5.0}, {"q": 5, "score": 5.0}, {"q": 6, "score": 5.0}, {"q": 7, "score": 0.0}, {"q": 8, "score": 5.0}, {"q": 9, "score": 5.0}, {"q": 10, "score": 5.0}, {"q": 11, "score": 5.0}, {"q": 12, "score": 5.0}, {"q": 13, "score": 5.0}, {"q": 14, "score": 5.0}]}, "赵瑞阳": {"total": 65.0, "questions": [{"q": 1, "score": 5.0}, {"q": 2, "score": 5.0}, {"q": 3, "score": 5.0}, {"q": 4, "score": 5.0}, {"q": 5, "score": 5.0}, {"q": 6, "score": 5.0}, {"q": 7, "score": 5.0}, {"q": 8, "score": 0.0}, {"q": 9, "score": 5.0}, {"q": 10, "score": 5.0}, {"q": 11, "score": 5.0}, {"q": 12, "score": 5.0}, {"q": 13, "score": 5.0}, {"q": 14, "score": 5.0}]}, "朱浩文": {"total": 65.0, "questions": [{"q": 1, "score": 5.0}, {"q": 2, "score": 5.0}, {"q": 3, "score": 5.0}, {"q": 4, "score": 5.0}, {"q": 5, "score": 5.0}, {"q": 6, "score": 5.0}, {"q": 7, "score": 5.0}, {"q": 8, "score": 5.0}, {"q": 9, "score": 5.0}, {"q": 10, "score": 0.0}, {"q": 11, "score": 5.0}, {"q": 12, "score": 5.0}, {"q": 13, "score": 5.0}, {"q": 14, "score": 5.0}]}, "黄知涵": {"total": 65.0, "questions": [{"q": 1, "score": 5.0}, {"q": 2, "score": 0.0}, {"q": 3, "score": 5.0}, {"q": 4, "score": 5.0}, {"q": 5, "score": 5.0}, {"q": 6, "score": 5.0}, {"q": 7, "score": 5.0}, {"q": 8, "score": 5.0}, {"q": 9, "score": 5.0}, {"q": 10, "score": 5.0}, {"q": 11, "score": 5.0}, {"q": 12, "score": 5.0}, {"q": 13, "score": 5.0}, {"q": 14, "score": 5.0}]}, "王诗涵": {"total": 65.0, "questions": [{"q": 1, "score": 5.0}, {"q": 2, "score": 5.0}, {"q": 3, "score": 5.0}, {"q": 4, "score": 5.0}, {"q": 5, "score": 5.0}, {"q": 6, "score": 5.0}, {"q": 7, "score": 5.0}, {"q": 8, "score": 5.0}, {"q": 9, "score": 5.0}, {"q": 10, "score": 5.0}, {"q": 11, "score": 5.0}, {"q": 12, "score": 0.0}, {"q": 13, "score": 5.0}, {"q": 14, "score": 5.0}]}, "王冉": {"total": 65.0, "questions": [{"q": 1, "score": 5.0}, {"q": 2, "score": 5.0}, {"q": 3, "score": 5.0}, {"q": 4, "score": 5.0}, {"q": 5, "score": 0.0}, {"q": 6, "score": 5.0}, {"q": 7, "score": 5.0}, {"q": 8, "score": 5.0}, {"q": 9, "score": 5.0}, {"q": 10, "score": 5.0}, {"q": 11, "score": 5.0}, {"q": 12, "score": 5.0}, {"q": 13, "score": 5.0}, {"q": 14, "score": 5.0}]}, "曹昊坤": {"total": 65.0, "questions": [{"q": 1, "score": 5.0}, {"q": 2, "score": 5.0}, {"q": 3, "score": 5.0}, {"q": 4, "score": 5.0}, {"q": 5, "score": 5.0}, {"q": 6, "score": 5.0}, {"q": 7, "score": 5.0}, {"q": 8, "score": 5.0}, {"q": 9, "score": 5.0}, {"q": 10, "score": 5.0}, {"q": 11, "score": 0.0}, {"q": 12, "score": 5.0}, {"q": 13, "score": 5.0}, {"q": 14, "score": 5.0}]}, "卢慕白": {"total": 60.0, "questions": [{"q": 1, "score": 5.0}, {"q": 2, "score": 5.0}, {"q": 3, "score": 5.0}, {"q": 4, "score": 5.0}, {"q": 5, "score": 5.0}, {"q": 6, "score": 5.0}, {"q": 7, "score": 5.0}, {"q": 8, "score": 5.0}, {"q": 9, "score": 5.0}, {"q": 10, "score": 0.0}, {"q": 11, "score": 5.0}, {"q": 12, "score": 5.0}, {"q": 13, "score": 5.0}, {"q": 14, "score": 0.0}]}, "余梦璠": {"total": 60.0, "questions": [{"q": 1, "score": 5.0}, {"q": 2, "score": 5.0}, {"q": 3, "score": 0.0}, {"q": 4, "score": 5.0}, {"q": 5, "score": 5.0}, {"q": 6, "score": 5.0}, {"q": 7, "score": 5.0}, {"q": 8, "score": 0.0}, {"q": 9, "score": 5.0}, {"q": 10, "score": 5.0}, {"q": 11, "score": 5.0}, {"q": 12, "score": 5.0}, {"q": 13, "score": 5.0}, {"q": 14, "score": 5.0}]}, "许悠然": {"total": 60.0, "questions": [{"q": 1, "score": 5.0}, {"q": 2, "score": 0.0}, {"q": 3, "score": 5.0}, {"q": 4, "score": 5.0}, {"q": 5, "score": 5.0}, {"q": 6, "score": 5.0}, {"q": 7, "score": 5.0}, {"q": 8, "score": 5.0}, {"q": 9, "score": 0.0}, {"q": 10, "score": 5.0}, {"q": 11, "score": 5.0}, {"q": 12, "score": 5.0}, {"q": 13, "score": 5.0}, {"q": 14, "score": 5.0}]}, "卢若水": {"total": 55.0, "questions": [{"q": 1, "score": 5.0}, {"q": 2, "score": 5.0}, {"q": 3, "score": 5.0}, {"q": 4, "score": 5.0}, {"q": 5, "score": 0.0}, {"q": 6, "score": 5.0}, {"q": 7, "score": 0.0}, {"q": 8, "score": 0.0}, {"q": 9, "score": 5.0}, {"q": 10, "score": 5.0}, {"q": 11, "score": 5.0}, {"q": 12, "score": 5.0}, {"q": 13, "score": 5.0}, {"q": 14, "score": 5.0}]}, "唐巍桓": {"total": 55.0, "questions": [{"q": 1, "score": 5.0}, {"q": 2, "score": 5.0}, {"q": 3, "score": 5.0}, {"q": 4, "score": 5.0}, {"q": 5, "score": 5.0}, {"q": 6, "score": 5.0}, {"q": 7, "score": 5.0}, {"q": 8, "score": 5.0}, {"q": 9, "score": 5.0}, {"q": 10, "score": 0.0}, {"q": 11, "score": 5.0}, {"q": 12, "score": 0.0}, {"q": 13, "score": 5.0}, {"q": 14, "score": 0.0}]}, "吴沁珂": {"total": 55.0, "questions": [{"q": 1, "score": 5.0}, {"q": 2, "score": 5.0}, {"q": 3, "score": 5.0}, {"q": 4, "score": 5.0}, {"q": 5, "score": 5.0}, {"q": 6, "score": 5.0}, {"q": 7, "score": 0.0}, {"q": 8, "score": 0.0}, {"q": 9, "score": 5.0}, {"q": 10, "score": 5.0}, {"q": 11, "score": 5.0}, {"q": 12, "score": 5.0}, {"q": 13, "score": 0.0}, {"q": 14, "score": 5.0}]}, "田沐杉": {"total": 55.0, "questions": [{"q": 1, "score": 5.0}, {"q": 2, "score": 5.0}, {"q": 3, "score": 0.0}, {"q": 4, "score": 5.0}, {"q": 5, "score": 5.0}, {"q": 6, "score": 0.0}, {"q": 7, "score": 5.0}, {"q": 8, "score": 5.0}, {"q": 9, "score": 5.0}, {"q": 10, "score": 5.0}, {"q": 11, "score": 5.0}, {"q": 12, "score": 5.0}, {"q": 13, "score": 5.0}, {"q": 14, "score": 0.0}]}, "付启亨": {"total": 55.0, "questions": [{"q": 1, "score": 5.0}, {"q": 2, "score": 5.0}, {"q": 3, "score": 5.0}, {"q": 4, "score": 5.0}, {"q": 5, "score": 0.0}, {"q": 6, "score": 5.0}, {"q": 7, "score": 0.0}, {"q": 8, "score": 5.0}, {"q": 9, "score": 0.0}, {"q": 10, "score": 5.0}, {"q": 11, "score": 5.0}, {"q": 12, "score": 5.0}, {"q": 13, "score": 5.0}, {"q": 14, "score": 5.0}]}, "张楚玉": {"total": 55.0, "questions": [{"q": 1, "score": 5.0}, {"q": 2, "score": 5.0}, {"q": 3, "score": 5.0}, {"q": 4, "score": 5.0}, {"q": 5, "score": 5.0}, {"q": 6, "score": 5.0}, {"q": 7, "score": 0.0}, {"q": 8, "score": 0.0}, {"q": 9, "score": 5.0}, {"q": 10, "score": 5.0}, {"q": 11, "score": 5.0}, {"q": 12, "score": 5.0}, {"q": 13, "score": 0.0}, {"q": 14, "score": 5.0}]}, "张芙宁": {"total": 55.0, "questions": [{"q": 1, "score": 5.0}, {"q": 2, "score": 5.0}, {"q": 3, "score": 5.0}, {"q": 4, "score": 5.0}, {"q": 5, "score": 5.0}, {"q": 6, "score": 5.0}, {"q": 7, "score": 0.0}, {"q": 8, "score": 5.0}, {"q": 9, "score": 5.0}, {"q": 10, "score": 5.0}, {"q": 11, "score": 5.0}, {"q": 12, "score": 5.0}, {"q": 13, "score": 0.0}, {"q": 14, "score": 0.0}]}, "李玥瑶": {"total": 50.0, "questions": [{"q": 1, "score": 5.0}, {"q": 2, "score": 5.0}, {"q": 3, "score": 5.0}, {"q": 4, "score": 0.0}, {"q": 5, "score": 5.0}, {"q": 6, "score": 0.0}, {"q": 7, "score": 5.0}, {"q": 8, "score": 0.0}, {"q": 9, "score": 5.0}, {"q": 10, "score": 5.0}, {"q": 11, "score": 5.0}, {"q": 12, "score": 5.0}, {"q": 13, "score": 0.0}, {"q": 14, "score": 5.0}]}, "苗雨涵": {"total": 45.0, "questions": [{"q": 1, "score": 5.0}, {"q": 2, "score": 5.0}, {"q": 3, "score": 5.0}, {"q": 4, "score": 5.0}, {"q": 5, "score": 5.0}, {"q": 6, "score": 5.0}, {"q": 7, "score": 5.0}, {"q": 8, "score": 5.0}, {"q": 9, "score": 0.0}, {"q": 10, "score": 0.0}, {"q": 11, "score": 5.0}, {"q": 12, "score": 0.0}, {"q": 13, "score": 0.0}, {"q": 14, "score": 0.0}]}}
+};
+
+        // ============================================================
+        // Knowledge Base
+        // ============================================================
+        var KB = {
+            A: { name: '立体几何', points: [
+                { id:'A1', name:'三视图还原与直观图', w:'mid' },
+                { id:'A2', name:'截面问题分析', w:'mid' },
+                { id:'A3', name:'柱体/锥体表面积', w:'high' },
+                { id:'A4', name:'球的表面积与体积', w:'mid' },
+                { id:'A5', name:'线面平行判定与性质', w:'high' },
+                { id:'A6', name:'面面平行判定与性质', w:'mid' },
+                { id:'A7', name:'线面垂直判定与性质', w:'high' },
+                { id:'A8', name:'面面垂直判定与性质', w:'high' },
+                { id:'A9', name:'空间角(异面直线角/线面角/二面角)', w:'high' },
+                { id:'A10', name:'点面距离计算', w:'high' },
+                { id:'A11', name:'空间向量坐标法', w:'mid' },
+                { id:'A12', name:'立几综合证明', w:'high' },
+            ]},
+            B: { name: '解三角形', points: [
+                { id:'B1', name:'正弦定理(解三角形/边角互化)', w:'high' },
+                { id:'B2', name:'余弦定理(解三角形/边角互化)', w:'high' },
+                { id:'B3', name:'面积公式(1/2\u00b7ab\u00b7sinC)', w:'high' },
+                { id:'B4', name:'正余弦综合(选条件/最值/范围)', w:'high' },
+            ]},
+            C: { name: '向量', points: [
+                { id:'C1', name:'基本运算与坐标表示', w:'mid' },
+                { id:'C2', name:'数量积(定义/坐标/运算律)', w:'high' },
+                { id:'C3', name:'夹角与模的计算', w:'high' },
+                { id:'C4', name:'平面向量几何应用(基底表示)', w:'mid' },
+                { id:'C5', name:'向量共线/垂直条件', w:'mid' },
+                { id:'C6', name:'向量综合(最值/动点)', w:'high' },
+            ]},
+            D: { name: '概率统计', points: [
+                { id:'D1', name:'平均数/中位数/众数', w:'mid' },
+                { id:'D2', name:'方差与标准差', w:'high' },
+                { id:'D3', name:'频率分布直方图', w:'high' },
+                { id:'D4', name:'百分位数估计', w:'mid' },
+                { id:'D5', name:'分层抽样', w:'mid' },
+                { id:'D6', name:'古典概型', w:'mid' },
+                { id:'D7', name:'独立事件与乘法公式', w:'high' },
+                { id:'D8', name:'统计综合(直方图+概率+决策)', w:'high' },
+            ]},
+            E: { name: '复数', points: [
+                { id:'E1', name:'基本概念与四则运算', w:'mid' },
+                { id:'E2', name:'模与共轭复数', w:'mid' },
+                { id:'E3', name:'几何意义与坐标表示', w:'low' },
+            ]},
+            F: { name: '选填压轴', points: [
+                { id:'F1', name:'选择题第10题压轴(向量/立几)', w:'high' },
+                { id:'F2', name:'填空题第16题压轴(综合性)', w:'high' },
+                { id:'F3', name:'新定义与探究题型(Q21)', w:'high' },
+            ]},
+        };
+
+        // Module weights for score prediction (out of 150)
+        var MODULE_WEIGHTS = {
+            A: { pts: 38, pct: 25 },
+            B: { pts: 27, pct: 18 },
+            C: { pts: 18, pct: 12 },
+            D: { pts: 25, pct: 17 },
+            E: { pts: 8,  pct: 5 },
+            F: { pts: 34, pct: 23 },
+        };
+
+        // ============================================================
+        // Global State
+        // ============================================================
+        var currentUser = null;
+        var assessments = {};
+        var customPoints = {};    // { moduleKey: [ {id, name} ] }
+        var reviewPlans = {};     // { 'YYYY-MM-DD': 'plan text' }
+        var tipsCache = [];
+        var likedTips = {};       // { tipId: true }
+        var pendingFirstLogin = false;
+        var pendingStudentData = null;
+        var calendarModalDate = null;
+        var moduleSortModes = {};   // { moduleKey: 'mastery'|'kb' }
+        var planCheckStates = {};   // { 'YYYY-MM-DD': true/false }
+        var modalTasks = [];        // current modal task list state
+        var dismissedSuggestions = {}; // { pointId: true }
+
+        // ============================================================
+        // DOM Helpers
+        // ============================================================
+        function $(id) { return document.getElementById(id); }
+
+        function showToast(msg) {
+            var t = $('toast');
+            t.textContent = msg;
+            t.classList.add('show');
+            setTimeout(function() { t.classList.remove('show'); }, 2500);
+        }
+
+        function updateSyncStatus(ok) {
+            var el = $('syncStatus');
+            el.textContent = ok ? '\u25cf 已同步' : '\u25cf 同步失败';
+            el.className = ok ? 'sync-status' : 'sync-status offline';
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        }
+
+        function parsePlanContent(raw) {
+            if (!raw || !raw.trim()) return [];
+            try {
+                var parsed = JSON.parse(raw);
+                if (Array.isArray(parsed)) return parsed;
+            } catch (_) {}
+            // Legacy plain text format - convert to single task
+            return [{ text: raw.trim(), done: false }];
+        }
+
+        // ============================================================
+        // Populate Name Datalist
+        // ============================================================
+        function populateDatalist() {
+            var dl = $('nameDatalist');
+            dl.innerHTML = '';
+            STUDENT_NAMES.forEach(function(name) {
+                var opt = document.createElement('option');
+                opt.value = name;
+                dl.appendChild(opt);
+            });
+        }
+
+        // ============================================================
+        // LOGIN FLOW
+        // ============================================================
+        async function doLogin() {
+            var cls = $('loginClass').value.trim();
+            var name = $('loginName').value.trim();
+            var pin = $('loginPin').value.trim() || '1234';
+            var errEl = $('loginError');
+            errEl.style.display = 'none';
+
+            if (!cls || !name) {
+                errEl.textContent = '请填写班级和姓名';
+                errEl.style.display = 'block';
+                return;
+            }
+            if (!STUDENT_NAMES.includes(name)) {
+                errEl.textContent = '该姓名不在班级名单中';
+                errEl.style.display = 'block';
+                return;
+            }
+
+            try {
+                // Look up by name only — students were pre-imported, names are unique
+                var { data: existing, error: lookupErr } = await sb.from('students')
+                    .select('id, class_name, name, pin')
+                    .eq('name', name)
+                    .limit(1)
+                    .maybeSingle();
+
+                if (lookupErr) throw lookupErr;
+
+                if (existing) {
+                    if (existing.pin !== pin) {
+                        errEl.textContent = '密码不正确';
+                        errEl.style.display = 'block';
+                        return;
+                    }
+                    currentUser = existing;
+
+                    // Check first-login status (try DB column, fall back to localStorage)
+                    var needsChange = false;
+                    try {
+                        var { data: flData } = await sb.from('students')
+                            .select('first_login_done')
+                            .eq('id', existing.id)
+                            .single();
+                        if (flData && flData.first_login_done === false) {
+                            needsChange = true;
+                        } else if (!flData || flData.first_login_done == null) {
+                            needsChange = !localStorage.getItem('fl_' + existing.id);
+                        }
+                    } catch (_) {
+                        // Column may not exist — fall back to localStorage
+                        needsChange = !localStorage.getItem('fl_' + existing.id);
+                    }
+
+                    if (needsChange) {
+                        showPasswordChangeScreen();
+                        return;
+                    }
+                    await enterApp();
+                } else {
+                    // Student not in DB — should not happen since we pre-imported all 45
+                    errEl.textContent = '未找到您的记录，请确认姓名是否正确';
+                    errEl.style.display = 'block';
+                }
+            } catch (e) {
+                errEl.textContent = '连接失败: ' + e.message;
+                errEl.style.display = 'block';
+            }
+        }
+
+        // ============================================================
+        // PASSWORD CHANGE
+        // ============================================================
+        function showPasswordChangeScreen() {
+            $('loginScreen').style.display = 'none';
+            $('pwdChangeScreen').style.display = 'flex';
+            $('newPin').value = '';
+            $('confirmPin').value = '';
+            $('pwdChangeError').style.display = 'none';
+        }
+
+        async function doChangePin() {
+            var newPin = $('newPin').value.trim();
+            var confirm = $('confirmPin').value.trim();
+            var errEl = $('pwdChangeError');
+            errEl.style.display = 'none';
+
+            if (newPin.length < 4) {
+                errEl.textContent = '密码至少4位';
+                errEl.style.display = 'block';
+                return;
+            }
+            if (newPin !== confirm) {
+                errEl.textContent = '两次输入的密码不一致';
+                errEl.style.display = 'block';
+                return;
+            }
+
+            try {
+                var updatePayload = { pin: newPin };
+                try {
+                    updatePayload.first_login_done = true;
+                    await sb.from('students').update(updatePayload).eq('id', currentUser.id);
+                } catch (_) {
+                    await sb.from('students').update({ pin: newPin }).eq('id', currentUser.id);
+                }
+                localStorage.setItem('fl_' + currentUser.id, '1');
+                await enterApp();
+            } catch (e) {
+                errEl.textContent = '修改失败: ' + e.message;
+                errEl.style.display = 'block';
+            }
+        }
+
+        // ============================================================
+        // ENTER MAIN APP
+        // ============================================================
+        async function enterApp() {
+            $('pwdChangeScreen').style.display = 'none';
+            $('loginScreen').style.display = 'none';
+            $('app').style.display = 'block';
+
+            sessionStorage.setItem('exam_prep_user', JSON.stringify(currentUser));
+            $('profileBadge').textContent = currentUser.class_name + ' ' + currentUser.name;
+
+            // Load assessments
+            try {
+                var { data: saved } = await sb.from('self_assessments')
+                    .select('point_id, status, note')
+                    .eq('student_id', currentUser.id);
+                assessments = {};
+                if (saved) {
+                    saved.forEach(function(a) {
+                        assessments[a.point_id] = { status: a.status, note: a.note || '' };
+                    });
+                }
+            } catch (_) { assessments = {}; }
+
+            // Load custom points
+            try {
+                var { data: cpData } = await sb.from('custom_points')
+                    .select('module_key, id, point_id, point_name')
+                    .eq('student_id', currentUser.id);
+                customPoints = {};
+                if (cpData) {
+                    cpData.forEach(function(cp) {
+                        if (!customPoints[cp.module_key]) customPoints[cp.module_key] = [];
+                        customPoints[cp.module_key].push({ id: cp.point_id || cp.id, name: cp.point_name });
+                    });
+                }
+            } catch (_) { customPoints = {}; }
+
+            // Load review plans
+            try {
+                var { data: rpData } = await sb.from('review_plans')
+                    .select('plan_date, content')
+                    .eq('student_id', currentUser.id);
+                reviewPlans = {};
+                if (rpData) {
+                    rpData.forEach(function(rp) {
+                        reviewPlans[rp.plan_date] = rp.content;
+                    });
+                }
+            } catch (_) { reviewPlans = {}; }
+
+            // Load liked tips
+            try {
+                var { data: likeData } = await sb.from('tip_likes')
+                    .select('tip_id')
+                    .eq('student_id', currentUser.id);
+                likedTips = {};
+                if (likeData) {
+                    likeData.forEach(function(l) { likedTips[l.tip_id] = true; });
+                }
+            } catch (_) { likedTips = {}; }
+
+            renderScores();
+            loadTargets();
+            loadPlanCheckStates();
+            renderAll();
+            renderCalendar();
+            loadTips();
+            showToast('登录成功，数据将实时同步');
+        }
+
+        // ============================================================
+        // SCORE DISPLAY
+        // ============================================================
+        function renderScores() {
+            var name = currentUser.name;
+            var s = STUDENT_SCORES[name];
+            var container = $('scoreContent');
+
+            if (!s) {
+                container.innerHTML = '<p style="color:var(--text-dim);font-size:0.9rem;">暂无成绩数据</p>';
+                return;
+            }
+
+            var mmHtml;
+            if (s.mm === null || s.mm === undefined) {
+                mmHtml = '<span class="score-absent">缺考</span>';
+            } else {
+                mmHtml = '<span class="score-value">' + s.mm + '/100</span>' +
+                    '<span class="score-rank">班排' + s.mmr + '</span>';
+            }
+            var mtHtml;
+            if (s.mt === null || s.mt === undefined) {
+                mtHtml = '<span class="score-absent">缺考</span>';
+            } else {
+                mtHtml = '<span class="score-value">' + s.mt + '/650</span>' +
+                    '<span class="score-rank">班排' + s.mtr + '</span>';
+            }
+
+            container.innerHTML =
+                '<div class="score-period">' +
+                    '<div class="score-period-title">高一上期末</div>' +
+                    '<div class="score-row"><span class="score-label">数学</span>' +
+                        '<span><span class="score-value">' + s.fm + '/150</span>' +
+                        '<span class="score-rank">班排' + s.fmr + '</span></span></div>' +
+                    '<div class="score-row"><span class="score-label">总分</span>' +
+                        '<span><span class="score-value">' + s.ft + '/750</span>' +
+                        '<span class="score-rank">班排' + s.ftr + '</span></span></div>' +
+                '</div>' +
+                '<div class="score-period">' +
+                    '<div class="score-period-title">高一下5月月考</div>' +
+                    '<div class="score-row"><span class="score-label">数学</span><span>' + mmHtml + '</span></div>' +
+                    '<div class="score-row"><span class="score-label">总分</span><span>' + mtHtml + '</span></div>' +
+                '</div>';
+        }
+
+        // ============================================================
+        // TARGET SETTING
+        // ============================================================
+        function getTargetKey() { return 'target_' + currentUser.id; }
+
+        function loadTargets() {
+            try {
+                var saved = localStorage.getItem(getTargetKey());
+                if (saved) {
+                    var t = JSON.parse(saved);
+                    $('targetMath').value = t.math || '';
+                    $('targetRank').value = t.rank || '';
+                }
+            } catch (_) {}
+        }
+
+        function saveTargets() {
+            var math = $('targetMath').value;
+            var rank = $('targetRank').value;
+            localStorage.setItem(getTargetKey(), JSON.stringify({ math: math, rank: rank }));
+            showToast('目标已保存');
+        }
+
+        // ============================================================
+        // KNOWLEDGE POINT SORTING
+        // ============================================================
+        function sortPoints(points, moduleKey, sortMode) {
+            if (sortMode === 'kb') return points.slice();
+            var notMastered = [];
+            var partial = [];
+            var mastered = [];
+            var unassessed = [];
+
+            points.forEach(function(p) {
+                var a = assessments[p.id];
+                if (!a || !a.status) { unassessed.push(p); }
+                else if (a.status === 'not_mastered') { notMastered.push(p); }
+                else if (a.status === 'partial') { partial.push(p); }
+                else if (a.status === 'mastered') { mastered.push(p); }
+                else { unassessed.push(p); }
+            });
+
+            return notMastered.concat(unassessed).concat(partial).concat(mastered);
+        }
+
+        // ============================================================
+        // GET ALL POINTS FOR A MODULE (including custom)
+        // ============================================================
+        function getAllPoints(moduleKey) {
+            var base = KB[moduleKey].points.slice();
+            var custom = customPoints[moduleKey] || [];
+            custom.forEach(function(cp) {
+                base.push({ id: cp.id, name: cp.name, w: 'mid', custom: true });
+            });
+            return base;
+        }
+
+        // ============================================================
+        // RENDER ALL
+        // ============================================================
+        function renderAll() {
+            renderQuizDiagnosis();
+            renderModules();
+            renderStats();
+            drawRadar();
+            renderPrediction();
+        }
+
+        // ============================================================
+        // QUIZ DIAGNOSIS
+        // ============================================================
+        function renderQuizDiagnosis() {
+            var container = $('quizDiagnosisContainer');
+            if (!container || !currentUser) return;
+
+            var studentName = currentUser.name;
+            var isSubmitted = QUIZ_DATA.submitted.indexOf(studentName) !== -1;
+            var studentScores = QUIZ_DATA.scores[studentName] || null;
+
+            var statusBadge = '';
+            if (isSubmitted) {
+                statusBadge = '<span class="quiz-status-badge submitted">已提交 (' + QUIZ_DATA.date + ')</span>';
+                if (studentScores) {
+                    var totalScore = studentScores.total;
+                    var totalColor = totalScore >= 60 ? 'var(--green)' : totalScore >= 50 ? 'var(--yellow)' : 'var(--red)';
+                    statusBadge += '<div style="padding:0 1.25rem 0.75rem;font-size:0.85rem;">' +
+                        '<span style="color:var(--text-dim);">总分: </span>' +
+                        '<span style="color:' + totalColor + ';font-weight:700;font-size:1rem;">' + totalScore + '</span>' +
+                        '<span style="color:var(--text-dim);"> / ' + QUIZ_DATA.total + '</span>' +
+                        '</div>';
+                } else {
+                    statusBadge += '<div style="padding:0 1.25rem 0.75rem;font-size:0.78rem;color:var(--text-dim);">成绩待批改录入</div>';
+                }
+            } else {
+                statusBadge = '<span class="quiz-status-badge not-submitted">未提交</span>';
+                statusBadge += '<div style="padding:0 1.25rem 0.75rem;font-size:0.78rem;color:var(--yellow);">请联系老师补交</div>';
+            }
+
+            var tableRows = QUIZ_DATA.questions.map(function(q) {
+                var scoreCell = '-';
+                if (studentScores && studentScores.questions) {
+                    var sq = studentScores.questions.find(function(s) { return s.q === q.q; });
+                    if (sq) {
+                        if (sq.score === 5) {
+                            scoreCell = '<span style="color:var(--green);font-weight:600;">5/5 &#10003;</span>';
+                        } else {
+                            scoreCell = '<span style="color:var(--red);font-weight:600;">0/5 &#10007;</span>';
+                        }
+                    }
+                }
+                var pointsStr = q.points.length > 0 ? q.points.join(', ') : '-';
+                var topicStr = q.topic || '';
+                return '<tr>' +
+                    '<td style="text-align:center;">' + q.q + '</td>' +
+                    '<td>' + q.type + '</td>' +
+                    '<td style="font-weight:600;color:var(--green);">' + q.answer + '</td>' +
+                    '<td>' + q.module + '</td>' +
+                    '<td style="font-size:0.72rem;color:var(--text-dim);">' + topicStr + '</td>' +
+                    '<td style="font-size:0.7rem;color:var(--text-dim);">' + pointsStr + '</td>' +
+                    '<td style="text-align:center;">' + scoreCell + '</td>' +
+                    '</tr>';
+            }).join('');
+
+            container.innerHTML = '<div class="quiz-card" style="background:var(--card);border:1px solid var(--border);border-radius:12px;margin-bottom:0.75rem;overflow:hidden;">' +
+                '<div style="padding:1rem 1.25rem;display:flex;align-items:center;justify-content:space-between;cursor:pointer;" onclick="this.parentElement.classList.toggle(\'expanded\')">' +
+                    '<div>' +
+                        '<span style="font-size:1rem;font-weight:600;">&#128221; 小测诊断</span>' +
+                        '<span style="font-size:0.8rem;color:var(--text-dim);margin-left:0.5rem;">' + QUIZ_DATA.name + '</span>' +
+                    '</div>' +
+                    '<span style="color:var(--text-dim);font-size:0.8rem;">&#9660;</span>' +
+                '</div>' +
+                '<div class="quiz-body" style="display:none;border-top:1px solid var(--border);">' +
+                    statusBadge +
+                    '<table class="quiz-table">' +
+                        '<thead><tr>' +
+                            '<th style="text-align:center;">题号</th>' +
+                            '<th>题型</th>' +
+                            '<th>正确答案</th>' +
+                            '<th>模块</th>' +
+                            '<th>考点</th>' +
+                            '<th>知识点</th>' +
+                            '<th style="text-align:center;">得分</th>' +
+                        '</tr></thead>' +
+                        '<tbody>' + tableRows + '</tbody>' +
+                    '</table>' +
+                '</div>' +
+            '</div>';
+        }
+
+        // ============================================================
+        // QUIZ-BASED SUGGESTIONS
+        // ============================================================
+        function computeQuizSuggestions() {
+            if (!currentUser) return {};
+            var studentScores = QUIZ_DATA.scores[currentUser.name];
+            if (!studentScores) return {};
+
+            var suggestions = {}; // { pointId: { correct: N, wrong: N, total: N } }
+
+            // Build point -> question results mapping
+            QUIZ_DATA.questions.forEach(function(q) {
+                var qResult = studentScores.questions.find(function(sq) { return sq.q === q.q; });
+                if (!qResult) return;
+                var isCorrect = qResult.score === 5;
+
+                q.points.forEach(function(pid) {
+                    if (!suggestions[pid]) {
+                        suggestions[pid] = { correct: 0, wrong: 0, total: 0 };
+                    }
+                    suggestions[pid].total++;
+                    if (isCorrect) {
+                        suggestions[pid].correct++;
+                    } else {
+                        suggestions[pid].wrong++;
+                    }
+                });
+            });
+
+            // Apply rules
+            Object.keys(suggestions).forEach(function(pid) {
+                var s = suggestions[pid];
+                if (s.wrong >= 2) {
+                    s.status = 'not_mastered';
+                } else if (s.correct >= 3) {
+                    s.status = 'mastered';
+                } else if (s.correct >= 1) {
+                    s.status = 'partial';
+                } else {
+                    s.status = 'not_mastered';
+                }
+            });
+
+            return suggestions;
+        }
+
+        // ============================================================
+        // MODULE CARDS
+        // ============================================================
+        function renderModules() {
+            var container = $('modulesContainer');
+            var expandedKeys = {};
+            container.querySelectorAll('.module-card.expanded').forEach(function(c) {
+                expandedKeys[c.getAttribute('data-key')] = true;
+            });
+            container.innerHTML = '';
+
+            // Compute quiz-based suggestions
+            var quizSuggestions = computeQuizSuggestions();
+            // Filter out dismissed ones
+            Object.keys(dismissedSuggestions).forEach(function(pid) {
+                delete quizSuggestions[pid];
+            });
+            // Also filter out points where student already has a self-assessment
+            Object.keys(quizSuggestions).forEach(function(pid) {
+                if (assessments[pid] && assessments[pid].status) {
+                    delete quizSuggestions[pid]; // Student already assessed this
+                }
+            });
+
+            Object.entries(KB).forEach(function(entry) {
+                var key = entry[0];
+                var mod = entry[1];
+                var allPoints = getAllPoints(key);
+                var sortMode = moduleSortModes[key] || 'mastery';
+                var sortedPoints = sortPoints(allPoints, key, sortMode);
+                var stats = getModuleStats(key);
+                var total = allPoints.length;
+                var pct = total > 0 ? Math.round(((stats.g + stats.y * 0.5) / total) * 100) : 0;
+
+                var pointsHtml = sortedPoints.map(function(p) {
+                    var a = assessments[p.id] || {};
+                    var weightLabel = p.w === 'high' ? '高频' : p.w === 'mid' ? '中频' : '低频';
+                    var gActive = a.status === 'mastered' ? ' active-g' : '';
+                    var yActive = a.status === 'partial' ? ' active-y' : '';
+                    var rActive = a.status === 'not_mastered' ? ' active-r' : '';
+                    var noteVal = a.note || '';
+                    var customBadge = p.custom ? '<span class="custom-badge">自定义</span>' : '';
+
+                    var pointHtml = '<div class="point-item">' +
+                        '<div class="point-header">' +
+                            '<span class="point-weight weight-' + p.w + '">' + weightLabel + '</span>' +
+                            customBadge +
+                            '<span class="point-name">' + p.id + ' ' + escapeHtml(p.name) + '</span>' +
+                            '<div class="btn-group">' +
+                                '<button class="status-btn' + gActive + '" data-pid="' + p.id + '" data-status="mastered">满分拿下</button>' +
+                                '<button class="status-btn' + yActive + '" data-pid="' + p.id + '" data-status="partial">加强练习</button>' +
+                                '<button class="status-btn' + rActive + '" data-pid="' + p.id + '" data-status="not_mastered">有点挑战</button>' +
+                            '</div>' +
+                        '</div>';
+
+                    // Quiz suggestion for this point (only if not yet self-assessed and not dismissed)
+                    var quizSugg = quizSuggestions[p.id];
+                    if (quizSugg) {
+                        var suggText = quizSugg.status === 'mastered' ? '满分拿下' : quizSugg.status === 'partial' ? '加强练习' : '有点挑战';
+                        var suggColor = quizSugg.status === 'mastered' ? 'var(--green)' : quizSugg.status === 'partial' ? 'var(--yellow)' : 'var(--red)';
+                        var suggRgb = quizSugg.status === 'mastered' ? '16,185,129' : quizSugg.status === 'partial' ? '245,158,11' : '239,68,68';
+                        pointHtml += '<div class="quiz-sugg" style="margin-top:0.4rem;font-size:0.72rem;color:' + suggColor + ';display:flex;align-items:center;gap:0.3rem;padding:0 0 0.4rem 0;">' +
+                            '<span style="background:rgba(' + suggRgb + ',0.12);padding:0.15rem 0.5rem;border-radius:4px;">' +
+                            '\uD83D\uDCDD 小测建议: ' + suggText + ' (对' + quizSugg.correct + '/' + quizSugg.total + '题)</span>' +
+                            '<button class="quiz-sugg-accept" data-point="' + p.id + '" data-status="' + quizSugg.status + '" style="background:transparent;border:1px solid ' + suggColor + ';color:' + suggColor + ';font-size:0.68rem;padding:0.1rem 0.4rem;border-radius:4px;cursor:pointer;">采纳</button>' +
+                            '<button class="quiz-sugg-dismiss" data-point="' + p.id + '" style="background:transparent;border:1px solid var(--border);color:var(--text-dim);font-size:0.68rem;padding:0.1rem 0.4rem;border-radius:4px;cursor:pointer;">忽略</button>' +
+                        '</div>';
+                    }
+
+                    pointHtml += '<textarea class="point-note" data-pid="' + p.id + '" placeholder="备注（易错点、需要加强的地方...）">' + escapeHtml(noteVal) + '</textarea>' +
+                        '<div class="note-actions">' +
+                            '<button class="share-tip-btn" data-pid="' + p.id + '" data-modname="' + escapeHtml(mod.name) + '" data-pname="' + escapeHtml(p.name) + '">分享到论坛</button>' +
+                        '</div>' +
+                    '</div>';
+
+                    return pointHtml;
+                }).join('');
+
+                // Add custom point input
+                var addCustomHtml = '<div class="add-custom-point">' +
+                    '<input type="text" placeholder="新知识点名称" data-module="' + key + '" class="custom-point-input">' +
+                    '<button data-module="' + key + '" class="add-custom-btn">+ 添加</button>' +
+                '</div>';
+
+                var sortToggleLabel = sortMode === 'mastery' ? '按掌握情况排列' : '按知识点顺序';
+                var sortToggleActive = sortMode === 'mastery' ? ' active' : '';
+                var sortToggleHtml = '<button class="sort-toggle-btn' + sortToggleActive + '" data-module="' + key + '">\u21C5 ' + sortToggleLabel + '</button>';
+
+                var card = document.createElement('div');
+                card.className = 'module-card' + (expandedKeys[key] ? ' expanded' : '');
+                card.setAttribute('data-key', key);
+                card.id = 'module_' + key;
+
+                var dotsHtml = '';
+                if (stats.g > 0) dotsHtml += '<span class="dot g" title="掌握' + stats.g + '"></span>';
+                if (stats.y > 0) dotsHtml += '<span class="dot y" title="部分' + stats.y + '"></span>';
+                if (stats.r > 0) dotsHtml += '<span class="dot r" title="未掌握' + stats.r + '"></span>';
+
+                card.innerHTML =
+                    '<div class="module-header">' +
+                        '<span class="module-name">' + key + '. ' + mod.name + '</span>' +
+                        '<div class="module-meta">' +
+                            '<div class="module-dots">' + dotsHtml + '</div>' +
+                            '<span class="module-pct">' + pct + '%</span>' +
+                            '<span class="expand-icon">\u25BC</span>' +
+                        '</div>' +
+                    '</div>' +
+                    '<div class="module-body">' + sortToggleHtml + pointsHtml + addCustomHtml + '</div>';
+
+                container.appendChild(card);
+            });
+        }
+
+        function getModuleStats(key) {
+            var g = 0, y = 0, r = 0;
+            var allPoints = getAllPoints(key);
+            allPoints.forEach(function(p) {
+                var a = assessments[p.id];
+                if (a) {
+                    if (a.status === 'mastered') g++;
+                    else if (a.status === 'partial') y++;
+                    else r++;
+                }
+            });
+            return { g: g, y: y, r: r };
+        }
+
+        // ============================================================
+        // OVERALL PROGRESS
+        // ============================================================
+        function renderStats() {
+            var g = 0, y = 0, r = 0, total = 0;
+            Object.keys(KB).forEach(function(key) {
+                var allPts = getAllPoints(key);
+                total += allPts.length;
+                allPts.forEach(function(p) {
+                    var a = assessments[p.id];
+                    if (a) {
+                        if (a.status === 'mastered') g++;
+                        else if (a.status === 'partial') y++;
+                        else if (a.status === 'not_mastered') r++;
+                    }
+                });
+            });
+            $('statMastered').textContent = g;
+            $('statPartial').textContent = y;
+            $('statNot').textContent = r;
+            $('statUnset').textContent = total - g - y - r;
+            var pct = total > 0 ? Math.round(((g + y * 0.5) / total) * 100) : 0;
+            $('overallBar').style.width = pct + '%';
+        }
+
+        // ============================================================
+        // SCORE PREDICTION
+        // ============================================================
+        function renderPrediction() {
+            var totalPred = 0;
+            var breakdownHtml = '';
+
+            Object.entries(KB).forEach(function(entry) {
+                var key = entry[0];
+                var mod = entry[1];
+                var weight = MODULE_WEIGHTS[key];
+                var allPts = getAllPoints(key);
+                var modTotal = allPts.length;
+
+                var modScore = 0;
+                allPts.forEach(function(p) {
+                    var a = assessments[p.id];
+                    var perPoint = weight.pts / modTotal;
+                    if (!a || !a.status) {
+                        modScore += perPoint * 0.5; // unassessed = 50%
+                    } else if (a.status === 'mastered') {
+                        modScore += perPoint * 1.0;
+                    } else if (a.status === 'partial') {
+                        modScore += perPoint * 0.6;
+                    } else if (a.status === 'not_mastered') {
+                        modScore += perPoint * 0.25;
+                    }
+                });
+
+                totalPred += modScore;
+
+                var statusSummary = getModuleStats(key);
+                breakdownHtml += '<div class="pred-row">' +
+                    '<span class="pred-mod">' + key + '. ' + mod.name + '</span>' +
+                    '<span class="pred-detail">' + statusSummary.g + '/' + modTotal + ' 掌握</span>' +
+                    '<span class="pred-pts">' + modScore.toFixed(1) + '/' + weight.pts + '</span>' +
+                '</div>';
+            });
+
+            $('predTotal').textContent = '根据你的自评，预测期末数学得分：约 ' + Math.round(totalPred) + '/150 分';
+            $('predBreakdown').innerHTML = breakdownHtml;
+        }
+
+        // ============================================================
+        // RADAR CHART
+        // ============================================================
+        function drawRadar() {
+            var canvas = $('radarCanvas');
+            var ctx = canvas.getContext('2d');
+            var dpr = window.devicePixelRatio || 1;
+            var size = 320;
+            canvas.width = size * dpr;
+            canvas.height = size * dpr;
+            canvas.style.width = size + 'px';
+            canvas.style.height = size + 'px';
+            ctx.scale(dpr, dpr);
+
+            var w = size, h = size;
+            var cx = w / 2, cy = h / 2;
+            var r = Math.min(w, h) / 2 - 50;
+            ctx.clearRect(0, 0, w, h);
+
+            var modules = Object.entries(KB);
+            var n = modules.length;
+            var step = (Math.PI * 2) / n;
+
+            ctx.strokeStyle = '#2a2f45';
+            ctx.lineWidth = 1;
+            for (var i = 1; i <= 4; i++) {
+                ctx.beginPath();
+                for (var j = 0; j <= n; j++) {
+                    var a = j * step - Math.PI / 2;
+                    var x = cx + Math.cos(a) * r * i / 4;
+                    var y = cy + Math.sin(a) * r * i / 4;
+                    if (j === 0) ctx.moveTo(x, y);
+                    else ctx.lineTo(x, y);
+                }
+                ctx.stroke();
+            }
+
+            modules.forEach(function(_, idx) {
+                var a = idx * step - Math.PI / 2;
+                ctx.beginPath();
+                ctx.moveTo(cx, cy);
+                ctx.lineTo(cx + Math.cos(a) * r, cy + Math.sin(a) * r);
+                ctx.stroke();
+            });
+
+            var rates = modules.map(function(entry) {
+                var key = entry[0];
+                var allPts = getAllPoints(key);
+                var m = 0, total = allPts.length;
+                allPts.forEach(function(p) {
+                    var a = assessments[p.id];
+                    if (a && a.status === 'mastered') m++;
+                    else if (a && a.status === 'partial') m += 0.5;
+                });
+                return total > 0 ? m / total : 0;
+            });
+
+            ctx.fillStyle = 'rgba(99,102,241,0.25)';
+            ctx.strokeStyle = '#6366f1';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            rates.forEach(function(rate, idx) {
+                var a = idx * step - Math.PI / 2;
+                var x = cx + Math.cos(a) * r * rate;
+                var y = cy + Math.sin(a) * r * rate;
+                if (idx === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            });
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+
+            ctx.fillStyle = '#6366f1';
+            rates.forEach(function(rate, idx) {
+                var a = idx * step - Math.PI / 2;
+                var x = cx + Math.cos(a) * r * rate;
+                var y = cy + Math.sin(a) * r * rate;
+                ctx.beginPath();
+                ctx.arc(x, y, 3, 0, Math.PI * 2);
+                ctx.fill();
+            });
+
+            modules.forEach(function(entry, idx) {
+                var key = entry[0], mod = entry[1];
+                var a = idx * step - Math.PI / 2;
+                var lx = cx + Math.cos(a) * (r + 28);
+                var ly = cy + Math.sin(a) * (r + 28);
+                ctx.fillStyle = '#e8eaf0';
+                ctx.font = 'bold 11px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(mod.name, lx, ly);
+                ctx.font = '10px sans-serif';
+                ctx.fillStyle = '#6b7280';
+                ctx.fillText(Math.round(rates[idx] * 100) + '%', lx, ly + 14);
+            });
+        }
+
+        // ============================================================
+        // CALENDAR
+        // ============================================================
+        function renderCalendar() {
+            var examDate = new Date(2026, 6, 8); // July 8, 2026 (month is 0-indexed)
+            var today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            // Countdown
+            var diffMs = examDate.getTime() - today.getTime();
+            var diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+            if (diffDays < 0) diffDays = 0;
+            $('countdownBanner').textContent = '距离期末考试还有 ' + diffDays + ' 天';
+
+            // Calendar from June 11 to July 8
+            var startDate = new Date(2026, 5, 11); // June 11
+            var endDate = new Date(2026, 6, 8);    // July 8
+
+            var grid = $('calGrid');
+            grid.innerHTML = '';
+
+            // Day headers
+            var dayNames = ['日', '一', '二', '三', '四', '五', '六'];
+            dayNames.forEach(function(d) {
+                var cell = document.createElement('div');
+                cell.className = 'cal-header-cell';
+                cell.textContent = d;
+                grid.appendChild(cell);
+            });
+
+            // Leading empty cells
+            var startDay = startDate.getDay(); // 0=Sun
+            for (var i = 0; i < startDay; i++) {
+                var empty = document.createElement('div');
+                empty.className = 'cal-cell cal-empty';
+                grid.appendChild(empty);
+            }
+
+            // Date cells
+            var current = new Date(startDate);
+            while (current <= endDate) {
+                var dateStr = formatDate(current);
+                var isToday = current.getTime() === today.getTime();
+                var isPast = current.getTime() < today.getTime();
+                var isExam = current.getTime() === examDate.getTime();
+
+                var cell = document.createElement('div');
+                cell.className = 'cal-cell';
+                if (isToday) cell.classList.add('today');
+                if (isPast && !isToday) cell.classList.add('past');
+                if (isExam) cell.classList.add('exam-day');
+
+                var dayNum = current.getDate();
+                var monthLabel = (current.getMonth() + 1) + '/';
+                var planText = reviewPlans[dateStr] || '';
+                var planDisplay = '';
+                if (planText) {
+                    var tasks = parsePlanContent(planText);
+                    planDisplay = tasks.map(function(task, idx) {
+                        var itemKey = dateStr + '_' + idx;
+                        var checkedClass = task.done ? ' checked' : '';
+                        var checkedAttr = task.done ? ' checked' : '';
+                        return '<label class="cal-plan-item' + checkedClass + '">' +
+                            '<input type="checkbox"' + checkedAttr + ' data-plan-check="' + itemKey + '" data-date="' + dateStr + '" data-idx="' + idx + '">' +
+                            '<span class="plan-text">' + escapeHtml(task.text) + '</span>' +
+                        '</label>';
+                    }).join('');
+                }
+
+                cell.innerHTML = '<div class="cal-day">' + monthLabel + dayNum +
+                    (isExam ? ' 考试!' : '') + '</div>' +
+                    '<div class="cal-plan">' + planDisplay + '</div>';
+                cell.setAttribute('data-date', dateStr);
+                cell.addEventListener('click', function() {
+                    openCalModal(this.getAttribute('data-date'));
+                });
+
+                grid.appendChild(cell);
+                current.setDate(current.getDate() + 1);
+            }
+
+            // Attach checkbox handlers for plan check items (per-task)
+            grid.querySelectorAll('.cal-plan-item input[type="checkbox"]').forEach(function(cb) {
+                cb.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    var dateKey = cb.getAttribute('data-date');
+                    var taskIdx = parseInt(cb.getAttribute('data-idx'));
+                    var label = cb.closest('.cal-plan-item');
+                    if (cb.checked) {
+                        label.classList.add('checked');
+                    } else {
+                        label.classList.remove('checked');
+                    }
+                    // Update the task in reviewPlans
+                    var tasks = parsePlanContent(reviewPlans[dateKey] || '');
+                    if (tasks[taskIdx]) {
+                        tasks[taskIdx].done = cb.checked;
+                        reviewPlans[dateKey] = JSON.stringify(tasks);
+                        // Save to server
+                        if (currentUser) {
+                            sb.from('review_plans').upsert({
+                                student_id: currentUser.id,
+                                plan_date: dateKey,
+                                content: reviewPlans[dateKey]
+                            }, { onConflict: 'student_id,plan_date' }).catch(function(){});
+                        }
+                    }
+                });
+            });
+        }
+
+        function formatDate(d) {
+            var y = d.getFullYear();
+            var m = String(d.getMonth() + 1).padStart(2, '0');
+            var day = String(d.getDate()).padStart(2, '0');
+            return y + '-' + m + '-' + day;
+        }
+
+        function savePlanCheckStates() {
+            if (!currentUser) return;
+            var key = 'plan_checks_' + currentUser.id;
+            localStorage.setItem(key, JSON.stringify(planCheckStates));
+        }
+
+        function loadPlanCheckStates() {
+            if (!currentUser) return;
+            var key = 'plan_checks_' + currentUser.id;
+            try {
+                var saved = localStorage.getItem(key);
+                if (saved) { planCheckStates = JSON.parse(saved); }
+                else { planCheckStates = {}; }
+            } catch (_) { planCheckStates = {}; }
+        }
+
+        function openCalModal(dateStr) {
+            calendarModalDate = dateStr;
+            $('calModalTitle').textContent = dateStr + ' 复习计划';
+            modalTasks = parsePlanContent(reviewPlans[dateStr] || '');
+            renderModalTasks();
+            $('calNewTaskInput').value = '';
+            $('calModal').classList.add('open');
+            setTimeout(function() { $('calNewTaskInput').focus(); }, 100);
+        }
+
+        function renderModalTasks() {
+            var container = $('calTaskList');
+            if (!modalTasks.length) {
+                container.innerHTML = '<p style="color:var(--text-dim);font-size:0.8rem;text-align:center;padding:0.5rem;">还没有任务，在下方添加</p>';
+                return;
+            }
+            container.innerHTML = modalTasks.map(function(task, idx) {
+                var doneClass = task.done ? ' done' : '';
+                var checkedAttr = task.done ? ' checked' : '';
+                return '<div class="cal-task-item' + doneClass + '" data-idx="' + idx + '">' +
+                    '<input type="checkbox"' + checkedAttr + ' data-task-toggle="' + idx + '">' +
+                    '<input type="text" value="' + escapeHtml(task.text).replace(/"/g, '&quot;') + '" data-task-edit="' + idx + '">' +
+                    '<button class="cal-task-remove" data-task-remove="' + idx + '">×</button>' +
+                '</div>';
+            }).join('');
+
+            // Bind events
+            container.querySelectorAll('[data-task-toggle]').forEach(function(cb) {
+                cb.addEventListener('change', function() {
+                    var idx = parseInt(this.dataset.taskToggle);
+                    modalTasks[idx].done = this.checked;
+                    var item = this.closest('.cal-task-item');
+                    if (item) item.classList.toggle('done', this.checked);
+                });
+            });
+            container.querySelectorAll('[data-task-edit]').forEach(function(input) {
+                input.addEventListener('input', function() {
+                    var idx = parseInt(this.dataset.taskEdit);
+                    modalTasks[idx].text = this.value;
+                });
+            });
+            container.querySelectorAll('[data-task-remove]').forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    var idx = parseInt(this.dataset.taskRemove);
+                    modalTasks.splice(idx, 1);
+                    renderModalTasks();
+                });
+            });
+        }
+
+        function closeCalModal() {
+            $('calModal').classList.remove('open');
+            calendarModalDate = null;
+        }
+
+        async function saveCalPlan() {
+            if (!calendarModalDate || !currentUser) return;
+            // Filter out empty tasks
+            var tasks = modalTasks.filter(function(t) { return t.text && t.text.trim(); });
+            var content = JSON.stringify(tasks);
+            reviewPlans[calendarModalDate] = content;
+
+            try {
+                await sb.from('review_plans').upsert({
+                    student_id: currentUser.id,
+                    plan_date: calendarModalDate,
+                    content: content
+                }, { onConflict: 'student_id,plan_date' });
+                updateSyncStatus(true);
+            } catch (e) {
+                updateSyncStatus(false);
+            }
+
+            closeCalModal();
+            renderCalendar();
+            showToast('复习计划已保存');
+        }
+
+        // ============================================================
+        // STATUS & NOTE OPERATIONS
+        // ============================================================
+        async function setStatus(pointId, status, btnEl) {
+            if (!currentUser) return;
+
+            if (!assessments[pointId]) assessments[pointId] = {};
+            var prevStatus = assessments[pointId].status;
+            assessments[pointId].status = status;
+
+            var btns = btnEl.parentElement.querySelectorAll('.status-btn');
+            btns.forEach(function(b) { b.className = 'status-btn'; });
+            var cls = status === 'mastered' ? 'active-g' : status === 'partial' ? 'active-y' : 'active-r';
+            btnEl.className = 'status-btn ' + cls;
+
+            try {
+                await sb.from('self_assessments').upsert({
+                    student_id: currentUser.id,
+                    point_id: pointId,
+                    status: status,
+                    note: assessments[pointId].note || ''
+                }, { onConflict: 'student_id,point_id' });
+                updateSyncStatus(true);
+            } catch (e) {
+                updateSyncStatus(false);
+            }
+
+            // If status category changed, re-render modules to re-sort
+            var prevCategory = getCategory(prevStatus);
+            var newCategory = getCategory(status);
+            if (prevCategory !== newCategory) {
+                renderModules();
+                rebindModuleListeners();
+            }
+
+            renderStats();
+            drawRadar();
+            renderPrediction();
+            renderModuleDots();
+        }
+
+        function getCategory(status) {
+            if (status === 'not_mastered') return 'r';
+            if (status === 'partial') return 'y';
+            if (status === 'mastered') return 'g';
+            return 'u';
+        }
+
+        var noteSaveTimers = {};
+        function saveNoteDebounced(pointId, note) {
+            if (!currentUser) return;
+            if (!assessments[pointId]) assessments[pointId] = {};
+            assessments[pointId].note = note;
+            if (noteSaveTimers[pointId]) clearTimeout(noteSaveTimers[pointId]);
+            noteSaveTimers[pointId] = setTimeout(function() {
+                doSaveNote(pointId, note);
+            }, 800);
+        }
+
+        async function doSaveNote(pointId, note) {
+            var currentStatus = assessments[pointId] ? assessments[pointId].status : null;
+            if (currentStatus) {
+                try {
+                    await sb.from('self_assessments').upsert({
+                        student_id: currentUser.id,
+                        point_id: pointId,
+                        status: currentStatus,
+                        note: note
+                    }, { onConflict: 'student_id,point_id' });
+                    updateSyncStatus(true);
+                } catch (e) {
+                    updateSyncStatus(false);
+                }
+            }
+        }
+
+        function renderModuleDots() {
+            var cards = document.querySelectorAll('.module-card');
+            var keys = Object.keys(KB);
+            cards.forEach(function(card, idx) {
+                var key = keys[idx];
+                if (!key) return;
+                var stats = getModuleStats(key);
+                var dotsEl = card.querySelector('.module-dots');
+                var pctEl = card.querySelector('.module-pct');
+                var allPts = getAllPoints(key);
+                var total = allPts.length;
+                var pct = total > 0 ? Math.round(((stats.g + stats.y * 0.5) / total) * 100) : 0;
+
+                var html = '';
+                if (stats.g > 0) html += '<span class="dot g"></span>';
+                if (stats.y > 0) html += '<span class="dot y"></span>';
+                if (stats.r > 0) html += '<span class="dot r"></span>';
+                dotsEl.innerHTML = html;
+                if (pctEl) pctEl.textContent = pct + '%';
+            });
+        }
+
+        // ============================================================
+        // CUSTOM POINTS
+        // ============================================================
+        async function addCustomPoint(moduleKey, name) {
+            if (!currentUser || !name.trim()) return;
+            var pointId = moduleKey + '_custom_' + Date.now();
+            var pointData = { id: pointId, name: name.trim() };
+
+            // Save to Supabase
+            try {
+                await sb.from('custom_points').insert({
+                    student_id: currentUser.id,
+                    module_key: moduleKey,
+                    point_id: pointId,
+                    point_name: name.trim()
+                });
+                updateSyncStatus(true);
+            } catch (e) {
+                updateSyncStatus(false);
+                showToast('添加失败: ' + e.message);
+                return;
+            }
+
+            if (!customPoints[moduleKey]) customPoints[moduleKey] = [];
+            customPoints[moduleKey].push(pointData);
+
+            renderModules();
+            rebindModuleListeners();
+            renderStats();
+            renderPrediction();
+            showToast('自定义知识点已添加');
+        }
+
+        // ============================================================
+        // SORT TOGGLE
+        // ============================================================
+        function toggleSortMode(moduleKey) {
+            var current = moduleSortModes[moduleKey] || 'mastery';
+            moduleSortModes[moduleKey] = current === 'mastery' ? 'kb' : 'mastery';
+            renderModules();
+            rebindModuleListeners();
+        }
+
+        function addSortToggleHandler(btn) {
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                var modKey = btn.getAttribute('data-module');
+                toggleSortMode(modKey);
+            });
+        }
+
+        // ============================================================
+        // TIPS FORUM
+        // ============================================================
+        async function loadTips() {
+            try {
+                var { data: tips, error } = await sb.from('tips')
+                    .select('id, student_name, module_name, point_id, point_name, content, likes, featured, created_at')
+                    .order('likes', { ascending: false })
+                    .order('created_at', { ascending: false })
+                    .limit(50);
+                if (tips) {
+                    tipsCache = tips;
+                    renderTips();
+                }
+            } catch (_) {
+                $('tipsList').innerHTML = '<p style="color:var(--text-dim);font-size:0.85rem;">加载失败，请刷新</p>';
+            }
+        }
+
+        function renderTips() {
+            var container = $('tipsList');
+            if (!tipsCache.length) {
+                container.innerHTML = '<p style="color:var(--text-dim);font-size:0.85rem;">暂无提示，成为第一个分享的人吧!</p>';
+                return;
+            }
+
+            // Sort: featured first, then by likes desc, then by created_at desc
+            var sorted = tipsCache.slice().sort(function(a, b) {
+                if (a.featured && !b.featured) return -1;
+                if (!a.featured && b.featured) return 1;
+                if ((b.likes || 0) !== (a.likes || 0)) return (b.likes || 0) - (a.likes || 0);
+                return new Date(b.created_at) - new Date(a.created_at);
+            });
+
+            container.innerHTML = sorted.map(function(tip) {
+                var liked = likedTips[tip.id] ? ' liked' : '';
+                var likeCount = tip.likes || 0;
+                var featuredBadge = tip.featured
+                    ? '<span style="font-size:0.65rem;color:var(--yellow);background:rgba(245,158,11,0.15);padding:0.1rem 0.35rem;border-radius:3px;margin-left:0.5rem;">精选</span>'
+                    : '';
+                return '<div class="tip-card">' +
+                    '<div class="tip-meta">' + escapeHtml(tip.student_name) + ' \u00b7 ' +
+                        escapeHtml(tip.module_name) + '/' + escapeHtml(tip.point_name) +
+                        featuredBadge + '</div>' +
+                    '<div class="tip-content">' + escapeHtml(tip.content) + '</div>' +
+                    '<div class="tip-actions">' +
+                        '<button class="tip-like-btn' + liked + '" data-tipid="' + tip.id + '">' +
+                            '\uD83D\uDC4D ' + likeCount + '</button>' +
+                        '<button class="tip-add-note-btn" data-tipid="' + tip.id + '" ' +
+                            'data-pointid="' + escapeHtml(tip.point_id || '') + '" ' +
+                            'data-content="' + escapeHtml(tip.content) + '">加入我的笔记</button>' +
+                    '</div>' +
+                '</div>';
+            }).join('');
+        }
+
+        async function shareTip(pointId, moduleName, pointName) {
+            if (!currentUser) return;
+            var note = assessments[pointId] ? assessments[pointId].note : '';
+            if (!note || !note.trim()) {
+                showToast('请先在备注中写入内容再分享');
+                return;
+            }
+
+            // Check for duplicate
+            var existing = tipsCache.find(function(t) {
+                return t.student_name === currentUser.name && t.point_id === pointId && t.content === note.trim();
+            });
+            if (existing) {
+                showToast('你已经分享过相同的内容');
+                return;
+            }
+
+            try {
+                var { data: inserted, error } = await sb.from('tips').insert({
+                    student_id: currentUser.id,
+                    student_name: currentUser.name,
+                    module_name: moduleName,
+                    point_name: pointName,
+                    point_id: pointId,
+                    content: note.trim(),
+                    likes: 0
+                }).select().single();
+
+                if (error) throw error;
+                if (inserted) tipsCache.unshift(inserted);
+                renderTips();
+                showToast('已分享到论坛');
+            } catch (e) {
+                showToast('分享失败: ' + e.message);
+            }
+        }
+
+        async function likeTip(tipId) {
+            if (!currentUser) return;
+            if (likedTips[tipId]) {
+                showToast('你已经点过赞了');
+                return;
+            }
+
+            try {
+                // Increment likes
+                var tip = tipsCache.find(function(t) { return t.id === tipId; });
+                if (!tip) return;
+                var newLikes = (tip.likes || 0) + 1;
+
+                await sb.from('tips').update({ likes: newLikes }).eq('id', tipId);
+                await sb.from('tip_likes').insert({
+                    student_id: currentUser.id,
+                    tip_id: tipId
+                });
+
+                tip.likes = newLikes;
+                likedTips[tipId] = true;
+                renderTips();
+            } catch (e) {
+                showToast('点赞失败');
+            }
+        }
+
+        function addTipToNote(tipId, content) {
+            // Find the point_id from the tip
+            var tip = tipsCache.find(function(t) { return t.id === tipId; });
+            if (!tip || !tip.point_id) {
+                showToast('无法确定对应知识点');
+                return;
+            }
+
+            if (!assessments[tip.point_id]) assessments[tip.point_id] = {};
+            var existing = assessments[tip.point_id].note || '';
+            var newNote = existing ? existing + '\n---\n[' + tip.student_name + '的提示] ' + content : '[' + tip.student_name + '的提示] ' + content;
+            assessments[tip.point_id].note = newNote;
+
+            // Save
+            doSaveNote(tip.point_id, newNote);
+            showToast('已加入你的笔记');
+
+            // Re-render modules to show updated note
+            renderModules();
+            rebindModuleListeners();
+        }
+
+        // ============================================================
+        // SIDEBAR
+        // ============================================================
+        function toggleSidebar() {
+            var sidebar = $('sidebar');
+            var overlay = $('sidebarOverlay');
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('open');
+        }
+
+        function closeSidebar() {
+            $('sidebar').classList.remove('open');
+            $('sidebarOverlay').classList.remove('open');
+        }
+
+        function scrollToSection(sectionId) {
+            var el = document.getElementById(sectionId);
+            if (el) {
+                el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+            closeSidebar();
+        }
+
+        // ============================================================
+        // EXPORT
+        // ============================================================
+        function exportData() {
+            if (!currentUser) return;
+            var data = {
+                profile: { class: currentUser.class_name, name: currentUser.name },
+                scores: STUDENT_SCORES[currentUser.name] || null,
+                targets: { math: $('targetMath').value, rank: $('targetRank').value },
+                assessments: assessments,
+                exportTime: new Date().toISOString(),
+                summary: {}
+            };
+            Object.entries(KB).forEach(function(entry) {
+                var key = entry[0], mod = entry[1];
+                var s = getModuleStats(key);
+                data.summary[key] = {
+                    name: mod.name, mastered: s.g, partial: s.y,
+                    notMastered: s.r, total: getAllPoints(key).length
+                };
+            });
+            var blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            var url = URL.createObjectURL(blob);
+            var a = document.createElement('a');
+            a.href = url;
+            a.download = '自评_' + currentUser.name + '_' + new Date().toLocaleDateString('zh-CN') + '.json';
+            a.click();
+            URL.revokeObjectURL(url);
+            showToast('数据已导出');
+        }
+
+        // ============================================================
+        // LOGOUT
+        // ============================================================
+        function logout() {
+            currentUser = null;
+            assessments = {};
+            customPoints = {};
+            reviewPlans = {};
+            tipsCache = [];
+            likedTips = {};
+            planCheckStates = {};
+            moduleSortModes = {};
+            dismissedSuggestions = {};
+            pendingFirstLogin = false;
+            pendingStudentData = null;
+            sessionStorage.removeItem('exam_prep_user');
+            $('app').style.display = 'none';
+            $('pwdChangeScreen').style.display = 'none';
+            $('loginScreen').style.display = 'flex';
+            $('loginError').style.display = 'none';
+        }
+
+        // ============================================================
+        // EVENT LISTENERS
+        // ============================================================
+
+        // Login
+        $('loginBtn').addEventListener('click', doLogin);
+        $('loginForm').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') { e.preventDefault(); doLogin(); }
+        });
+
+        // Password change
+        $('changePinBtn').addEventListener('click', doChangePin);
+        $('pwdChangeScreen').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && document.activeElement && document.activeElement.id === 'confirmPin') {
+                e.preventDefault(); doChangePin();
+            }
+        });
+
+        // Targets
+        $('saveTargetBtn').addEventListener('click', saveTargets);
+
+        // Export / Logout
+        $('exportBtn').addEventListener('click', exportData);
+        $('logoutBtn').addEventListener('click', logout);
+
+        // Sidebar
+        $('hamburgerBtn').addEventListener('click', toggleSidebar);
+        $('sidebarClose').addEventListener('click', closeSidebar);
+        $('sidebarOverlay').addEventListener('click', closeSidebar);
+
+        // Sidebar navigation
+        $('sidebar').addEventListener('click', function(e) {
+            var item = e.target.closest('.sidebar-item[data-scroll]');
+            if (item) {
+                scrollToSection(item.getAttribute('data-scroll'));
+            }
+        });
+
+        // Calendar modal
+        $('calModalCancel').addEventListener('click', closeCalModal);
+        $('calModalSave').addEventListener('click', saveCalPlan);
+        $('calModal').addEventListener('click', function(e) {
+            if (e.target === $('calModal')) closeCalModal();
+        });
+
+        // Add task button and Enter key in new task input
+        $('calAddTaskBtn').addEventListener('click', function() {
+            var input = $('calNewTaskInput');
+            var text = input.value.trim();
+            if (!text) return;
+            modalTasks.push({ text: text, done: false });
+            input.value = '';
+            renderModalTasks();
+        });
+        $('calNewTaskInput').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                $('calAddTaskBtn').click();
+            }
+        });
+
+        // Module container: delegated events
+        function rebindModuleListeners() {
+            // Remove and re-add by using a fresh handler
+            var mc = $('modulesContainer');
+            mc.removeEventListener('click', moduleClickHandler);
+            mc.removeEventListener('input', moduleInputHandler);
+            mc.addEventListener('click', moduleClickHandler);
+            mc.addEventListener('input', moduleInputHandler);
+        }
+
+        function moduleClickHandler(e) {
+            // Module header expand/collapse
+            var header = e.target.closest('.module-header');
+            if (header) {
+                header.parentElement.classList.toggle('expanded');
+                return;
+            }
+
+            // Status button
+            var statusBtn = e.target.closest('.status-btn');
+            if (statusBtn) {
+                var pid = statusBtn.getAttribute('data-pid');
+                var status = statusBtn.getAttribute('data-status');
+                setStatus(pid, status, statusBtn);
+                return;
+            }
+
+            // Quiz suggestion accept button
+            var acceptBtn = e.target.closest('.quiz-sugg-accept');
+            if (acceptBtn) {
+                e.stopPropagation();
+                var qPointId = acceptBtn.getAttribute('data-point');
+                var qStatus = acceptBtn.getAttribute('data-status');
+                // Set the assessment status (without btnEl, since this is not a status-btn)
+                if (!assessments[qPointId]) assessments[qPointId] = {};
+                assessments[qPointId].status = qStatus;
+                // Save to Supabase
+                try {
+                    sb.from('self_assessments').upsert({
+                        student_id: currentUser.id,
+                        point_id: qPointId,
+                        status: qStatus,
+                        note: assessments[qPointId].note || ''
+                    }, { onConflict: 'student_id,point_id' }).then(function() {
+                        updateSyncStatus(true);
+                    }).catch(function() {
+                        updateSyncStatus(false);
+                    });
+                } catch (_) {}
+                // Remove the suggestion UI
+                var suggEl = acceptBtn.closest('.quiz-sugg');
+                if (suggEl) suggEl.remove();
+                // Re-render to update visual (stats, prediction, etc.)
+                renderModules();
+                rebindModuleListeners();
+                renderStats();
+                drawRadar();
+                renderPrediction();
+                renderModuleDots();
+                showToast('已采纳小测建议');
+                return;
+            }
+
+            // Quiz suggestion dismiss button
+            var dismissBtn = e.target.closest('.quiz-sugg-dismiss');
+            if (dismissBtn) {
+                e.stopPropagation();
+                var dPointId = dismissBtn.getAttribute('data-point');
+                dismissedSuggestions[dPointId] = true;
+                var dSuggEl = dismissBtn.closest('.quiz-sugg');
+                if (dSuggEl) dSuggEl.remove();
+                return;
+            }
+
+            // Add custom point button
+            var addBtn = e.target.closest('.add-custom-btn');
+            if (addBtn) {
+                var modKey = addBtn.getAttribute('data-module');
+                var input = addBtn.parentElement.querySelector('.custom-point-input');
+                if (input && input.value.trim()) {
+                    addCustomPoint(modKey, input.value.trim());
+                    input.value = '';
+                }
+                return;
+            }
+
+            // Share tip button
+            var shareBtn = e.target.closest('.share-tip-btn');
+            if (shareBtn) {
+                var sPid = shareBtn.getAttribute('data-pid');
+                var sModName = shareBtn.getAttribute('data-modname');
+                var sPName = shareBtn.getAttribute('data-pname');
+                shareTip(sPid, sModName, sPName);
+                return;
+            }
+
+            // Sort toggle button
+            var sortBtn = e.target.closest('.sort-toggle-btn');
+            if (sortBtn) {
+                var sModKey = sortBtn.getAttribute('data-module');
+                toggleSortMode(sModKey);
+                return;
+            }
+        }
+
+        function moduleInputHandler(e) {
+            if (e.target.classList.contains('point-note')) {
+                var pid = e.target.getAttribute('data-pid');
+                saveNoteDebounced(pid, e.target.value);
+            }
+        }
+
+        // Initial binding
+        $('modulesContainer').addEventListener('click', moduleClickHandler);
+        $('modulesContainer').addEventListener('input', moduleInputHandler);
+
+        // Tips container: delegated events
+        $('tipsList').addEventListener('click', function(e) {
+            var likeBtn = e.target.closest('.tip-like-btn');
+            if (likeBtn) {
+                likeTip(likeBtn.getAttribute('data-tipid'));
+                return;
+            }
+            var addNoteBtn = e.target.closest('.tip-add-note-btn');
+            if (addNoteBtn) {
+                var tipId = addNoteBtn.getAttribute('data-tipid');
+                var content = addNoteBtn.getAttribute('data-content');
+                addTipToNote(tipId, content);
+                return;
+            }
+        });
+
+        // ============================================================
+        // INITIALIZATION - Restore Session
+        // ============================================================
+        (async function init() {
+            populateDatalist();
+
+            var saved = sessionStorage.getItem('exam_prep_user');
+            if (saved) {
+                try {
+                    var parsed = JSON.parse(saved);
+                    if (parsed && parsed.id) {
+                        currentUser = parsed;
+
+                        try {
+                            var { data } = await sb.from('self_assessments')
+                                .select('point_id, status, note')
+                                .eq('student_id', currentUser.id);
+                            assessments = {};
+                            if (data) {
+                                data.forEach(function(a) {
+                                    assessments[a.point_id] = { status: a.status, note: a.note || '' };
+                                });
+                            }
+                        } catch (_) { assessments = {}; }
+
+                        // Load custom points
+                        try {
+                            var { data: cpData } = await sb.from('custom_points')
+                                .select('module_key, id, point_id, point_name')
+                                .eq('student_id', currentUser.id);
+                            customPoints = {};
+                            if (cpData) {
+                                cpData.forEach(function(cp) {
+                                    if (!customPoints[cp.module_key]) customPoints[cp.module_key] = [];
+                                    customPoints[cp.module_key].push({ id: cp.point_id || cp.id, name: cp.point_name });
+                                });
+                            }
+                        } catch (_) { customPoints = {}; }
+
+                        // Load review plans
+                        try {
+                            var { data: rpData } = await sb.from('review_plans')
+                                .select('plan_date, content')
+                                .eq('student_id', currentUser.id);
+                            reviewPlans = {};
+                            if (rpData) {
+                                rpData.forEach(function(rp) {
+                                    reviewPlans[rp.plan_date] = rp.content;
+                                });
+                            }
+                        } catch (_) { reviewPlans = {}; }
+
+                        // Load liked tips
+                        try {
+                            var { data: likeData } = await sb.from('tip_likes')
+                                .select('tip_id')
+                                .eq('student_id', currentUser.id);
+                            likedTips = {};
+                            if (likeData) {
+                                likeData.forEach(function(l) { likedTips[l.tip_id] = true; });
+                            }
+                        } catch (_) { likedTips = {}; }
+
+                        $('loginScreen').style.display = 'none';
+                        $('app').style.display = 'block';
+                        $('profileBadge').textContent = currentUser.class_name + ' ' + currentUser.name;
+                        renderScores();
+                        loadTargets();
+                        loadPlanCheckStates();
+                        renderAll();
+                        renderCalendar();
+                        loadTips();
+                    }
+                } catch (_) {}
+            }
+        })();
+
+    </script>
+</body>
+</html>

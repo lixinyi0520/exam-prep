@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>高一下数学期末备考</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg: #0a0e1a; --card: #141825; --border: #2a2f45;
+            --text: #e8eaf0; --text-dim: #6b7280;
+            --accent: #6366f1; --accent-light: #818cf8; --success: #10b981;
+        }
+        body {
+            font-family: 'PingFang SC', 'Microsoft YaHei', -apple-system, sans-serif;
+            background: var(--bg); color: var(--text);
+            min-height: 100vh; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; padding: 20px;
+        }
+        .container { text-align: center; max-width: 700px; }
+        h1 { font-size: 2.5rem; font-weight: 700; margin-bottom: 0.4rem;
+            background: linear-gradient(135deg, var(--accent-light), var(--success));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .subtitle { color: var(--text-dim); font-size: 1.05rem; margin-bottom: 0.75rem; }
+        .meta-info { color: var(--text-dim); font-size: 0.85rem; margin-bottom: 2.5rem; line-height: 1.6; }
+        .meta-info span { display: inline-block; background: var(--card); border: 1px solid var(--border); border-radius: 6px; padding: 0.3rem 0.65rem; margin: 0.25rem; font-size: 0.8rem; }
+        .role-cards { display: flex; gap: 1.5rem; justify-content: center; flex-wrap: wrap; }
+        .role-card {
+            background: var(--card); border: 1px solid var(--border); border-radius: 16px;
+            padding: 2.25rem 1.75rem; width: 260px; cursor: pointer;
+            transition: all 0.3s ease; text-decoration: none; color: var(--text);
+        }
+        .role-card:hover { border-color: var(--accent); transform: translateY(-4px); box-shadow: 0 12px 40px rgba(99,102,241,0.2); }
+        .role-icon { width: 60px; height: 60px; border-radius: 14px; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.25rem; font-size: 1.8rem; }
+        .role-card.teacher .role-icon { background: rgba(99,102,241,0.15); }
+        .role-card.student .role-icon { background: rgba(16,185,129,0.15); }
+        .role-title { font-size: 1.2rem; font-weight: 600; margin-bottom: 0.4rem; }
+        .role-desc { color: var(--text-dim); font-size: 0.85rem; line-height: 1.5; }
+        .footer { margin-top: 3rem; color: var(--text-dim); font-size: 0.8rem; }
+        .config-hint { background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.3); border-radius: 8px; padding: 0.75rem 1rem; margin-top: 2rem; font-size: 0.8rem; color: var(--warning); text-align: left; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>高一下数学期末备考</h1>
+        <p class="subtitle">学有法，行有踪；脚踏实地，持之以恒！</p>
+        <div class="meta-info">
+            <span>6大模块</span>
+            <span>38个二级知识点</span>
+            <span>45名学生已导入</span>
+            <span>2次综合套卷</span>
+            <span>实时云端同步</span>
+            <span>倒计时至7.8</span>
+        </div>
+
+        <div class="role-cards">
+            <a href="dashboard.html" class="role-card teacher">
+                <div class="role-icon">👨‍🏫</div>
+                <div class="role-title">教师端</div>
+                <div class="role-desc">日历视图(6.11-7.8)、倒计时、模块追踪、热力图、学生画像、实时数据</div>
+            </a>
+            <a href="student.html" class="role-card student">
+                <div class="role-icon">👨‍🎓</div>
+                <div class="role-title">学生端</div>
+                <div class="role-desc">成绩回顾、目标设定、知识点自评打卡、首次登录改密、数据实时同步</div>
+            </a>
+        </div>
+
+        <div class="config-hint" id="configHint" style="display:none;">
+            ⚠️ <strong>配置提醒：</strong>请先在 student.html 和 dashboard.html 中替换 Supabase anon key，否则数据无法同步。获取方式：Supabase → Settings → API → anon public key
+        </div>
+
+        <div class="footer">
+            目标：培养10人145+，班级平均140+
+        </div>
+    </div>
+    <script>
+        // 检查 Supabase key 是否已配置
+        fetch('student.html').then(r => r.text()).then(t => {
+            if (t.includes('YOUR_ANON_KEY_HERE')) {
+                document.getElementById('configHint').style.display = 'block';
+            }
+        }).catch(() => {});
+    </script>
+</body>
+</html>
