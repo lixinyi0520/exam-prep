@@ -519,6 +519,7 @@
         .quiz-table td { padding: 0.5rem 0.75rem; border-bottom: 1px solid rgba(42,47,69,0.4); }
         .quiz-table tr:last-child td { border-bottom: none; }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 
@@ -698,11 +699,11 @@
     <!-- Toast -->
     <div class="toast" id="toast"></div>
 
-    <script type="module">
+    <script>
         // ============================================================
-        // Supabase Import & Init
+        // Supabase Init
         // ============================================================
-        import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+        var { createClient } = supabase;
 
         var sb = createClient(
             'https://zeijwibhhtznoagevaeh.supabase.co',

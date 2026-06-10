@@ -229,13 +229,44 @@
             .student-detail{padding:1.25rem}
             .sd-header{flex-direction:column}
         }
+
+        /* Login screen */
+        .teacher-login{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:2rem}
+        .teacher-login h1{font-size:1.6rem;margin-bottom:.5rem;background:linear-gradient(135deg,var(--accent-light),var(--green));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+        .teacher-login .subtitle{color:var(--text-dim);margin-bottom:2rem;font-size:.9rem}
+        .teacher-login-form{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:2rem;width:100%;max-width:360px}
+        .teacher-login-form label{display:block;font-size:.85rem;color:var(--text-dim);margin-bottom:.3rem}
+        .teacher-login-form input{width:100%;padding:.85rem 1rem;border:1px solid var(--border);border-radius:10px;background:var(--bg);color:var(--text);font-size:1rem;margin-bottom:.75rem}
+        .teacher-login-form input:focus{outline:none;border-color:var(--accent)}
+        .teacher-login-form button{width:100%;padding:.85rem;background:var(--accent);color:white;border:none;border-radius:10px;font-size:1rem;font-weight:600;cursor:pointer;margin-top:.5rem}
+        .teacher-login-form button:active{opacity:.85}
+        .teacher-login-error{color:var(--red);font-size:.8rem;margin-top:.5rem;display:none;text-align:center}
+        #mainApp{display:none}
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
+    <!-- Teacher Login Screen -->
+    <div class="teacher-login" id="teacherLogin">
+        <h1>高一下数学期末备考</h1>
+        <p class="subtitle">教师看板 · 请登录</p>
+        <div class="teacher-login-form">
+            <label>账号</label>
+            <input type="text" id="loginUser" placeholder="请输入账号" autocomplete="off">
+            <label>密码</label>
+            <input type="password" id="loginPass" placeholder="请输入密码">
+            <button id="loginBtn">进入看板</button>
+            <div class="teacher-login-error" id="loginError"></div>
+        </div>
+    </div>
+
+    <!-- Main App (hidden until login) -->
+    <div id="mainApp">
     <div class="header">
         <h1>教师备课看板</h1>
         <div class="header-right">
             <span style="font-size:.8rem;color:var(--text-dim)"><span class="live-dot"></span> 实时同步</span>
+            <a href="#" id="logoutBtn" style="color:var(--red);font-size:.8rem">退出登录</a>
             <a href="index.html">返回</a>
         </div>
     </div>
@@ -341,15 +372,97 @@
         <div class="student-detail" id="studentDetailContent"></div>
     </div>
 
-    <script type="module">
+    <script>
     // ================================================================
     // SUPABASE
     // ================================================================
-    import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+    if (typeof supabase === 'undefined') {
+        document.getElementById('teacherLogin').innerHTML =
+            '<h1>高一下数学期末备考</h1>' +
+            '<p class="subtitle">教师看板</p>' +
+            '<div class="teacher-login-form"><p style="color:var(--red);text-align:center">Supabase 库加载失败，请检查网络连接后刷新页面</p></div>';
+        throw new Error('Supabase library not loaded');
+    }
+    const { createClient } = supabase;
 
     const SUPABASE_URL = 'https://zeijwibhhtznoagevaeh.supabase.co';
     const SUPABASE_KEY = 'sb_publishable_HaQf-0CDYDEet6xuTCauMw_MZxKPMty';
     const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    // ================================================================
+    // TEACHER LOGIN
+    // ================================================================
+    const TEACHER_ACCOUNTS = {
+        '黎老师': 'lixinyi'
+    };
+
+    function checkTeacherLogin() {
+        if (sessionStorage.getItem('teacher_logged_in') === 'true') {
+            showMainApp();
+            return true;
+        }
+        return false;
+    }
+
+    function showMainApp() {
+        document.getElementById('teacherLogin').style.display = 'none';
+        document.getElementById('mainApp').style.display = 'block';
+    }
+
+    function doTeacherLogin() {
+        var user = document.getElementById('loginUser').value.trim();
+        var pass = document.getElementById('loginPass').value;
+        var errEl = document.getElementById('loginError');
+
+        errEl.style.display = 'none';
+        errEl.textContent = '';
+
+        if (!user || !pass) {
+            errEl.textContent = '请输入账号和密码';
+            errEl.style.display = 'block';
+            return;
+        }
+
+        if (TEACHER_ACCOUNTS[user] === pass) {
+            sessionStorage.setItem('teacher_logged_in', 'true');
+            showMainApp();
+            // Init data after login
+            initApp();
+        } else {
+            errEl.textContent = '账号或密码错误，请重试';
+            errEl.style.display = 'block';
+            document.getElementById('loginPass').value = '';
+            document.getElementById('loginPass').focus();
+        }
+    }
+
+    document.getElementById('loginBtn').addEventListener('click', doTeacherLogin);
+    document.getElementById('loginPass').addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') { e.preventDefault(); doTeacherLogin(); }
+    });
+    document.getElementById('loginUser').addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') { e.preventDefault(); document.getElementById('loginPass').focus(); }
+    });
+
+    // Logout handler
+    document.getElementById('logoutBtn').addEventListener('click', function(e) {
+        e.preventDefault();
+        sessionStorage.removeItem('teacher_logged_in');
+        appInitialized = false;
+        document.getElementById('mainApp').style.display = 'none';
+        document.getElementById('teacherLogin').style.display = 'flex';
+        document.getElementById('loginPass').value = '';
+        document.getElementById('loginError').style.display = 'none';
+    });
+
+    var appInitialized = false;
+    async function initApp() {
+        if (appInitialized) return;
+        appInitialized = true;
+        initReviewDayMap();
+        await loadAll();
+        subscribeRealtime();
+    }
 
     // ================================================================
     // KNOWLEDGE BASE
@@ -1790,9 +1903,10 @@
     // ================================================================
     // INIT
     // ================================================================
-    initReviewDayMap();
-    await loadAll();
-    subscribeRealtime();
+    // If already logged in (session), show app immediately; otherwise show login screen
+    if (checkTeacherLogin()) {
+        initApp();
+    }
 
     // Inline add task handler (event delegation on calendar grid)
     document.getElementById('calendarGrid').addEventListener('keydown', async (e) => {
@@ -1826,5 +1940,6 @@
         }
     });
     </script>
+    </div><!-- /mainApp -->
 </body>
 </html>
