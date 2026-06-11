@@ -399,39 +399,62 @@
         <div class="quiz-detail-modal-box" id="quizDetailModalContent"></div>
     </div>
 
-    <!-- Supabase CDN: loaded here (not in <head>) so login form renders immediately -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script>if(typeof supabase==='undefined'){document.write('<scr'+'ipt src="https://unpkg.com/@supabase/supabase-js@2"><\/scr'+'ipt>');}</script>
-
     <script>
     // ================================================================
-    // SUPABASE
+    // SUPABASE (fully async, non-blocking)
     // ================================================================
     var sb = null;
-    if (typeof supabase === 'undefined') {
-        document.getElementById('loginError').textContent = '网络组件加载失败，请刷新页面重试';
-        document.getElementById('loginError').style.display = 'block';
-        // Keep retrying in case CDN loads late
-        (function() {
-            var t = setInterval(function() {
-                if (typeof supabase !== 'undefined') {
-                    clearInterval(t);
-                    sb = supabase.createClient(
-                        'https://zeijwibhhtznoagevaeh.supabase.co',
-                        'sb_publishable_HaQf-0CDYDEet6xuTCauMw_MZxKPMty'
-                    );
-                    document.getElementById('loginError').style.display = 'none';
-                }
-            }, 500);
-            setTimeout(function() { clearInterval(t); }, 15000);
-        })();
-    } else {
-        const { createClient } = supabase;
-        sb = createClient(
+    var _sbReadyCallbacks = [];
+    var _sbLoading = false;
+
+    function onSbReady(fn) {
+        if (sb) { fn(); return; }
+        _sbReadyCallbacks.push(fn);
+    }
+
+    function _initSbClient() {
+        sb = supabase.createClient(
             'https://zeijwibhhtznoagevaeh.supabase.co',
             'sb_publishable_HaQf-0CDYDEet6xuTCauMw_MZxKPMty'
         );
+        var errEl = document.getElementById('loginError');
+        if (errEl && errEl.textContent.indexOf('加载失败') !== -1) errEl.style.display = 'none';
+        _sbReadyCallbacks.forEach(function(fn) { try { fn(); } catch(e) {} });
+        _sbReadyCallbacks = [];
     }
+
+    function ensureSupabaseLoaded() {
+        if (sb) return;
+        if (!_sbLoading) {
+            _sbLoading = true;
+            var cdnUrls = [
+                'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2',
+                'https://unpkg.com/@supabase/supabase-js@2'
+            ];
+            var idx = 0;
+            function tryNext() {
+                if (idx >= cdnUrls.length) {
+                    _sbLoading = false;
+                    var errEl = document.getElementById('loginError');
+                    if (errEl) { errEl.textContent = '网络组件加载失败，请刷新页面重试'; errEl.style.display = 'block'; }
+                    return;
+                }
+                var s = document.createElement('script');
+                s.src = cdnUrls[idx];
+                s.onload = function() {
+                    if (typeof supabase !== 'undefined') {
+                        _initSbClient();
+                    } else { idx++; tryNext(); }
+                };
+                s.onerror = function() { idx++; tryNext(); };
+                document.head.appendChild(s);
+            }
+            tryNext();
+        }
+    }
+
+    // Start loading immediately (non-blocking)
+    ensureSupabaseLoaded();
 
     // ================================================================
     // TEACHER LOGIN
@@ -470,8 +493,8 @@
         if (TEACHER_ACCOUNTS[user] === pass) {
             sessionStorage.setItem('teacher_logged_in', 'true');
             showMainApp();
-            // Init data after login
-            initApp();
+            // Init data after login (wait for Supabase to be ready)
+            onSbReady(() => initApp());
         } else {
             errEl.textContent = '账号或密码错误，请重试';
             errEl.style.display = 'block';
@@ -2254,7 +2277,7 @@
     // ================================================================
     // If already logged in (session), show app immediately; otherwise show login screen
     if (checkTeacherLogin()) {
-        initApp();
+        onSbReady(() => initApp());
     }
 
     // Inline add task handler (event delegation on calendar grid)

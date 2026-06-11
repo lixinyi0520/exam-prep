@@ -536,8 +536,13 @@
             <input type="password" id="loginPin" placeholder="密码（默认1234）" value="1234" autocomplete="off">
             <button id="loginBtn">进入自评</button>
             <div class="error" id="loginError"></div>
+            <div id="cdnLoadingHint" style="text-align:center;color:var(--text-dim);font-size:0.82rem;margin-top:0.6rem;display:none;">
+                <span style="display:inline-block;width:14px;height:14px;border:2px solid var(--accent);border-top-color:transparent;border-radius:50%;animation:spin 0.8s linear infinite;vertical-align:middle;margin-right:6px;"></span>
+                组件加载中…
+            </div>
         </div>
     </div>
+    <style>@keyframes spin{to{transform:rotate(360deg)}}</style>
 
     <!-- ===== PASSWORD CHANGE SCREEN ===== -->
     <div class="pwd-change-screen" id="pwdChangeScreen">
@@ -698,45 +703,75 @@
     <!-- Toast -->
     <div class="toast" id="toast"></div>
 
-    <!-- Supabase CDN: loaded here (not in <head>) so login form renders immediately -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script>if(typeof supabase==='undefined'){document.write('<scr'+'ipt src="https://unpkg.com/@supabase/supabase-js@2"><\/scr'+'ipt>');}</script>
-
     <script>
         // ============================================================
-        // Supabase Init (with CDN fallback guard)
+        // Supabase Init (fully async, non-blocking)
         // ============================================================
         var sb = null;
-        if (typeof supabase !== 'undefined') {
-            var createClient = supabase.createClient;
-            sb = createClient(
+        var _sbReadyCallbacks = [];
+        var _sbLoading = false;
+        var _sbLoadError = false;
+
+        function onSbReady(fn) {
+            if (sb) { fn(); return; }
+            _sbReadyCallbacks.push(fn);
+        }
+
+        function _initSbClient() {
+            sb = supabase.createClient(
                 'https://zeijwibhhtznoagevaeh.supabase.co',
                 'sb_publishable_HaQf-0CDYDEet6xuTCauMw_MZxKPMty'
             );
-        } else {
-            // Supabase CDN failed to load — show error and retry
-            (function retrySupabase() {
-                var attempts = 0;
-                var timer = setInterval(function() {
-                    attempts++;
-                    if (typeof supabase !== 'undefined') {
-                        clearInterval(timer);
-                        sb = supabase.createClient(
-                            'https://zeijwibhhtznoagevaeh.supabase.co',
-                            'sb_publishable_HaQf-0CDYDEet6xuTCauMw_MZxKPMty'
-                        );
+            _sbLoadError = false;
+            var hint = document.getElementById('cdnLoadingHint');
+            if (hint) hint.style.display = 'none';
+            var errEl = document.getElementById('loginError');
+            if (errEl) errEl.style.display = 'none';
+            // Run queued callbacks
+            _sbReadyCallbacks.forEach(function(fn) { try { fn(); } catch(e) {} });
+            _sbReadyCallbacks = [];
+        }
+
+        function ensureSupabaseLoaded() {
+            if (sb) return;
+            // Show loading hint
+            var hint = document.getElementById('cdnLoadingHint');
+            if (hint) hint.style.display = 'block';
+            if (!_sbLoading) {
+                _sbLoading = true;
+                var cdnUrls = [
+                    'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2',
+                    'https://unpkg.com/@supabase/supabase-js@2'
+                ];
+                var idx = 0;
+                function tryNext() {
+                    if (idx >= cdnUrls.length) {
+                        _sbLoading = false;
+                        _sbLoadError = true;
+                        if (hint) hint.style.display = 'none';
                         var errEl = document.getElementById('loginError');
-                        if (errEl) { errEl.style.display = 'none'; }
+                        if (errEl) { errEl.textContent = '网络组件加载失败，请刷新页面重试'; errEl.style.display = 'block'; }
                         return;
                     }
-                    if (attempts > 20) {
-                        clearInterval(timer);
-                        var errEl2 = document.getElementById('loginError');
-                        if (errEl2) { errEl2.textContent = '网络组件加载失败，请刷新页面重试'; errEl2.style.display = 'block'; }
-                    }
-                }, 500);
-            })();
+                    var s = document.createElement('script');
+                    s.src = cdnUrls[idx];
+                    s.onload = function() {
+                        if (typeof supabase !== 'undefined') {
+                            _initSbClient();
+                        } else {
+                            idx++;
+                            tryNext();
+                        }
+                    };
+                    s.onerror = function() { idx++; tryNext(); };
+                    document.head.appendChild(s);
+                }
+                tryNext();
+            }
         }
+
+        // Start loading immediately (non-blocking)
+        ensureSupabaseLoaded();
 
         // ============================================================
         // Student Data (embedded from student_data.js)
@@ -974,11 +1009,6 @@
             var errEl = $('loginError');
             errEl.style.display = 'none';
 
-            if (!sb) {
-                errEl.textContent = '系统加载中，请稍后再试…';
-                errEl.style.display = 'block';
-                return;
-            }
             if (!cls || !name) {
                 errEl.textContent = '请填写班级和姓名';
                 errEl.style.display = 'block';
@@ -988,6 +1018,27 @@
                 errEl.textContent = '该姓名不在班级名单中';
                 errEl.style.display = 'block';
                 return;
+            }
+
+            // If Supabase not ready yet, trigger load and wait
+            if (!sb) {
+                var hint = $('cdnLoadingHint');
+                if (hint) hint.style.display = 'block';
+                ensureSupabaseLoaded();
+                // Wait for sb to be ready
+                await new Promise(function(resolve) {
+                    var check = setInterval(function() {
+                        if (sb) { clearInterval(check); clearTimeout(safetyTimer); resolve(); }
+                    }, 200);
+                    // Safety timeout: 15 seconds
+                    var safetyTimer = setTimeout(function() { clearInterval(check); resolve(); }, 15000);
+                });
+                if (!sb) {
+                    errEl.textContent = '网络组件加载超时，请检查网络后刷新页面';
+                    errEl.style.display = 'block';
+                    if (hint) hint.style.display = 'none';
+                    return;
+                }
             }
 
             try {
@@ -2526,65 +2577,68 @@
                     if (parsed && parsed.id) {
                         currentUser = parsed;
 
-                        try {
-                            var { data } = await sb.from('self_assessments')
-                                .select('point_id, status, note')
-                                .eq('student_id', currentUser.id);
-                            assessments = {};
-                            if (data) {
-                                data.forEach(function(a) {
-                                    assessments[a.point_id] = { status: a.status, note: a.note || '' };
-                                });
-                            }
-                        } catch (_) { assessments = {}; }
+                        // Wait for Supabase to be ready before loading data
+                        onSbReady(async function() {
+                            try {
+                                var { data } = await sb.from('self_assessments')
+                                    .select('point_id, status, note')
+                                    .eq('student_id', currentUser.id);
+                                assessments = {};
+                                if (data) {
+                                    data.forEach(function(a) {
+                                        assessments[a.point_id] = { status: a.status, note: a.note || '' };
+                                    });
+                                }
+                            } catch (_) { assessments = {}; }
 
-                        // Load custom points
-                        try {
-                            var { data: cpData } = await sb.from('custom_points')
-                                .select('module_key, id, point_id, point_name')
-                                .eq('student_id', currentUser.id);
-                            customPoints = {};
-                            if (cpData) {
-                                cpData.forEach(function(cp) {
-                                    if (!customPoints[cp.module_key]) customPoints[cp.module_key] = [];
-                                    customPoints[cp.module_key].push({ id: cp.point_id || cp.id, name: cp.point_name });
-                                });
-                            }
-                        } catch (_) { customPoints = {}; }
+                            // Load custom points
+                            try {
+                                var { data: cpData } = await sb.from('custom_points')
+                                    .select('module_key, id, point_id, point_name')
+                                    .eq('student_id', currentUser.id);
+                                customPoints = {};
+                                if (cpData) {
+                                    cpData.forEach(function(cp) {
+                                        if (!customPoints[cp.module_key]) customPoints[cp.module_key] = [];
+                                        customPoints[cp.module_key].push({ id: cp.point_id || cp.id, name: cp.point_name });
+                                    });
+                                }
+                            } catch (_) { customPoints = {}; }
 
-                        // Load review plans
-                        try {
-                            var { data: rpData } = await sb.from('review_plans')
-                                .select('plan_date, content')
-                                .eq('student_id', currentUser.id);
-                            reviewPlans = {};
-                            if (rpData) {
-                                rpData.forEach(function(rp) {
-                                    reviewPlans[rp.plan_date] = rp.content;
-                                });
-                            }
-                        } catch (_) { reviewPlans = {}; }
+                            // Load review plans
+                            try {
+                                var { data: rpData } = await sb.from('review_plans')
+                                    .select('plan_date, content')
+                                    .eq('student_id', currentUser.id);
+                                reviewPlans = {};
+                                if (rpData) {
+                                    rpData.forEach(function(rp) {
+                                        reviewPlans[rp.plan_date] = rp.content;
+                                    });
+                                }
+                            } catch (_) { reviewPlans = {}; }
 
-                        // Load liked tips
-                        try {
-                            var { data: likeData } = await sb.from('tip_likes')
-                                .select('tip_id')
-                                .eq('student_id', currentUser.id);
-                            likedTips = {};
-                            if (likeData) {
-                                likeData.forEach(function(l) { likedTips[l.tip_id] = true; });
-                            }
-                        } catch (_) { likedTips = {}; }
+                            // Load liked tips
+                            try {
+                                var { data: likeData } = await sb.from('tip_likes')
+                                    .select('tip_id')
+                                    .eq('student_id', currentUser.id);
+                                likedTips = {};
+                                if (likeData) {
+                                    likeData.forEach(function(l) { likedTips[l.tip_id] = true; });
+                                }
+                            } catch (_) { likedTips = {}; }
 
-                        $('loginScreen').style.display = 'none';
-                        $('app').style.display = 'block';
-                        $('profileBadge').textContent = currentUser.class_name + ' ' + currentUser.name;
-                        renderScores();
-                        loadTargets();
-                        loadPlanCheckStates();
-                        renderAll();
-                        renderCalendar();
-                        loadTips();
+                            $('loginScreen').style.display = 'none';
+                            $('app').style.display = 'block';
+                            $('profileBadge').textContent = currentUser.class_name + ' ' + currentUser.name;
+                            renderScores();
+                            loadTargets();
+                            loadPlanCheckStates();
+                            renderAll();
+                            renderCalendar();
+                            loadTips();
+                        }); // end onSbReady
                     }
                 } catch (_) {}
             }
