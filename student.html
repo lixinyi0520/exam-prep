@@ -520,6 +520,7 @@
         .quiz-table tr:last-child td { border-bottom: none; }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>if(typeof supabase==='undefined'){document.write('<scr'+'ipt src="https://unpkg.com/@supabase/supabase-js@2"><\/scr'+'ipt>');}</script>
 </head>
 <body>
 
@@ -701,14 +702,39 @@
 
     <script>
         // ============================================================
-        // Supabase Init
+        // Supabase Init (with CDN fallback guard)
         // ============================================================
-        var { createClient } = supabase;
-
-        var sb = createClient(
-            'https://zeijwibhhtznoagevaeh.supabase.co',
-            'sb_publishable_HaQf-0CDYDEet6xuTCauMw_MZxKPMty'
-        );
+        var sb = null;
+        if (typeof supabase !== 'undefined') {
+            var createClient = supabase.createClient;
+            sb = createClient(
+                'https://zeijwibhhtznoagevaeh.supabase.co',
+                'sb_publishable_HaQf-0CDYDEet6xuTCauMw_MZxKPMty'
+            );
+        } else {
+            // Supabase CDN failed to load — show error and retry
+            (function retrySupabase() {
+                var attempts = 0;
+                var timer = setInterval(function() {
+                    attempts++;
+                    if (typeof supabase !== 'undefined') {
+                        clearInterval(timer);
+                        sb = supabase.createClient(
+                            'https://zeijwibhhtznoagevaeh.supabase.co',
+                            'sb_publishable_HaQf-0CDYDEet6xuTCauMw_MZxKPMty'
+                        );
+                        var errEl = document.getElementById('loginError');
+                        if (errEl) { errEl.style.display = 'none'; }
+                        return;
+                    }
+                    if (attempts > 20) {
+                        clearInterval(timer);
+                        var errEl2 = document.getElementById('loginError');
+                        if (errEl2) { errEl2.textContent = '网络组件加载失败，请刷新页面重试'; errEl2.style.display = 'block'; }
+                    }
+                }, 500);
+            })();
+        }
 
         // ============================================================
         // Student Data (embedded from student_data.js)
@@ -946,6 +972,11 @@
             var errEl = $('loginError');
             errEl.style.display = 'none';
 
+            if (!sb) {
+                errEl.textContent = '系统加载中，请稍后再试…';
+                errEl.style.display = 'block';
+                return;
+            }
             if (!cls || !name) {
                 errEl.textContent = '请填写班级和姓名';
                 errEl.style.display = 'block';

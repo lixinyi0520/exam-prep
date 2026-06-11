@@ -267,6 +267,7 @@
         .sd-reset-btn:hover{background:rgba(239,68,68,.1)}
     </style>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>if(typeof supabase==='undefined'){document.write('<scr'+'ipt src="https://unpkg.com/@supabase/supabase-js@2"><\/scr'+'ipt>');}</script>
 </head>
 <body>
     <!-- Teacher Login Screen -->
@@ -404,18 +405,31 @@
     // ================================================================
     // SUPABASE
     // ================================================================
+    var sb = null;
     if (typeof supabase === 'undefined') {
-        document.getElementById('teacherLogin').innerHTML =
-            '<h1>高一下数学期末备考</h1>' +
-            '<p class="subtitle">教师看板</p>' +
-            '<div class="teacher-login-form"><p style="color:var(--red);text-align:center">Supabase 库加载失败，请检查网络连接后刷新页面</p></div>';
-        throw new Error('Supabase library not loaded');
+        document.getElementById('loginError').textContent = '网络组件加载失败，请刷新页面重试';
+        document.getElementById('loginError').style.display = 'block';
+        // Keep retrying in case CDN loads late
+        (function() {
+            var t = setInterval(function() {
+                if (typeof supabase !== 'undefined') {
+                    clearInterval(t);
+                    sb = supabase.createClient(
+                        'https://zeijwibhhtznoagevaeh.supabase.co',
+                        'sb_publishable_HaQf-0CDYDEet6xuTCauMw_MZxKPMty'
+                    );
+                    document.getElementById('loginError').style.display = 'none';
+                }
+            }, 500);
+            setTimeout(function() { clearInterval(t); }, 15000);
+        })();
+    } else {
+        const { createClient } = supabase;
+        sb = createClient(
+            'https://zeijwibhhtznoagevaeh.supabase.co',
+            'sb_publishable_HaQf-0CDYDEet6xuTCauMw_MZxKPMty'
+        );
     }
-    const { createClient } = supabase;
-
-    const SUPABASE_URL = 'https://zeijwibhhtznoagevaeh.supabase.co';
-    const SUPABASE_KEY = 'sb_publishable_HaQf-0CDYDEet6xuTCauMw_MZxKPMty';
-    const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
 
     // ================================================================
     // TEACHER LOGIN
@@ -486,6 +500,11 @@
     var appInitialized = false;
     async function initApp() {
         if (appInitialized) return;
+        if (!sb) {
+            document.getElementById('loginError').textContent = '数据服务加载中，请稍后刷新…';
+            document.getElementById('loginError').style.display = 'block';
+            return;
+        }
         appInitialized = true;
         initReviewDayMap();
         await loadAll();
