@@ -266,8 +266,6 @@
         .sd-reset-btn{background:transparent;border:1px solid var(--red);color:var(--red);padding:.35rem .75rem;border-radius:6px;font-size:.78rem;cursor:pointer;font-family:inherit;margin-left:.75rem;transition:all .2s}
         .sd-reset-btn:hover{background:rgba(239,68,68,.1)}
     </style>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script>if(typeof supabase==='undefined'){document.write('<scr'+'ipt src="https://unpkg.com/@supabase/supabase-js@2"><\/scr'+'ipt>');}</script>
 </head>
 <body>
     <!-- Teacher Login Screen -->
@@ -400,6 +398,10 @@
     <div class="quiz-detail-modal" id="quizDetailModal">
         <div class="quiz-detail-modal-box" id="quizDetailModalContent"></div>
     </div>
+
+    <!-- Supabase CDN: loaded here (not in <head>) so login form renders immediately -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>if(typeof supabase==='undefined'){document.write('<scr'+'ipt src="https://unpkg.com/@supabase/supabase-js@2"><\/scr'+'ipt>');}</script>
 
     <script>
     // ================================================================
