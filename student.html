@@ -1140,6 +1140,7 @@ Resources:`;for(let t of c){if(!t||typeof t!=`string`)throw Error(`@supabase/aut
             renderScores();
             loadTargets();
             loadPlanCheckStates();
+            applyAutoAssessments();
             renderAll();
             renderCalendar();
             loadTips();
@@ -1371,10 +1372,10 @@ Resources:`;for(let t of c){if(!t||typeof t!=`string`)throw Error(`@supabase/aut
         function computeQuizSuggestions() {
             if (!currentUser) return {};
 
-            var suggestions = {}; // { pointId: { correct: N, wrong: N, total: N } }
+            var suggestions = {};
 
-            // Build point -> question results mapping across all quizzes
             ALL_QUIZZES.forEach(function(quiz) {
+                if (quiz.status) return; // skip placeholder quizzes
                 var studentScores = quiz.scores[currentUser.name];
                 if (!studentScores) return;
 
@@ -1397,21 +1398,51 @@ Resources:`;for(let t of c){if(!t||typeof t!=`string`)throw Error(`@supabase/aut
                 });
             });
 
-            // Apply rules
+            // Apply new assessment rules:
+            // errors >= 3 -> not_mastered; correct >= 3 -> mastered; else -> partial
             Object.keys(suggestions).forEach(function(pid) {
                 var s = suggestions[pid];
-                if (s.wrong >= 2) {
+                if (s.wrong >= 3 && s.correct >= 3) {
+                    // Conflict: both thresholds met - check most recent quiz
+                    s.status = 'partial'; // default to practice for conflicts
+                    s.conflict = true;
+                } else if (s.wrong >= 3) {
                     s.status = 'not_mastered';
                 } else if (s.correct >= 3) {
                     s.status = 'mastered';
-                } else if (s.correct >= 1) {
-                    s.status = 'partial';
                 } else {
-                    s.status = 'not_mastered';
+                    s.status = 'partial';
                 }
             });
 
             return suggestions;
+        }
+
+        // Auto-populate assessments from quiz data (for points without manual assessment)
+        function applyAutoAssessments() {
+            if (!currentUser) return;
+            var quizSuggestions = computeQuizSuggestions();
+            var changed = false;
+            Object.keys(quizSuggestions).forEach(function(pid) {
+                // Only auto-set if student hasn't manually assessed this point
+                if (!assessments[pid] || !assessments[pid].status) {
+                    if (!assessments[pid]) assessments[pid] = {};
+                    assessments[pid].status = quizSuggestions[pid].status;
+                    assessments[pid].auto = true;
+                    changed = true;
+                    // Save to Supabase silently
+                    sb.from('self_assessments').upsert({
+                        student_id: currentUser.id,
+                        point_id: pid,
+                        status: quizSuggestions[pid].status,
+                        note: assessments[pid].note || ''
+                    }, { onConflict: 'student_id,point_id' }).catch(function(){});
+                }
+            });
+            if (changed) {
+                // Don't re-render here - renderAll() is called immediately after
+                // Just update the assessments data
+            }
         }
 
         // ============================================================
