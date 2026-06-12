@@ -62,6 +62,13 @@
         .cal-cell.today{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
         .cal-cell.past .cal-date{opacity:.5;text-decoration:line-through}
         .cal-cell.past .cal-topic{opacity:.85}
+        .cal-custom-del:hover{opacity:1!important;color:var(--red)!important}
+.sd-priority-btn{background:transparent;border:1px solid var(--border);color:var(--text-dim);font-size:.72rem;padding:2px 8px;border-radius:4px;cursor:pointer;margin-left:8px;transition:all .2s;}
+.sd-priority-btn.active{color:var(--accent-light);border-color:var(--accent-light);background:rgba(99,102,241,.1);}
+.sd-priority-btn:hover{border-color:var(--accent-light);}
+.sd-teacher-select:focus{outline:1px solid var(--accent);border-color:var(--accent);}
+.sd-teacher-note:focus{outline:1px solid var(--accent);border-color:var(--accent);}
+.sd-save-note-btn:hover{background:var(--accent-light)!important;}
         .cal-cell.exam-day{border-color:var(--red);background:rgba(239,68,68,.08);box-shadow:0 0 12px rgba(239,68,68,.2)}
         .cal-cell.exam-day .cal-date{color:var(--red);font-size:1rem}
 
@@ -680,24 +687,24 @@ Resources:`;for(let t of c){if(!t||typeof t!=`string`)throw Error(`@supabase/aut
     submitted: ["陈以诺", "邓超", "杭诗雨", "赵瑞阳", "朱浩文", "蒋宸安", "张涵", "屠俊赫", "李鹏宇", "卢若水", "毛潇然", "杨瑾华", "余梦璠", "李沐琛", "苗雨涵", "张宸楠", "张楚玉", "李瀚林", "杨嘉瑞", "吴沁珂", "郜源", "高艺宁", "黄知涵", "王冉", "李玥瑶", "曹昊坤", "唐巍桓", "许悠然", "龚奕铭"],
     notSubmitted: ["贺宜量", "李牧远", "刘思齐", "吴润旗", "姚天灏", "卢慕白", "刘思远", "马世博", "田沐杉", "王诗涵", "张一弛", "何知政", "付启亨", "张芙宁", "申屠泰然", "孙诗尧"],
     questions: [
-        {q:1, type:"单选", answer:"—", module:"立体几何", points:["A3","A4"], topic:"空间几何体"},
-        {q:2, type:"单选", answer:"—", module:"立体几何", points:["A1","A2"], topic:"直观图与截面"},
-        {q:3, type:"单选", answer:"C", module:"复数", points:["E1","E2"], topic:"复数代数运算"},
-        {q:4, type:"单选", answer:"D", module:"向量", points:["C2","C3"], topic:"向量数量积(夹角)"},
-        {q:5, type:"填空", answer:"—", module:"向量", points:["C2"], topic:"投影向量与数量积"},
-        {q:6, type:"填空", answer:"—", module:"向量", points:["C2"], topic:"向量数量积(坐标运算)"},
-        {q:7, type:"单选", answer:"D", module:"解三角形", points:["B1","B2"], topic:"正弦定理边角互化"},
-        {q:8, type:"解答", answer:"—", module:"解三角形", points:["B1","B2","B3"], topic:"正弦余弦+面积综合"},
-        {q:9, type:"填空", answer:"—", module:"立体几何", points:["A3","A4"], topic:"空间几何体(表面积)"},
-        {q:10, type:"单选", answer:"C", module:"立体几何", points:["A1","A2"], topic:"斜二测画法/直观图"},
-        {q:11, type:"单选", answer:"—", module:"概率统计", points:["D6","D7"], topic:"古典概型/独立事件"},
+        {q:1, type:"多选", answer:"—", module:"立体几何", points:["A3","A4"], topic:"空间几何体"},
+        {q:2, type:"多选", answer:"—", module:"立体几何", points:["A1","A2"], topic:"直观图与截面"},
+        {q:3, type:"多选", answer:"—", module:"复数", points:["E1","E2"], topic:"复数代数运算"},
+        {q:4, type:"填空", answer:"—", module:"向量", points:["C2","C3"], topic:"向量数量积(夹角)"},
+        {q:5, type:"多选", answer:"—", module:"向量", points:["C2"], topic:"投影向量与数量积"},
+        {q:6, type:"多选", answer:"—", module:"向量", points:["C2"], topic:"向量数量积(坐标运算)"},
+        {q:7, type:"多选", answer:"—", module:"解三角形", points:["B1","B2"], topic:"正弦定理边角互化"},
+        {q:8, type:"填空", answer:"—", module:"解三角形", points:["B1","B2","B3"], topic:"正弦余弦+面积综合"},
+        {q:9, type:"多选", answer:"—", module:"立体几何", points:["A3","A4"], topic:"空间几何体(表面积)"},
+        {q:10, type:"多选", answer:"—", module:"立体几何", points:["A1","A2"], topic:"斜二测画法/直观图"},
+        {q:11, type:"多选", answer:"—", module:"概率统计", points:["D6","D7"], topic:"古典概型/独立事件"},
         {q:12.1, type:"填空", answer:"—", module:"概率统计", points:["D7"], topic:"独立事件概率"},
         {q:12.2, type:"填空", answer:"—", module:"概率统计", points:["D7"], topic:"概率综合"},
-        {q:13, type:"单选", answer:"—", module:"概率统计", points:["D4","D6"], topic:"概率统计综合"},
-        {q:14, type:"单选", answer:"—", module:"概率统计", points:["D7"], topic:"独立事件与条件概率"},
-        {q:15.1, type:"解答", answer:"—", module:"解三角形", points:["B1"], topic:"正弦定理求角"},
-        {q:15.2, type:"解答", answer:"—", module:"解三角形", points:["B2","B3"], topic:"余弦定理与面积"},
-        {q:16, type:"单选", answer:"—", module:"选填压轴", points:["F2"], topic:"综合压轴"}
+        {q:13, type:"多选", answer:"—", module:"概率统计", points:["D4","D6"], topic:"概率统计综合"},
+        {q:14, type:"多选", answer:"—", module:"概率统计", points:["D7"], topic:"独立事件与条件概率"},
+        {q:15.1, type:"填空", answer:"—", module:"解三角形", points:["B1"], topic:"正弦定理求角"},
+        {q:15.2, type:"填空", answer:"—", module:"解三角形", points:["B2","B3"], topic:"余弦定理与面积"},
+        {q:16, type:"多选", answer:"—", module:"选填压轴", points:["F2"], topic:"综合压轴"}
     ],
     scores: {
     "陈以诺": {"class": "4班", "total": 90.0, "questions": [{"q": 1, "score": 5.0}, {"q": 2, "score": 5.0}, {"q": 3, "score": 5.0}, {"q": 4, "score": 5.0}, {"q": 5, "score": 5.0}, {"q": 6, "score": 5.0}, {"q": 7, "score": 5.0}, {"q": 8, "score": 5.0}, {"q": 9, "score": 5.0}, {"q": 10, "score": 5.0}, {"q": 11, "score": 5.0}, {"q": 12.1, "score": 5.0}, {"q": 12.2, "score": 5.0}, {"q": 13, "score": 5.0}, {"q": 14, "score": 5.0}, {"q": 15.1, "score": 5.0}, {"q": 15.2, "score": 5.0}, {"q": 16, "score": 5.0}]},
@@ -842,6 +849,100 @@ Resources:`;for(let t of c){if(!t||typeof t!=`string`)throw Error(`@supabase/aut
     }
 
     // ================================================================
+    // AUTO-ASSESSMENT (based on quiz performance)
+    // Rules: errors >= 3 → challenged; correct >= 3 → mastered; else → practice
+    // Most recent quiz data takes priority for conflicts
+    // ================================================================
+    function computeAutoAssessments() {
+        const autoMap = {};
+        const realQuizzes = ALL_QUIZZES.filter(q => !q.status);
+
+        ALL_POINTS.forEach(p => {
+            autoMap[p.id] = {};
+            realQuizzes.forEach(quiz => {
+                const hasQ = quiz.questions.find(q => q.points.includes(p.id));
+                if (!hasQ) return;
+                Object.entries(quiz.scores).forEach(([name, scoreData]) => {
+                    const qResult = scoreData.questions.find(sq => sq.q === hasQ.q);
+                    if (!qResult) return;
+                    if (!autoMap[p.id][name]) autoMap[p.id][name] = [];
+                    autoMap[p.id][name].push({
+                        correct: qResult.score === 5,
+                        wrong: qResult.score < 5,
+                        date: quiz.date,
+                        quizName: quiz.name
+                    });
+                });
+            });
+        });
+
+        const result = {};
+        Object.entries(autoMap).forEach(([pid, studentData]) => {
+            result[pid] = {};
+            Object.entries(studentData).forEach(([name, attempts]) => {
+                const totalCorrect = attempts.filter(a => a.correct).length;
+                const totalWrong = attempts.filter(a => a.wrong).length;
+                const totalAttempts = attempts.length;
+
+                // Use most recent quiz as tiebreaker for conflicts
+                const latest = attempts[attempts.length - 1];
+                const latestCorrect = latest.correct ? 1 : 0;
+                const latestWrong = latest.wrong ? 1 : 0;
+
+                let status;
+                if (totalWrong >= 3 && totalCorrect >= 3) {
+                    // Conflict: both thresholds met, use most recent data
+                    if (latestWrong) status = 'not_mastered';
+                    else if (latestCorrect) status = 'mastered';
+                    else status = 'partial';
+                } else if (totalWrong >= 3) {
+                    status = 'not_mastered';
+                } else if (totalCorrect >= 3) {
+                    status = 'mastered';
+                } else {
+                    status = 'partial';
+                }
+
+                result[pid][name] = {
+                    status,
+                    correct: totalCorrect,
+                    wrong: totalWrong,
+                    total: totalAttempts
+                };
+            });
+        });
+        return result;
+    }
+
+    // Compute homework submission stats per student
+    function computeHomeworkStats() {
+        const stats = {};
+        const realQuizzes = ALL_QUIZZES.filter(q => !q.status);
+        students.forEach(s => {
+            let submitted = 0, notSubmitted = 0, totalScore = 0, totalCount = 0, lowScores = 0;
+            realQuizzes.forEach(quiz => {
+                const max = quiz.total || 100;
+                const threshold = max * 0.8; // 80% as passing
+                if (quiz.scores[s.name]) {
+                    submitted++;
+                    totalScore += quiz.scores[s.name].total;
+                    totalCount++;
+                    if (quiz.scores[s.name].total < threshold) lowScores++;
+                } else if (quiz.submitted.includes(s.name)) {
+                    submitted++;
+                    totalCount++;
+                } else {
+                    notSubmitted++;
+                }
+            });
+            const avg = totalCount > 0 ? Math.round(totalScore / totalCount) : 0;
+            const avgRate = totalCount > 0 ? Math.round(totalScore / (totalCount * (realQuizzes[0] ? realQuizzes[0].total || 100 : 100)) * 100) : 0;
+            stats[s.name] = { submitted, notSubmitted, avg, lowScores, totalQuizzes: realQuizzes.length, avgRate };
+        });
+        return stats;
+    }
+
+    // ================================================================
     // REVIEW DAYS SCHEDULE
     // ================================================================
     const EXAM_DATE = new Date(2026, 6, 8); // July 8, 2026
@@ -893,8 +994,10 @@ Resources:`;for(let t of c){if(!t||typeof t!=`string`)throw Error(`@supabase/aut
     let students = [];
     let allAssessments = [];
     let dailyProgress = [];
+    let customCalendarTasks = [];
     let allTips = [];
     let allReviewPlans = [];
+    let teacherDataLoaded = false;
     let isDragging = false;
     let reloadTimer = null;
 
@@ -922,6 +1025,10 @@ Resources:`;for(let t of c){if(!t||typeof t!=`string`)throw Error(`@supabase/aut
             allTips = tRes.data || [];
             allReviewPlans = rRes.data || [];
 
+            // Load teacher data (priority students + notes)
+            await loadTeacherData();
+            teacherDataLoaded = true;
+
             // Load custom date mapping from daily_progress if available
             dailyProgress.forEach(dp => {
                 if (dp.notes && dp.notes.startsWith('date:')) {
@@ -929,6 +1036,11 @@ Resources:`;for(let t of c){if(!t||typeof t!=`string`)throw Error(`@supabase/aut
                     reviewDayDateMap[dp.day_number] = customDate;
                 }
             });
+            // Load custom calendar tasks (stored in day_number = -1)
+            const ctRow = dailyProgress.find(d => d.day_number === -1);
+            if (ctRow && ctRow.topic) {
+                try { customCalendarTasks = JSON.parse(ctRow.topic); } catch(_) {}
+            }
         } catch (e) {
             console.error('Load error:', e);
         }
@@ -1060,8 +1172,7 @@ Resources:`;for(let t of c){if(!t||typeof t!=`string`)throw Error(`@supabase/aut
             const dayNum = dateToDay[key] || null;
             const reviewInfo = dayNum ? INITIAL_REVIEW_DAYS[dayNum] : null;
 
-            const isSelfReview = !isExam && !reviewInfo &&
-                ((month === 5 && dayOfMonth >= 25) || (month === 6 && dayOfMonth >= 1 && dayOfMonth <= 7));
+            const isBeforeExam = !isExam && !reviewInfo && cursor < new Date(2026, 6, 8);
 
             let status = null;
             if (reviewInfo) {
@@ -1073,7 +1184,6 @@ Resources:`;for(let t of c){if(!t||typeof t!=`string`)throw Error(`@supabase/aut
             if (isToday) cellClasses.push('today');
             if (isPast && !isToday) cellClasses.push('past');
             if (isExam) cellClasses.push('exam-day');
-            if (isSelfReview) cellClasses.push('self-review');
             if (status === 'completed') cellClasses.push('status-completed');
             else if (status === 'in_progress') cellClasses.push('status-in_progress');
             else if (status) cellClasses.push('status-pending');
@@ -1144,11 +1254,26 @@ Resources:`;for(let t of c){if(!t||typeof t!=`string`)throw Error(`@supabase/aut
                 // Make draggable
                 cell.draggable = true;
                 cell.dataset.dayNum = dayNum;
-            } else if (isSelfReview) {
-                inner += `<div class="cal-topic" style="color:var(--accent-light)">自主复习</div>`;
-                inner += `<span class="cal-status-tag tag-self">自由安排</span>`;
             } else if (month === 5 && dayOfMonth < 11) {
                 inner += `<div class="cal-topic" style="color:var(--text-dim);font-size:.6rem">--</div>`;
+            } else if (isBeforeExam) {
+                // Empty date: show custom tasks or add-task input
+                const ct = customCalendarTasks.filter(t => t.date === key);
+                if (ct.length > 0) {
+                    let ctHtml = ct.map((t, ci) => {
+                        const realIdx = customCalendarTasks.indexOf(t);
+                        const doneCls = t.done ? 'text-decoration:line-through;opacity:0.5;' : '';
+                        return '<div class="cal-task-line" style="display:flex;align-items:center;gap:3px;margin:1px 0;">' +
+                            '<input type="checkbox" data-custom-check="' + realIdx + '" ' + (t.done ? 'checked' : '') + ' style="width:12px;height:12px;accent-color:var(--green);cursor:pointer;flex-shrink:0;">' +
+                            '<span style="font-size:.68rem;flex:1;' + doneCls + '" data-custom-text="' + realIdx + '">' + escapeHtml(t.text) + '</span>' +
+                            '<span class="cal-custom-del" data-custom-del="' + realIdx + '" style="cursor:pointer;color:var(--text-dim);font-size:.6rem;opacity:0.4;flex-shrink:0;" title="删除">&times;</span>' +
+                            '</div>';
+                    }).join('');
+                    ctHtml += '<input type="text" placeholder="+ 添加..." class="cal-custom-add" data-date="' + key + '" style="width:100%;background:transparent;border:none;border-bottom:1px dashed var(--border);color:var(--text-dim);font-size:.6rem;padding:1px 0;outline:none;margin-top:2px;">';
+                    inner += '<div class="cal-tasks-container">' + ctHtml + '</div>';
+                } else {
+                    inner += '<input type="text" placeholder="+ 添加任务..." class="cal-custom-add" data-date="' + key + '" style="width:100%;background:transparent;border:none;border-bottom:1px dashed rgba(255,255,255,.1);color:var(--text-dim);font-size:.6rem;padding:1px 0;outline:none;">';
+                }
             }
 
             cell.innerHTML = inner;
@@ -1508,25 +1633,26 @@ Resources:`;for(let t of c){if(!t||typeof t!=`string`)throw Error(`@supabase/aut
                     <td>${barHtml}</td>
                     <td style="font-size:.72rem">${(() => {
                         const qEntries = pointToQuiz[p.id];
-                        if (qEntries && qEntries.length > 0) {
-                            const byQ = {};
-                            qEntries.forEach(e => {
-                                const q = e._quiz;
-                                if (!byQ[q.name]) byQ[q.name] = { quiz: q, qs: [] };
-                                byQ[q.name].qs.push(e);
-                            });
-                            return Object.values(byQ).map(({quiz, qs}) => {
-                                const sn = quiz.name.replace('滚动练习', '');
-                                const det = qs.map(q => {
-                                    const r = getQuestionCorrectRate(quiz, q.q);
-                                    if (r === null) return 'Q' + q.q + ': —';
-                                    const c = r >= 70 ? 'var(--green)' : r >= 50 ? 'var(--yellow)' : 'var(--red)';
-                                    return '<span style="color:' + c + '">Q' + q.q + ':' + r + '%</span>';
-                                }).join(' ');
-                                return '<div style="margin-bottom:2px;white-space:nowrap;"><span style="color:var(--accent-light);font-size:.65rem;">' + sn + '</span> ' + det + '</div>';
-                            }).join('');
-                        }
-                        return '<span style="color:var(--text-dim);font-size:.65rem;">暂无练习</span>';
+                        if (!qEntries || !qEntries.length) return '<span style="color:var(--text-dim);font-size:.65rem;">暂无练习</span>';
+                        const rates = [];
+                        qEntries.forEach(e => {
+                            const r = getQuestionCorrectRate(e._quiz, e.q);
+                            if (r !== null) rates.push(r);
+                        });
+                        if (!rates.length) return '<span style="color:var(--text-dim);font-size:.65rem;">暂无数据</span>';
+                        const avg = Math.round(rates.reduce((a,b)=>a+b,0)/rates.length);
+                        const mn = Math.min(...rates);
+                        const cnt = rates.length;
+                        const c = avg >= 80 ? 'var(--green)' : avg >= 60 ? 'var(--yellow)' : 'var(--red)';
+                        const barW = Math.max(8, avg);
+                        let badge = '';
+                        if (cnt >= 3) badge += '<span style="background:rgba(99,102,241,.15);color:var(--accent-light);font-size:.55rem;padding:1px 4px;border-radius:2px;margin-left:3px;">高频</span>';
+                        if (mn < 60) badge += '<span style="background:rgba(239,68,68,.12);color:var(--red);font-size:.55rem;padding:1px 4px;border-radius:2px;margin-left:3px;">难点</span>';
+                        return '<div style="display:flex;align-items:center;gap:6px;">' +
+                            '<span style="font-weight:600;color:' + c + ';min-width:32px;">' + avg + '%</span>' +
+                            '<div style="flex:1;height:6px;background:var(--border);border-radius:3px;min-width:30px;max-width:60px;"><div style="width:' + barW + '%;height:100%;background:' + c + ';border-radius:3px;"></div></div>' +
+                            '<span style="color:var(--text-dim);font-size:.6rem;white-space:nowrap;">' + cnt + '次</span>' +
+                            badge + '</div>';
                     })()}</td>
                 </tr>`;
             }).join('');
@@ -1864,11 +1990,10 @@ Resources:`;for(let t of c){if(!t||typeof t!=`string`)throw Error(`@supabase/aut
         html += `<div class="qdm-date">${quiz.date} | 共${quiz.questions.length}题 | 满分${quiz.total}分</div>`;
 
         html += `<table class="qdm-table"><thead><tr>
-            <th>题号</th><th>题型</th><th>考点</th><th>正确答案</th><th>错误学生</th>
+            <th>题号</th><th>题型</th><th>考点</th><th>正确答案</th><th>错误率</th><th>错误学生</th>
         </tr></thead><tbody>`;
 
         filteredQuestions.forEach(q => {
-            // Find students who got this wrong
             const wrongStudents = [];
             const scoreEntries = Object.entries(quiz.scores);
             scoreEntries.forEach(([name, scoreData]) => {
@@ -1878,15 +2003,21 @@ Resources:`;for(let t of c){if(!t||typeof t!=`string`)throw Error(`@supabase/aut
                 }
             });
 
+            const totalStudents = scoreEntries.length;
+            const errorRate = totalStudents > 0 ? Math.round(wrongStudents.length / totalStudents * 100) : 0;
+            const erColor = errorRate >= 40 ? 'var(--red)' : errorRate >= 20 ? 'var(--yellow)' : 'var(--green)';
+            const rowBg = errorRate >= 20 ? 'background:rgba(239,68,68,0.04);' : '';
+
             const wrongHtml = wrongStudents.length > 0
                 ? `<span class="qdm-wrong-students">${wrongStudents.map(n => escapeHtml(n)).join(', ')}</span>`
                 : '<span style="color:var(--green);font-size:.72rem">全部正确</span>';
 
-            html += `<tr>
+            html += `<tr style="${rowBg}">
                 <td>Q${q.q}</td>
                 <td>${q.type}</td>
                 <td style="font-size:.75rem">${escapeHtml(q.topic)}</td>
                 <td style="font-weight:600;color:var(--green)">${escapeHtml(String(q.answer))}</td>
+                <td style="font-weight:600;color:${erColor}">${errorRate}%</td>
                 <td>${wrongHtml}</td>
             </tr>`;
         });
@@ -1922,6 +2053,46 @@ Resources:`;for(let t of c){if(!t||typeof t!=`string`)throw Error(`@supabase/aut
             classes.map(c => `<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join('');
     }
 
+    // Teacher data: priority students + notes
+    let teacherData = { priority: [], notes: {} };
+
+    async function loadTeacherData() {
+        try {
+            const res = await sb.from('daily_progress').select('*').eq('day_number', -2).limit(1);
+            if (res.data && res.data.length > 0) {
+                const raw = res.data[0];
+                if (raw.topic) {
+                    try {
+                        const parsed = JSON.parse(raw.topic);
+                        teacherData.priority = parsed.priority || [];
+                        teacherData.notes = parsed.notes || {};
+                    } catch (e) { /* ignore parse error */ }
+                }
+                if (raw.status) {
+                    try {
+                        const parsed2 = JSON.parse(raw.status);
+                        if (parsed2.priority) teacherData.priority = parsed2.priority;
+                        if (parsed2.notes) teacherData.notes = parsed2.notes;
+                    } catch (e) {}
+                }
+            }
+        } catch (e) {
+            console.warn('loadTeacherData failed:', e);
+        }
+    }
+
+    async function saveTeacherData() {
+        try {
+            await sb.from('daily_progress').upsert({
+                day_number: -2,
+                topic: JSON.stringify({ priority: teacherData.priority, notes: teacherData.notes }),
+                status: 'teacher_data'
+            }, { onConflict: 'day_number' });
+        } catch (e) {
+            console.warn('saveTeacherData failed:', e);
+        }
+    }
+
     document.getElementById('classFilter').addEventListener('change', renderStudentList);
     document.getElementById('studentSearch').addEventListener('input', renderStudentList);
 
@@ -1939,6 +2110,9 @@ Resources:`;for(let t of c){if(!t||typeof t!=`string`)throw Error(`@supabase/aut
         if (classFilter) filtered = filtered.filter(s => s.class_name === classFilter);
         if (search) filtered = filtered.filter(s => s.name.toLowerCase().includes(search));
 
+        // Compute homework stats for all students
+        const hwStats = computeHomeworkStats();
+
         // Compute class averages for warning detection
         const allScoreValues = Object.values(STUDENT_SCORES);
         const allFm = allScoreValues.filter(s => s.fm).map(s => s.fm);
@@ -1952,20 +2126,23 @@ Resources:`;for(let t of c){if(!t||typeof t!=`string`)throw Error(`@supabase/aut
 
         // Determine warning level for each student and sort by priority
         const getWarningLevel = (s) => {
+            // Priority students always come first
+            const isPriority = teacherData.priority.includes(s.id);
             const sd = STUDENT_SCORES[s.name];
-            // Red: total score above average BUT math below average
             if (sd) {
-                if (sd.ft && sd.ft > avgFt && sd.fm && sd.fm < avgFm) return 1;
-                if (sd.mt && sd.mt > avgMt && sd.mm && sd.mm < avgMm) return 1;
+                if (sd.ft && sd.ft > avgFt && sd.fm && sd.fm < avgFm) return isPriority ? 0 : 1;
+                if (sd.mt && sd.mt > avgMt && sd.mm && sd.mm < avgMm) return isPriority ? 0 : 1;
             }
-            // Orange: quiz warning (check all quizzes for low scores or non-submission)
+            const hw = hwStats[s.name];
             let hasQuizWarning = false;
             ALL_QUIZZES.filter(q => !q.status).forEach(quiz => {
                 const quizScore = quiz.scores[s.name];
                 if (!quizScore || quizScore.total < 55) hasQuizWarning = true;
             });
-            if (hasQuizWarning) return 2;
-            return 3;
+            // Homework warning: unsubmitted or low scores
+            if (hw && (hw.notSubmitted > 0 || hw.lowScores >= 2)) hasQuizWarning = true;
+            if (hasQuizWarning) return isPriority ? 0 : 2;
+            return isPriority ? 0 : 3;
         };
 
         filtered.sort((a, b) => getWarningLevel(a) - getWarningLevel(b));
@@ -1977,27 +2154,39 @@ Resources:`;for(let t of c){if(!t||typeof t!=`string`)throw Error(`@supabase/aut
             const r = assessments.filter(a => a.status === 'not_mastered').length;
             const total = ALL_POINTS.length;
 
-            // Target: from past exam score
             const scoreData = STUDENT_SCORES[s.name];
             const target = scoreData ? scoreData.fm : '--';
-
-            // Prediction: compute from assessments
             const prediction = computeStudentPrediction(s.id);
+            const isPriority = teacherData.priority.includes(s.id);
+            const hw = hwStats[s.name] || {};
 
-            // Determine warning level and visual style
             const warningLevel = getWarningLevel(s);
             let cardStyle = '';
-            let badge = '';
-            if (warningLevel === 1) {
-                cardStyle = 'border-left:3px solid var(--red);box-shadow:0 0 8px rgba(239,68,68,0.3);';
-                badge = '<span style="font-size:.6rem;color:var(--red);background:rgba(239,68,68,.1);padding:1px 5px;border-radius:3px;margin-left:6px;">数学薄弱</span>';
+            let badges = '';
+            if (isPriority) {
+                cardStyle += 'border-left:3px solid var(--accent-light);';
+                badges += '<span style="font-size:.6rem;color:var(--accent-light);background:rgba(99,102,241,.12);padding:1px 5px;border-radius:3px;margin-left:4px;">★ 重点</span>';
+            }
+            if (warningLevel === 1 || warningLevel === 0) {
+                if (!isPriority) cardStyle += 'border-left:3px solid var(--red);box-shadow:0 0 8px rgba(239,68,68,0.3);';
+                badges += '<span style="font-size:.6rem;color:var(--red);background:rgba(239,68,68,.1);padding:1px 5px;border-radius:3px;margin-left:4px;">数学薄弱</span>';
             } else if (warningLevel === 2) {
-                cardStyle = 'border-left:3px solid var(--yellow);';
-                badge = '<span style="font-size:.6rem;color:var(--yellow);background:rgba(245,158,11,.1);padding:1px 5px;border-radius:3px;margin-left:6px;">小测预警</span>';
+                if (!isPriority) cardStyle += 'border-left:3px solid var(--yellow);';
+                badges += '<span style="font-size:.6rem;color:var(--yellow);background:rgba(245,158,11,.1);padding:1px 5px;border-radius:3px;margin-left:4px;">预警</span>';
+            }
+            // Homework warning badge
+            if (hw.notSubmitted > 0) {
+                badges += '<span style="font-size:.6rem;color:var(--red);background:rgba(239,68,68,.08);padding:1px 5px;border-radius:3px;margin-left:4px;">未交' + hw.notSubmitted + '次</span>';
+            } else if (hw.lowScores >= 2) {
+                badges += '<span style="font-size:.6rem;color:var(--yellow);background:rgba(245,158,11,.08);padding:1px 5px;border-radius:3px;margin-left:4px;">低分' + hw.lowScores + '次</span>';
+            }
+            // Teacher note indicator
+            if (teacherData.notes[s.id]) {
+                badges += '<span style="font-size:.6rem;color:var(--text-dim);background:rgba(107,114,128,.1);padding:1px 5px;border-radius:3px;margin-left:4px;" title="' + escapeHtml(teacherData.notes[s.id].substring(0, 50)) + '">✎ 备注</span>';
             }
 
             return `<div class="student-card" data-sid="${s.id}" style="${cardStyle}">
-                <div class="sc-name">${escapeHtml(s.name)}${badge}</div>
+                <div class="sc-name">${escapeHtml(s.name)}${badges}</div>
                 <div class="sc-class">${escapeHtml(s.class_name)}</div>
                 <div class="sc-target">目标: ${target}分 | 预测: ${prediction}分</div>
                 <div class="sc-stats">
@@ -2005,6 +2194,7 @@ Resources:`;for(let t of c){if(!t||typeof t!=`string`)throw Error(`@supabase/aut
                     <span class="sc-stat"><span class="sc-dot" style="background:var(--yellow)"></span>${y}</span>
                     <span class="sc-stat"><span class="sc-dot" style="background:var(--red)"></span>${r}</span>
                     <span class="sc-stat" style="color:var(--text-dim)">/${total}</span>
+                    <span style="font-size:.65rem;color:var(--text-dim);margin-left:6px;">交${hw.submitted || 0}/${hw.totalQuizzes || 0}</span>
                 </div>
             </div>`;
         }).join('');
@@ -2060,17 +2250,27 @@ Resources:`;for(let t of c){if(!t||typeof t!=`string`)throw Error(`@supabase/aut
         const aMap = {};
         assessments.forEach(a => { aMap[a.point_id] = a; });
 
+        // Compute auto-assessments and homework stats
+        const autoAssess = computeAutoAssessments();
+        const hwStats = computeHomeworkStats();
+        const studentHw = hwStats[student.name] || {};
+
         const prediction = computeStudentPrediction(studentId);
         const scoreData = STUDENT_SCORES[student.name];
         const target = scoreData ? scoreData.fm : '--';
         const studentPlans = allReviewPlans.filter(p => p.student_id === studentId);
 
+        // Teacher data (priority + notes)
+        const isPriority = teacherData.priority.includes(studentId);
+        const teacherNote = teacherData.notes[studentId] || '';
+
         let html = `<button class="sd-close" id="sdCloseBtn">&times;</button>`;
 
-        // Header
+        // Header with priority marking
         html += `<div class="sd-header">
             <div class="sd-header-info">
                 <h2>${escapeHtml(student.class_name)} ${escapeHtml(student.name)}
+                    <button class="sd-priority-btn ${isPriority ? 'active' : ''}" id="sdPriorityBtn" title="标记为重点学生">${isPriority ? '★' : '☆'} 重点</button>
                     <button class="sd-reset-btn" id="sdResetBtn" title="重置密码为1234">重置密码</button>
                 </h2>
                 <p>已评估 ${assessments.length}/${ALL_POINTS.length} 个知识点 | 预测分数: ${prediction}分 | 目标: ${target}分</p>
@@ -2085,6 +2285,18 @@ Resources:`;for(let t of c){if(!t||typeof t!=`string`)throw Error(`@supabase/aut
         }
         html += `<div class="sd-score-card"><div class="label">预测分数</div><div class="value" style="color:var(--accent-light)">${prediction}/150</div></div>`;
         html += `</div></div>`;
+
+        // Homework submission summary
+        const hwColor = studentHw.notSubmitted > 0 ? 'var(--red)' : studentHw.lowScores > 0 ? 'var(--yellow)' : 'var(--green)';
+        html += `<div class="sd-section" style="padding:.6rem .8rem;">
+            <h3>作业提交情况</h3>
+            <div style="display:flex;gap:16px;flex-wrap:wrap;margin-top:.4rem;font-size:.82rem;">
+                <span>已交: <b style="color:var(--green)">${studentHw.submitted || 0}</b>/${studentHw.totalQuizzes || 0}次</span>
+                <span>未交: <b style="color:${studentHw.notSubmitted > 0 ? 'var(--red)' : 'var(--text-dim)'}">${studentHw.notSubmitted || 0}</b>次</span>
+                <span>低于80%: <b style="color:${studentHw.lowScores > 0 ? 'var(--yellow)' : 'var(--text-dim)'}">${studentHw.lowScores || 0}</b>次</span>
+                <span>均分: <b style="color:${hwColor}">${studentHw.avg || 0}</b></span>
+            </div>
+        </div>`;
 
         // Quiz score trend
         const quizTrendData = ALL_QUIZZES.filter(q => !q.status).map(quiz => {
@@ -2115,37 +2327,66 @@ Resources:`;for(let t of c){if(!t||typeof t!=`string`)throw Error(`@supabase/aut
             html += `</div></div>`;
         }
 
-        // Knowledge points assessment status
-        html += `<div class="sd-section"><h3>知识点评估详情</h3>`;
-        html += `<table class="sd-kp-table"><thead><tr><th>知识点</th><th>权重</th><th>状态</th><th>备注</th></tr></thead><tbody>`;
+        // Knowledge points assessment status (teacher-editable with auto baseline)
+        html += `<div class="sd-section"><h3>知识点评估详情 <span style="font-size:.7rem;font-weight:400;color:var(--text-dim)">（自动评估 + 教师可调整）</span></h3>`;
+        html += `<table class="sd-kp-table"><thead><tr><th>知识点</th><th>权重</th><th>自动评估</th><th>教师调整</th><th>答题统计</th></tr></thead><tbody>`;
 
         Object.entries(KB).forEach(([key, mod]) => {
-            html += `<tr><td colspan="4" style="background:rgba(99,102,241,.05);font-weight:600;color:var(--accent-light)">${key}. ${mod.name}</td></tr>`;
+            html += `<tr><td colspan="5" style="background:rgba(99,102,241,.05);font-weight:600;color:var(--accent-light)">${key}. ${mod.name}</td></tr>`;
             mod.points.forEach(p => {
                 const a = aMap[p.id];
-                let statusHtml;
-                if (!a) {
-                    statusHtml = '<span style="color:var(--text-dim)">未评估</span>';
-                } else if (a.status === 'mastered') {
-                    statusHtml = '<span style="color:var(--green)">掌握</span>';
-                } else if (a.status === 'partial') {
-                    statusHtml = '<span style="color:var(--yellow)">部分掌握</span>';
+                const auto = autoAssess[p.id] && autoAssess[p.id][student.name];
+                const currentStatus = a ? a.status : (auto ? auto.status : null);
+
+                // Auto assessment display
+                let autoHtml;
+                if (auto) {
+                    const ac = auto.status === 'mastered' ? 'var(--green)' : auto.status === 'partial' ? 'var(--yellow)' : 'var(--red)';
+                    const al = auto.status === 'mastered' ? '掌握' : auto.status === 'partial' ? '加强练习' : '有点挑战';
+                    autoHtml = `<span style="color:${ac};font-size:.75rem;">${al}</span>`;
                 } else {
-                    statusHtml = '<span style="color:var(--red)">未掌握</span>';
+                    autoHtml = '<span style="color:var(--text-dim);font-size:.72rem;">无数据</span>';
                 }
+
+                // Teacher override dropdown
+                const selM = currentStatus === 'mastered' ? ' selected' : '';
+                const selP = currentStatus === 'partial' ? ' selected' : '';
+                const selN = currentStatus === 'not_mastered' ? ' selected' : '';
+                const selNone = !currentStatus ? ' selected' : '';
+                const dropdown = `<select class="sd-teacher-select" data-pid="${p.id}" data-sid="${studentId}" style="background:var(--card);color:var(--text);border:1px solid var(--border);border-radius:4px;font-size:.75rem;padding:2px 4px;cursor:pointer;">
+                    <option value=""${selNone}>--</option>
+                    <option value="mastered"${selM}>掌握</option>
+                    <option value="partial"${selP}>加强练习</option>
+                    <option value="not_mastered"${selN}>有点挑战</option>
+                </select>`;
+
+                // Quiz stats for this point
+                let statsHtml;
+                if (auto) {
+                    statsHtml = `<span style="font-size:.72rem;color:var(--text-dim);">✓${auto.correct} ✗${auto.wrong} / ${auto.total}次</span>`;
+                } else {
+                    statsHtml = '<span style="font-size:.72rem;color:var(--text-dim);">--</span>';
+                }
+
                 const wLabel = p.w === 'high' ? '高频' : p.w === 'mid' ? '中频' : '低频';
-                const note = a && a.note ? escapeHtml(a.note) : '';
                 html += `<tr>
                     <td>${p.id} ${escapeHtml(p.name)}</td>
                     <td><span class="w-${p.w}">[${wLabel}]</span></td>
-                    <td>${statusHtml}</td>
-                    <td style="font-size:.78rem;color:var(--text-dim)">${note}</td>
+                    <td>${autoHtml}</td>
+                    <td>${dropdown}</td>
+                    <td>${statsHtml}</td>
                 </tr>`;
             });
         });
         html += `</tbody></table></div>`;
 
-        // Notes/Tips section
+        // Teacher notes section (for tutoring tracking, etc.)
+        html += `<div class="sd-section"><h3>教师备注 <span style="font-size:.7rem;font-weight:400;color:var(--text-dim)">（面批记录、薄弱点追踪）</span></h3>
+            <textarea class="sd-teacher-note" id="sdTeacherNote" placeholder="记录面批情况、薄弱知识点、进步表现等..." style="width:100%;min-height:80px;background:var(--card);border:1px solid var(--border);border-radius:6px;color:var(--text);padding:.5rem;font-size:.82rem;resize:vertical;font-family:inherit;">${escapeHtml(teacherNote)}</textarea>
+            <button class="sd-save-note-btn" id="sdSaveNoteBtn" style="margin-top:.4rem;background:var(--accent);color:white;border:none;padding:4px 16px;border-radius:4px;font-size:.78rem;cursor:pointer;">保存备注</button>
+        </div>`;
+
+        // Student learning notes (from student self-assessments)
         const studentNotes = [];
         Object.entries(KB).forEach(([key, mod]) => {
             mod.points.forEach(p => {
@@ -2156,7 +2397,7 @@ Resources:`;for(let t of c){if(!t||typeof t!=`string`)throw Error(`@supabase/aut
             });
         });
 
-        html += `<div class="sd-section"><h3>学习笔记 / 备注</h3>`;
+        html += `<div class="sd-section"><h3>学生学习笔记</h3>`;
         if (studentNotes.length > 0) {
             studentNotes.forEach(n => {
                 html += `<div class="sd-note-item"><div class="point-label">${n.pointId} ${escapeHtml(n.pointName)}</div>${escapeHtml(n.note)}</div>`;
@@ -2230,6 +2471,51 @@ Resources:`;for(let t of c){if(!t||typeof t!=`string`)throw Error(`@supabase/aut
         overlay.classList.add('show');
 
         document.getElementById('sdCloseBtn').addEventListener('click', closeStudentDetail);
+
+        // Teacher dropdown handlers
+        content.querySelectorAll('.sd-teacher-select').forEach(sel => {
+            sel.addEventListener('change', async (e) => {
+                const pid = sel.dataset.pid;
+                const sid = sel.dataset.sid;
+                const newStatus = sel.value;
+                try {
+                    if (newStatus) {
+                        await sb.from('self_assessments').upsert({
+                            student_id: sid, point_id: pid,
+                            status: newStatus, note: ''
+                        }, { onConflict: 'student_id,point_id' });
+                        // Update local data
+                        const existing = allAssessments.findIndex(a => a.student_id === sid && a.point_id === pid);
+                        if (existing >= 0) allAssessments[existing].status = newStatus;
+                        else allAssessments.push({ student_id: sid, point_id: pid, status: newStatus, note: '' });
+                    }
+                } catch (err) {
+                    alert('保存失败: ' + err.message);
+                }
+            });
+        });
+
+        // Priority toggle handler
+        document.getElementById('sdPriorityBtn').addEventListener('click', async (e) => {
+            e.stopPropagation();
+            const idx = teacherData.priority.indexOf(studentId);
+            if (idx >= 0) teacherData.priority.splice(idx, 1);
+            else teacherData.priority.push(studentId);
+            const btn = document.getElementById('sdPriorityBtn');
+            const isNow = teacherData.priority.includes(studentId);
+            btn.className = 'sd-priority-btn' + (isNow ? ' active' : '');
+            btn.innerHTML = (isNow ? '★' : '☆') + ' 重点';
+            await saveTeacherData();
+        });
+
+        // Save teacher note handler
+        document.getElementById('sdSaveNoteBtn').addEventListener('click', async () => {
+            const noteVal = document.getElementById('sdTeacherNote').value;
+            teacherData.notes[studentId] = noteVal;
+            await saveTeacherData();
+            document.getElementById('sdSaveNoteBtn').textContent = '已保存';
+            setTimeout(() => { document.getElementById('sdSaveNoteBtn').textContent = '保存备注'; }, 1500);
+        });
 
         // Password reset button handler
         document.getElementById('sdResetBtn').addEventListener('click', async (e) => {
@@ -2370,6 +2656,85 @@ Resources:`;for(let t of c){if(!t||typeof t!=`string`)throw Error(`@supabase/aut
         div.textContent = str;
         return div.innerHTML;
     }
+
+    // === CUSTOM CALENDAR TASK HANDLERS ===
+    async function saveCustomTasks() {
+        try {
+            await sb.from('daily_progress').upsert(
+                { day_number: -1, topic: JSON.stringify(customCalendarTasks), status: 'pending', notes: '' },
+                { onConflict: 'day_number' }
+            );
+        } catch(e) { console.error('saveCustomTasks error:', e); }
+    }
+
+    document.getElementById('calendarGrid').addEventListener('keydown', async (e) => {
+        if (e.key === 'Enter' && e.target.classList.contains('cal-custom-add')) {
+            const dateStr = e.target.dataset.date;
+            const text = e.target.value.trim();
+            if (!text || !dateStr) return;
+            customCalendarTasks.push({ date: dateStr, text: text, done: false });
+            await saveCustomTasks();
+            e.target.value = '';
+            renderCalendar();
+        }
+    });
+
+    document.getElementById('calendarGrid').addEventListener('click', async (e) => {
+        // Custom task checkbox
+        const chk = e.target.closest('[data-custom-check]');
+        if (chk) {
+            e.stopPropagation();
+            const idx = parseInt(chk.dataset.customCheck);
+            if (customCalendarTasks[idx] !== undefined) {
+                customCalendarTasks[idx].done = chk.checked;
+                await saveCustomTasks();
+                const textEl = chk.parentElement.querySelector('[data-custom-text]');
+                if (textEl) {
+                    textEl.style.textDecoration = chk.checked ? 'line-through' : 'none';
+                    textEl.style.opacity = chk.checked ? '0.5' : '1';
+                }
+            }
+            return;
+        }
+        // Custom task delete
+        const del = e.target.closest('[data-custom-del]');
+        if (del) {
+            e.stopPropagation();
+            const idx = parseInt(del.dataset.customDel);
+            if (customCalendarTasks[idx] !== undefined) {
+                customCalendarTasks.splice(idx, 1);
+                await saveCustomTasks();
+                renderCalendar();
+            }
+            return;
+        }
+        // Custom task text edit
+        const txtEl = e.target.closest('[data-custom-text]');
+        if (txtEl) {
+            e.stopPropagation();
+            const idx = parseInt(txtEl.dataset.customText);
+            const orig = txtEl.textContent;
+            txtEl.setAttribute('contenteditable', 'true');
+            txtEl.focus();
+            const finishCustomEdit = async () => {
+                txtEl.setAttribute('contenteditable', 'false');
+                const newText = txtEl.textContent.trim() || orig;
+                if (newText !== orig && customCalendarTasks[idx]) {
+                    customCalendarTasks[idx].text = newText;
+                    await saveCustomTasks();
+                }
+                txtEl.removeEventListener('blur', finishCustomEdit);
+                txtEl.removeEventListener('keydown', handleCustomKey);
+            };
+            const handleCustomKey = (ev) => {
+                if (ev.key === 'Enter') { ev.preventDefault(); txtEl.blur(); }
+                if (ev.key === 'Escape') { txtEl.textContent = orig; txtEl.blur(); }
+            };
+            txtEl.addEventListener('blur', finishCustomEdit);
+            txtEl.addEventListener('keydown', handleCustomKey);
+            return;
+        }
+    });
 
     function parseTopicTasks(raw) {
         if (!raw || !raw.trim()) return [];
