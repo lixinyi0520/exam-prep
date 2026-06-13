@@ -2145,13 +2145,23 @@ Resources:`;for(let t of c){if(!t||typeof t!=`string`)throw Error(`@supabase/aut
             return isPriority ? 0 : 3;
         };
 
+        // Pre-compute auto-assessments for all students (fills gaps where students haven't logged in)
+        const autoAssess = computeAutoAssessments();
+
         filtered.sort((a, b) => getWarningLevel(a) - getWarningLevel(b));
 
         grid.innerHTML = filtered.map(s => {
-            const assessments = allAssessments.filter(a => a.student_id === s.id);
-            const g = assessments.filter(a => a.status === 'mastered').length;
-            const y = assessments.filter(a => a.status === 'partial').length;
-            const r = assessments.filter(a => a.status === 'not_mastered').length;
+            // Merge Supabase assessments with auto-assessments
+            const dbAssessments = allAssessments.filter(a => a.student_id === s.id);
+            const dbMap = {};
+            dbAssessments.forEach(a => { dbMap[a.point_id] = a.status; });
+            let g = 0, y = 0, r = 0;
+            ALL_POINTS.forEach(p => {
+                const status = dbMap[p.id] || (autoAssess[p.id] && autoAssess[p.id][s.name] ? autoAssess[p.id][s.name].status : null);
+                if (status === 'mastered') g++;
+                else if (status === 'partial') y++;
+                else if (status === 'not_mastered') r++;
+            });
             const total = ALL_POINTS.length;
 
             const scoreData = STUDENT_SCORES[s.name];
