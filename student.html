@@ -839,7 +839,77 @@ Resources:`;for(let t of c){if(!t||typeof t!=`string`)throw Error(`@supabase/aut
     }
 };
 
-        var ALL_QUIZZES = [QUIZ_DATA_0526, QUIZ_DATA_0603];
+var QUIZ_DATA_0611 = {
+    name: "滚动练习0611",
+    date: "2026-06-11",
+    total: 90,
+    submitted: ["陈以诺", "邓超", "杭诗雨", "赵瑞阳", "朱浩文", "蒋宸安", "张涵", "屠俊赫", "李鹏宇", "卢若水", "毛潇然", "杨瑾华", "余梦璠", "李沐琛", "苗雨涵", "张宸楠", "张楚玉", "李瀚林", "杨嘉瑞", "吴沁珂", "郜源", "高艺宁", "黄知涵", "王冉", "李玥瑶", "曹昊坤", "唐巍桓", "许悠然", "龚奕铭"],
+    notSubmitted: ["贺宜量", "李牧远", "刘思齐", "吴润旗", "姚天灏", "卢慕白", "刘思远", "马世博", "田沐杉", "王诗涵", "张一弛", "何知政", "付启亨", "张芙宁", "申屠泰然", "孙诗尧"],
+    questions: [
+        {q:1, type:"多选", answer:"—", module:"立体几何", points:["A3","A4"], topic:"空间几何体"},
+        {q:2, type:"多选", answer:"—", module:"立体几何", points:["A1","A2"], topic:"直观图与截面"},
+        {q:3, type:"多选", answer:"—", module:"复数", points:["E1","E2"], topic:"复数代数运算"},
+        {q:4, type:"填空", answer:"—", module:"向量", points:["C2","C3"], topic:"向量数量积(夹角)"},
+        {q:5, type:"多选", answer:"—", module:"向量", points:["C2"], topic:"投影向量与数量积"},
+        {q:6, type:"多选", answer:"—", module:"向量", points:["C2"], topic:"向量数量积(坐标运算)"},
+        {q:7, type:"多选", answer:"—", module:"解三角形", points:["B1","B2"], topic:"正弦定理边角互化"},
+        {q:8, type:"填空", answer:"—", module:"解三角形", points:["B1","B2","B3"], topic:"正弦余弦+面积综合"},
+        {q:9, type:"多选", answer:"—", module:"立体几何", points:["A3","A4"], topic:"空间几何体(表面积)"},
+        {q:10, type:"多选", answer:"—", module:"立体几何", points:["A1","A2"], topic:"斜二测画法/直观图"},
+        {q:11, type:"多选", answer:"—", module:"概率统计", points:["D6","D7"], topic:"古典概型/独立事件"},
+        {q:12.1, type:"填空", answer:"—", module:"概率统计", points:["D7"], topic:"独立事件概率"},
+        {q:12.2, type:"填空", answer:"—", module:"概率统计", points:["D7"], topic:"概率综合"},
+        {q:13, type:"多选", answer:"—", module:"概率统计", points:["D4","D6"], topic:"概率统计综合"},
+        {q:14, type:"多选", answer:"—", module:"概率统计", points:["D7"], topic:"独立事件与条件概率"},
+        {q:15.1, type:"填空", answer:"—", module:"解三角形", points:["B1"], topic:"正弦定理求角"},
+        {q:15.2, type:"填空", answer:"—", module:"解三角形", points:["B2","B3"], topic:"余弦定理与面积"},
+        {q:16, type:"多选", answer:"—", module:"选填压轴", points:["F2"], topic:"综合压轴"}
+    ],
+    scores: {
+    "陈以诺": {"class": "4班", "total": 90.0, "questions": [{"q": 1, "score": 5.0}, {"q": 2, "score": 5.0}, {"q": 3, "score": 5.0}, {"q": 4, "score": 5.0}, {"q": 5, "score": 5.0}, {"q": 6, "score": 5.0}, {"q": 7, "score": 5.0}, {"q": 8, "score": 5.0}, {"q": 9, "score": 5.0}, {"q": 10, "score": 5.0}, {"q": 11, "score": 5.0}, {"q": 12.1, "score": 5.0}, {"q": 12.2, "score": 5.0}, {"q": 13, "score": 5.0}, {"q": 14, "score": 5.0}, {"q": 15.1, "score": 5.0}, {"q": 15.2, "score": 5.0}, {"q": 16, "score": 5.0}]},
+    "邓超": {"class": "4班", "total": 90.0, "questions": [{"q": 1, "score": 5.0}, {"q": 2, "score": 5.0}, {"q": 3, "score": 5.0}, {"q": 4, "score": 5.0}, {"q": 5, "score": 5.0}, {"q": 6, "score": 5.0}, {"q": 7, "score": 5.0}, {"q": 8, "score": 5.0}, {"q": 9, "score": 5.0}, {"q": 10, "score": 5.0}, {"q": 11, "score": 5.0}, {"q": 12.1, "score": 5.0}, {"q": 12.2, "score": 5.0}, {"q": 13, "score": 5.0}, {"q": 14, "score": 5.0}, {"q": 15.1, "score": 5.0}, {"q": 15.2, "score": 5.0}, {"q": 16, "score": 5.0}]},
+    "杭诗雨": {"class": "4班", "total": 90.0, "questions": [{"q": 1, "score": 5.0}, {"q": 2, "score": 5.0}, {"q": 3, "score": 5.0}, {"q": 4, "score": 5.0}, {"q": 5, "score": 5.0}, {"q": 6, "score": 5.0}, {"q": 7, "score": 5.0}, {"q": 8, "score": 5.0}, {"q": 9, "score": 5.0}, {"q": 10, "score": 5.0}, {"q": 11, "score": 5.0}, {"q": 12.1, "score": 5.0}, {"q": 12.2, "score": 5.0}, {"q": 13, "score": 5.0}, {"q": 14, "score": 5.0}, {"q": 15.1, "score": 5.0}, {"q": 15.2, "score": 5.0}, {"q": 16, "score": 5.0}]},
+    "赵瑞阳": {"class": "4班", "total": 90.0, "questions": [{"q": 1, "score": 5.0}, {"q": 2, "score": 5.0}, {"q": 3, "score": 5.0}, {"q": 4, "score": 5.0}, {"q": 5, "score": 5.0}, {"q": 6, "score": 5.0}, {"q": 7, "score": 5.0}, {"q": 8, "score": 5.0}, {"q": 9, "score": 5.0}, {"q": 10, "score": 5.0}, {"q": 11, "score": 5.0}, {"q": 12.1, "score": 5.0}, {"q": 12.2, "score": 5.0}, {"q": 13, "score": 5.0}, {"q": 14, "score": 5.0}, {"q": 15.1, "score": 5.0}, {"q": 15.2, "score": 5.0}, {"q": 16, "score": 5.0}]},
+    "朱浩文": {"class": "4班", "total": 90.0, "questions": [{"q": 1, "score": 5.0}, {"q": 2, "score": 5.0}, {"q": 3, "score": 5.0}, {"q": 4, "score": 5.0}, {"q": 5, "score": 5.0}, {"q": 6, "score": 5.0}, {"q": 7, "score": 5.0}, {"q": 8, "score": 5.0}, {"q": 9, "score": 5.0}, {"q": 10, "score": 5.0}, {"q": 11, "score": 5.0}, {"q": 12.1, "score": 5.0}, {"q": 12.2, "score": 5.0}, {"q": 13, "score": 5.0}, {"q": 14, "score": 5.0}, {"q": 15.1, "score": 5.0}, {"q": 15.2, "score": 5.0}, {"q": 16, "score": 5.0}]},
+    "蒋宸安": {"class": "4班", "total": 90.0, "questions": [{"q": 1, "score": 5.0}, {"q": 2, "score": 5.0}, {"q": 3, "score": 5.0}, {"q": 4, "score": 5.0}, {"q": 5, "score": 5.0}, {"q": 6, "score": 5.0}, {"q": 7, "score": 5.0}, {"q": 8, "score": 5.0}, {"q": 9, "score": 5.0}, {"q": 10, "score": 5.0}, {"q": 11, "score": 5.0}, {"q": 12.1, "score": 5.0}, {"q": 12.2, "score": 5.0}, {"q": 13, "score": 5.0}, {"q": 14, "score": 5.0}, {"q": 15.1, "score": 5.0}, {"q": 15.2, "score": 5.0}, {"q": 16, "score": 5.0}]},
+    "张涵": {"class": "4班", "total": 90.0, "questions": [{"q": 1, "score": 5.0}, {"q": 2, "score": 5.0}, {"q": 3, "score": 5.0}, {"q": 4, "score": 5.0}, {"q": 5, "score": 5.0}, {"q": 6, "score": 5.0}, {"q": 7, "score": 5.0}, {"q": 8, "score": 5.0}, {"q": 9, "score": 5.0}, {"q": 10, "score": 5.0}, {"q": 11, "score": 5.0}, {"q": 12.1, "score": 5.0}, {"q": 12.2, "score": 5.0}, {"q": 13, "score": 5.0}, {"q": 14, "score": 5.0}, {"q": 15.1, "score": 5.0}, {"q": 15.2, "score": 5.0}, {"q": 16, "score": 5.0}]},
+    "屠俊赫": {"class": "4班", "total": 90.0, "questions": [{"q": 1, "score": 5.0}, {"q": 2, "score": 5.0}, {"q": 3, "score": 5.0}, {"q": 4, "score": 5.0}, {"q": 5, "score": 5.0}, {"q": 6, "score": 5.0}, {"q": 7, "score": 5.0}, {"q": 8, "score": 5.0}, {"q": 9, "score": 5.0}, {"q": 10, "score": 5.0}, {"q": 11, "score": 5.0}, {"q": 12.1, "score": 5.0}, {"q": 12.2, "score": 5.0}, {"q": 13, "score": 5.0}, {"q": 14, "score": 5.0}, {"q": 15.1, "score": 5.0}, {"q": 15.2, "score": 5.0}, {"q": 16, "score": 5.0}]},
+    "李鹏宇": {"class": "4班", "total": 90.0, "questions": [{"q": 1, "score": 5.0}, {"q": 2, "score": 5.0}, {"q": 3, "score": 5.0}, {"q": 4, "score": 5.0}, {"q": 5, "score": 5.0}, {"q": 6, "score": 5.0}, {"q": 7, "score": 5.0}, {"q": 8, "score": 5.0}, {"q": 9, "score": 5.0}, {"q": 10, "score": 5.0}, {"q": 11, "score": 5.0}, {"q": 12.1, "score": 5.0}, {"q": 12.2, "score": 5.0}, {"q": 13, "score": 5.0}, {"q": 14, "score": 5.0}, {"q": 15.1, "score": 5.0}, {"q": 15.2, "score": 5.0}, {"q": 16, "score": 5.0}]},
+    "卢若水": {"class": "4班", "total": 85.0, "questions": [{"q": 1, "score": 5.0}, {"q": 2, "score": 5.0}, {"q": 3, "score": 5.0}, {"q": 4, "score": 5.0}, {"q": 5, "score": 5.0}, {"q": 6, "score": 5.0}, {"q": 7, "score": 5.0}, {"q": 8, "score": 5.0}, {"q": 9, "score": 0.0}, {"q": 10, "score": 5.0}, {"q": 11, "score": 5.0}, {"q": 12.1, "score": 5.0}, {"q": 12.2, "score": 5.0}, {"q": 13, "score": 5.0}, {"q": 14, "score": 5.0}, {"q": 15.1, "score": 5.0}, {"q": 15.2, "score": 5.0}, {"q": 16, "score": 5.0}]},
+    "毛潇然": {"class": "4班", "total": 85.0, "questions": [{"q": 1, "score": 5.0}, {"q": 2, "score": 5.0}, {"q": 3, "score": 5.0}, {"q": 4, "score": 5.0}, {"q": 5, "score": 5.0}, {"q": 6, "score": 5.0}, {"q": 7, "score": 5.0}, {"q": 8, "score": 5.0}, {"q": 9, "score": 0.0}, {"q": 10, "score": 5.0}, {"q": 11, "score": 5.0}, {"q": 12.1, "score": 5.0}, {"q": 12.2, "score": 5.0}, {"q": 13, "score": 5.0}, {"q": 14, "score": 5.0}, {"q": 15.1, "score": 5.0}, {"q": 15.2, "score": 5.0}, {"q": 16, "score": 5.0}]},
+    "杨瑾华": {"class": "4班", "total": 85.0, "questions": [{"q": 1, "score": 5.0}, {"q": 2, "score": 5.0}, {"q": 3, "score": 5.0}, {"q": 4, "score": 5.0}, {"q": 5, "score": 5.0}, {"q": 6, "score": 5.0}, {"q": 7, "score": 5.0}, {"q": 8, "score": 5.0}, {"q": 9, "score": 5.0}, {"q": 10, "score": 0.0}, {"q": 11, "score": 5.0}, {"q": 12.1, "score": 5.0}, {"q": 12.2, "score": 5.0}, {"q": 13, "score": 5.0}, {"q": 14, "score": 5.0}, {"q": 15.1, "score": 5.0}, {"q": 15.2, "score": 5.0}, {"q": 16, "score": 5.0}]},
+    "余梦璠": {"class": "4班", "total": 85.0, "questions": [{"q": 1, "score": 5.0}, {"q": 2, "score": 5.0}, {"q": 3, "score": 5.0}, {"q": 4, "score": 5.0}, {"q": 5, "score": 5.0}, {"q": 6, "score": 5.0}, {"q": 7, "score": 5.0}, {"q": 8, "score": 5.0}, {"q": 9, "score": 0.0}, {"q": 10, "score": 5.0}, {"q": 11, "score": 5.0}, {"q": 12.1, "score": 5.0}, {"q": 12.2, "score": 5.0}, {"q": 13, "score": 5.0}, {"q": 14, "score": 5.0}, {"q": 15.1, "score": 5.0}, {"q": 15.2, "score": 5.0}, {"q": 16, "score": 5.0}]},
+    "李沐琛": {"class": "4班", "total": 85.0, "questions": [{"q": 1, "score": 5.0}, {"q": 2, "score": 5.0}, {"q": 3, "score": 5.0}, {"q": 4, "score": 5.0}, {"q": 5, "score": 5.0}, {"q": 6, "score": 5.0}, {"q": 7, "score": 5.0}, {"q": 8, "score": 0.0}, {"q": 9, "score": 5.0}, {"q": 10, "score": 5.0}, {"q": 11, "score": 5.0}, {"q": 12.1, "score": 5.0}, {"q": 12.2, "score": 5.0}, {"q": 13, "score": 5.0}, {"q": 14, "score": 5.0}, {"q": 15.1, "score": 5.0}, {"q": 15.2, "score": 5.0}, {"q": 16, "score": 5.0}]},
+    "苗雨涵": {"class": "4班", "total": 85.0, "questions": [{"q": 1, "score": 5.0}, {"q": 2, "score": 5.0}, {"q": 3, "score": 5.0}, {"q": 4, "score": 5.0}, {"q": 5, "score": 5.0}, {"q": 6, "score": 5.0}, {"q": 7, "score": 5.0}, {"q": 8, "score": 0.0}, {"q": 9, "score": 5.0}, {"q": 10, "score": 5.0}, {"q": 11, "score": 5.0}, {"q": 12.1, "score": 5.0}, {"q": 12.2, "score": 5.0}, {"q": 13, "score": 5.0}, {"q": 14, "score": 5.0}, {"q": 15.1, "score": 5.0}, {"q": 15.2, "score": 5.0}, {"q": 16, "score": 5.0}]},
+    "张宸楠": {"class": "4班", "total": 85.0, "questions": [{"q": 1, "score": 5.0}, {"q": 2, "score": 5.0}, {"q": 3, "score": 5.0}, {"q": 4, "score": 5.0}, {"q": 5, "score": 5.0}, {"q": 6, "score": 5.0}, {"q": 7, "score": 5.0}, {"q": 8, "score": 5.0}, {"q": 9, "score": 0.0}, {"q": 10, "score": 5.0}, {"q": 11, "score": 5.0}, {"q": 12.1, "score": 5.0}, {"q": 12.2, "score": 5.0}, {"q": 13, "score": 5.0}, {"q": 14, "score": 5.0}, {"q": 15.1, "score": 5.0}, {"q": 15.2, "score": 5.0}, {"q": 16, "score": 5.0}]},
+    "张楚玉": {"class": "4班", "total": 85.0, "questions": [{"q": 1, "score": 5.0}, {"q": 2, "score": 5.0}, {"q": 3, "score": 5.0}, {"q": 4, "score": 5.0}, {"q": 5, "score": 5.0}, {"q": 6, "score": 5.0}, {"q": 7, "score": 5.0}, {"q": 8, "score": 0.0}, {"q": 9, "score": 5.0}, {"q": 10, "score": 5.0}, {"q": 11, "score": 5.0}, {"q": 12.1, "score": 5.0}, {"q": 12.2, "score": 5.0}, {"q": 13, "score": 5.0}, {"q": 14, "score": 5.0}, {"q": 15.1, "score": 5.0}, {"q": 15.2, "score": 5.0}, {"q": 16, "score": 5.0}]},
+    "李瀚林": {"class": "4班", "total": 85.0, "questions": [{"q": 1, "score": 5.0}, {"q": 2, "score": 5.0}, {"q": 3, "score": 5.0}, {"q": 4, "score": 5.0}, {"q": 5, "score": 5.0}, {"q": 6, "score": 0.0}, {"q": 7, "score": 5.0}, {"q": 8, "score": 5.0}, {"q": 9, "score": 5.0}, {"q": 10, "score": 5.0}, {"q": 11, "score": 5.0}, {"q": 12.1, "score": 5.0}, {"q": 12.2, "score": 5.0}, {"q": 13, "score": 5.0}, {"q": 14, "score": 5.0}, {"q": 15.1, "score": 5.0}, {"q": 15.2, "score": 5.0}, {"q": 16, "score": 5.0}]},
+    "杨嘉瑞": {"class": "4班", "total": 85.0, "questions": [{"q": 1, "score": 5.0}, {"q": 2, "score": 5.0}, {"q": 3, "score": 5.0}, {"q": 4, "score": 5.0}, {"q": 5, "score": 5.0}, {"q": 6, "score": 5.0}, {"q": 7, "score": 5.0}, {"q": 8, "score": 5.0}, {"q": 9, "score": 5.0}, {"q": 10, "score": 5.0}, {"q": 11, "score": 5.0}, {"q": 12.1, "score": 5.0}, {"q": 12.2, "score": 5.0}, {"q": 13, "score": 5.0}, {"q": 14, "score": 5.0}, {"q": 15.1, "score": 5.0}, {"q": 15.2, "score": 0.0}, {"q": 16, "score": 5.0}]},
+    "吴沁珂": {"class": "4班", "total": 80.0, "questions": [{"q": 1, "score": 5.0}, {"q": 2, "score": 5.0}, {"q": 3, "score": 5.0}, {"q": 4, "score": 5.0}, {"q": 5, "score": 0.0}, {"q": 6, "score": 0.0}, {"q": 7, "score": 5.0}, {"q": 8, "score": 5.0}, {"q": 9, "score": 5.0}, {"q": 10, "score": 5.0}, {"q": 11, "score": 5.0}, {"q": 12.1, "score": 5.0}, {"q": 12.2, "score": 5.0}, {"q": 13, "score": 5.0}, {"q": 14, "score": 5.0}, {"q": 15.1, "score": 5.0}, {"q": 15.2, "score": 5.0}, {"q": 16, "score": 5.0}]},
+    "郜源": {"class": "4班", "total": 80.0, "questions": [{"q": 1, "score": 5.0}, {"q": 2, "score": 5.0}, {"q": 3, "score": 5.0}, {"q": 4, "score": 5.0}, {"q": 5, "score": 5.0}, {"q": 6, "score": 0.0}, {"q": 7, "score": 5.0}, {"q": 8, "score": 5.0}, {"q": 9, "score": 0.0}, {"q": 10, "score": 5.0}, {"q": 11, "score": 5.0}, {"q": 12.1, "score": 5.0}, {"q": 12.2, "score": 5.0}, {"q": 13, "score": 5.0}, {"q": 14, "score": 5.0}, {"q": 15.1, "score": 5.0}, {"q": 15.2, "score": 5.0}, {"q": 16, "score": 5.0}]},
+    "高艺宁": {"class": "4班", "total": 80.0, "questions": [{"q": 1, "score": 5.0}, {"q": 2, "score": 0.0}, {"q": 3, "score": 5.0}, {"q": 4, "score": 5.0}, {"q": 5, "score": 5.0}, {"q": 6, "score": 5.0}, {"q": 7, "score": 5.0}, {"q": 8, "score": 5.0}, {"q": 9, "score": 5.0}, {"q": 10, "score": 5.0}, {"q": 11, "score": 5.0}, {"q": 12.1, "score": 5.0}, {"q": 12.2, "score": 5.0}, {"q": 13, "score": 5.0}, {"q": 14, "score": 5.0}, {"q": 15.1, "score": 5.0}, {"q": 15.2, "score": 5.0}, {"q": 16, "score": 0.0}]},
+    "黄知涵": {"class": "4班", "total": 75.0, "questions": [{"q": 1, "score": 5.0}, {"q": 2, "score": 5.0}, {"q": 3, "score": 5.0}, {"q": 4, "score": 5.0}, {"q": 5, "score": 5.0}, {"q": 6, "score": 5.0}, {"q": 7, "score": 5.0}, {"q": 8, "score": 0.0}, {"q": 9, "score": 0.0}, {"q": 10, "score": 5.0}, {"q": 11, "score": 5.0}, {"q": 12.1, "score": 5.0}, {"q": 12.2, "score": 5.0}, {"q": 13, "score": 0.0}, {"q": 14, "score": 5.0}, {"q": 15.1, "score": 5.0}, {"q": 15.2, "score": 5.0}, {"q": 16, "score": 5.0}]},
+    "王冉": {"class": "4班", "total": 75.0, "questions": [{"q": 1, "score": 5.0}, {"q": 2, "score": 5.0}, {"q": 3, "score": 5.0}, {"q": 4, "score": 5.0}, {"q": 5, "score": 5.0}, {"q": 6, "score": 5.0}, {"q": 7, "score": 5.0}, {"q": 8, "score": 5.0}, {"q": 9, "score": 5.0}, {"q": 10, "score": 5.0}, {"q": 11, "score": 5.0}, {"q": 12.1, "score": 5.0}, {"q": 12.2, "score": 5.0}, {"q": 13, "score": 0.0}, {"q": 14, "score": 0.0}, {"q": 15.1, "score": 5.0}, {"q": 15.2, "score": 0.0}, {"q": 16, "score": 5.0}]},
+    "李玥瑶": {"class": "4班", "total": 75.0, "questions": [{"q": 1, "score": 5.0}, {"q": 2, "score": 5.0}, {"q": 3, "score": 5.0}, {"q": 4, "score": 5.0}, {"q": 5, "score": 5.0}, {"q": 6, "score": 5.0}, {"q": 7, "score": 0.0}, {"q": 8, "score": 5.0}, {"q": 9, "score": 0.0}, {"q": 10, "score": 5.0}, {"q": 11, "score": 5.0}, {"q": 12.1, "score": 5.0}, {"q": 12.2, "score": 5.0}, {"q": 13, "score": 0.0}, {"q": 14, "score": 5.0}, {"q": 15.1, "score": 5.0}, {"q": 15.2, "score": 5.0}, {"q": 16, "score": 5.0}]},
+    "曹昊坤": {"class": "4班", "total": 75.0, "questions": [{"q": 1, "score": 5.0}, {"q": 2, "score": 5.0}, {"q": 3, "score": 5.0}, {"q": 4, "score": 5.0}, {"q": 5, "score": 0.0}, {"q": 6, "score": 5.0}, {"q": 7, "score": 5.0}, {"q": 8, "score": 0.0}, {"q": 9, "score": 5.0}, {"q": 10, "score": 5.0}, {"q": 11, "score": 5.0}, {"q": 12.1, "score": 5.0}, {"q": 12.2, "score": 5.0}, {"q": 13, "score": 0.0}, {"q": 14, "score": 5.0}, {"q": 15.1, "score": 5.0}, {"q": 15.2, "score": 5.0}, {"q": 16, "score": 5.0}]},
+    "唐巍桓": {"class": "4班", "total": 70.0, "questions": [{"q": 1, "score": 0.0}, {"q": 2, "score": 5.0}, {"q": 3, "score": 5.0}, {"q": 4, "score": 5.0}, {"q": 5, "score": 5.0}, {"q": 6, "score": 0.0}, {"q": 7, "score": 5.0}, {"q": 8, "score": 5.0}, {"q": 9, "score": 0.0}, {"q": 10, "score": 5.0}, {"q": 11, "score": 5.0}, {"q": 12.1, "score": 5.0}, {"q": 12.2, "score": 5.0}, {"q": 13, "score": 0.0}, {"q": 14, "score": 5.0}, {"q": 15.1, "score": 5.0}, {"q": 15.2, "score": 5.0}, {"q": 16, "score": 5.0}]},
+    "许悠然": {"class": "4班", "total": 65.0, "questions": [{"q": 1, "score": 5.0}, {"q": 2, "score": 5.0}, {"q": 3, "score": 5.0}, {"q": 4, "score": 5.0}, {"q": 5, "score": 0.0}, {"q": 6, "score": 5.0}, {"q": 7, "score": 5.0}, {"q": 8, "score": 5.0}, {"q": 9, "score": 0.0}, {"q": 10, "score": 0.0}, {"q": 11, "score": 5.0}, {"q": 12.1, "score": 5.0}, {"q": 12.2, "score": 5.0}, {"q": 13, "score": 5.0}, {"q": 14, "score": 5.0}, {"q": 15.1, "score": 0.0}, {"q": 15.2, "score": 0.0}, {"q": 16, "score": 5.0}]},
+    "龚奕铭": {"class": "4班", "total": 0.0, "questions": [{"q": 1, "score": 0.0}, {"q": 2, "score": 0.0}, {"q": 3, "score": 0.0}, {"q": 4, "score": 0.0}, {"q": 5, "score": 0.0}, {"q": 6, "score": 0.0}, {"q": 7, "score": 0.0}, {"q": 8, "score": 0.0}, {"q": 9, "score": 0.0}, {"q": 10, "score": 0.0}, {"q": 11, "score": 0.0}, {"q": 12.1, "score": 0.0}, {"q": 12.2, "score": 0.0}, {"q": 13, "score": 0.0}, {"q": 14, "score": 0.0}, {"q": 15.1, "score": 0.0}, {"q": 15.2, "score": 0.0}, {"q": 16, "score": 0.0}]}
+    }
+};
+
+var QUIZ_DATA_0612 = {
+    name: "滚动练习0612",
+    date: "2026-06-12",
+    total: null,
+    submitted: [],
+    notSubmitted: [],
+    questions: [],
+    scores: {},
+    status: "已布置·暂无成绩"
+};
+
+        var ALL_QUIZZES = [QUIZ_DATA_0526, QUIZ_DATA_0603, QUIZ_DATA_0611, QUIZ_DATA_0612];
 
         // ============================================================
         // Knowledge Base
@@ -1514,23 +1584,8 @@ Resources:`;for(let t of c){if(!t||typeof t!=`string`)throw Error(`@supabase/aut
             });
             container.innerHTML = '';
 
-            // Compute quiz-based suggestions
-            var quizSuggestions = computeQuizSuggestions();
-            // Filter out dismissed ones
-            Object.keys(dismissedSuggestions).forEach(function(pid) {
-                delete quizSuggestions[pid];
-            });
-            // Filter: only show suggestion badge if quiz data suggests a DIFFERENT status
-            // than what the student currently has (to let them know they might want to update)
-            Object.keys(quizSuggestions).forEach(function(pid) {
-                if (assessments[pid] && assessments[pid].status && assessments[pid].status === quizSuggestions[pid].status) {
-                    delete quizSuggestions[pid]; // Status already matches quiz data
-                }
-                // Also remove if student has manually overridden (not auto-set)
-                if (assessments[pid] && assessments[pid].status && !assessments[pid].auto) {
-                    delete quizSuggestions[pid]; // Student chose their own status
-                }
-            });
+            // Quiz suggestions no longer displayed as badges (auto-applied via applyAutoAssessments)
+            // computeQuizSuggestions() is still used by applyAutoAssessments() and getWeakestPoints()
 
             Object.entries(KB).forEach(function(entry) {
                 var key = entry[0];
@@ -1563,19 +1618,8 @@ Resources:`;for(let t of c){if(!t||typeof t!=`string`)throw Error(`@supabase/aut
                             '</div>' +
                         '</div>';
 
-                    // Quiz suggestion for this point (only if not yet self-assessed and not dismissed)
-                    var quizSugg = quizSuggestions[p.id];
-                    if (quizSugg) {
-                        var suggText = quizSugg.status === 'mastered' ? '满分拿下' : quizSugg.status === 'partial' ? '加强练习' : '有点挑战';
-                        var suggColor = quizSugg.status === 'mastered' ? 'var(--green)' : quizSugg.status === 'partial' ? 'var(--yellow)' : 'var(--red)';
-                        var suggRgb = quizSugg.status === 'mastered' ? '16,185,129' : quizSugg.status === 'partial' ? '245,158,11' : '239,68,68';
-                        pointHtml += '<div class="quiz-sugg" style="margin-top:0.4rem;font-size:0.72rem;color:' + suggColor + ';display:flex;align-items:center;gap:0.3rem;padding:0 0 0.4rem 0;">' +
-                            '<span style="background:rgba(' + suggRgb + ',0.12);padding:0.15rem 0.5rem;border-radius:4px;">' +
-                            '\uD83D\uDCDD 小测建议: ' + suggText + ' (对' + quizSugg.correct + '/' + quizSugg.total + '题)</span>' +
-                            '<button class="quiz-sugg-accept" data-point="' + p.id + '" data-status="' + quizSugg.status + '" style="background:transparent;border:1px solid ' + suggColor + ';color:' + suggColor + ';font-size:0.68rem;padding:0.1rem 0.4rem;border-radius:4px;cursor:pointer;">采纳</button>' +
-                            '<button class="quiz-sugg-dismiss" data-point="' + p.id + '" style="background:transparent;border:1px solid var(--border);color:var(--text-dim);font-size:0.68rem;padding:0.1rem 0.4rem;border-radius:4px;cursor:pointer;">忽略</button>' +
-                        '</div>';
-                    }
+                    // Quiz data auto-applied via applyAutoAssessments() - no suggestion badges needed
+                    // Students can still modify via the status buttons above
 
                     pointHtml += '<textarea class="point-note" data-pid="' + p.id + '" placeholder="备注（易错点、需要加强的地方...）">' + escapeHtml(noteVal) + '</textarea>' +
                         '<div class="note-actions">' +
@@ -2545,52 +2589,7 @@ Resources:`;for(let t of c){if(!t||typeof t!=`string`)throw Error(`@supabase/aut
                 return;
             }
 
-            // Quiz suggestion accept button
-            var acceptBtn = e.target.closest('.quiz-sugg-accept');
-            if (acceptBtn) {
-                e.stopPropagation();
-                var qPointId = acceptBtn.getAttribute('data-point');
-                var qStatus = acceptBtn.getAttribute('data-status');
-                // Set the assessment status (without btnEl, since this is not a status-btn)
-                if (!assessments[qPointId]) assessments[qPointId] = {};
-                assessments[qPointId].status = qStatus;
-                // Save to Supabase
-                try {
-                    sb.from('self_assessments').upsert({
-                        student_id: currentUser.id,
-                        point_id: qPointId,
-                        status: qStatus,
-                        note: assessments[qPointId].note || ''
-                    }, { onConflict: 'student_id,point_id' }).then(function() {
-                        updateSyncStatus(true);
-                    }).catch(function() {
-                        updateSyncStatus(false);
-                    });
-                } catch (_) {}
-                // Remove the suggestion UI
-                var suggEl = acceptBtn.closest('.quiz-sugg');
-                if (suggEl) suggEl.remove();
-                // Re-render to update visual (stats, prediction, etc.)
-                renderModules();
-                rebindModuleListeners();
-                renderStats();
-                drawRadar();
-                renderPrediction();
-                renderModuleDots();
-                showToast('已采纳小测建议');
-                return;
-            }
-
-            // Quiz suggestion dismiss button
-            var dismissBtn = e.target.closest('.quiz-sugg-dismiss');
-            if (dismissBtn) {
-                e.stopPropagation();
-                var dPointId = dismissBtn.getAttribute('data-point');
-                dismissedSuggestions[dPointId] = true;
-                var dSuggEl = dismissBtn.closest('.quiz-sugg');
-                if (dSuggEl) dSuggEl.remove();
-                return;
-            }
+            // (Quiz suggestion buttons removed - assessments auto-applied)
 
             // Add custom point button
             var addBtn = e.target.closest('.add-custom-btn');
